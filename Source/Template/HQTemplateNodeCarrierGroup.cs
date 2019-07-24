@@ -1,7 +1,6 @@
-﻿//using Headquarters4DCS.Library;
-//using System.ComponentModel;
-
+﻿//using System.ComponentModel;
 //using System.Drawing.Design;
+//using Headquarters4DCS.Library;
 //using Headquarters4DCS.TypeConverters;
 
 //namespace Headquarters4DCS.Template

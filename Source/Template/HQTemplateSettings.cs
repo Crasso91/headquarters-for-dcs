@@ -18,15 +18,15 @@ namespace Headquarters4DCS.Template
         public string BriefingDescription { get; set; }
 
         [Category("Briefing"), DisplayName("Language")]
-        [TypeConverter(typeof(INIFileListTypeConverter<DefinitionLanguage>))]
+        [TypeConverter(typeof(DefinitionsStringConverter<DefinitionLanguage>))]
         public string BriefingLanguage { get; set; }
 
         [Category("Context"), DisplayName("Coalition, blue")]
-        [TypeConverter(typeof(INIFileListTypeConverter<DefinitionCoalition>))]
+        [TypeConverter(typeof(DefinitionsStringConverter<DefinitionCoalition>))]
         public string ContextCoalitionBlue { get; set; }
 
         [Category("Context"), DisplayName("Coalition, red")]
-        [TypeConverter(typeof(INIFileListTypeConverter<DefinitionCoalition>))]
+        [TypeConverter(typeof(DefinitionsStringConverter<DefinitionCoalition>))]
         public string ContextCoalitionRed { get; set; }
 
         [Category("Context"), DisplayName("Player coalition")]

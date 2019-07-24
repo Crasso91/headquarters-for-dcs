@@ -179,67 +179,67 @@ namespace Headquarters4DCS.Library
                 ID = ini.GetValue<string>("Unit", "DCSID");
                 if (string.IsNullOrEmpty(ID)) return false;
 
-                //Families = ini.GetValueArray<UnitFamily>("Unit", "Families"); //if (Families.Length == 0) return false;
+                Families = ini.GetValueArray<UnitFamily>("Unit", "Families"); if (Families.Length == 0) return false;
 
-                //Category = HQTools.GetUnitCategoryFromUnitFamily(Families[0]);
-                //// All families must belong to the same category. If that's not the case, remove all "wrong" families.
-                //Families = (from UnitFamily f in Families where f.ToString().StartsWith(Category.ToString()) select f).ToArray();
-                //if (Families.Length == 0) return false;
+                Category = HQTools.GetUnitCategoryFromUnitFamily(Families[0]);
+                // All families must belong to the same category. If that's not the case, remove all "wrong" families.
+                Families = (from UnitFamily f in Families where f.ToString().StartsWith(Category.ToString()) select f).ToArray();
+                if (Families.Length == 0) return false;
 
-                //InService = HQTools.ParseEnumString<TimePeriod>(ini.GetValue<string>("Unit", "InService"), '-', "Decade");
-                //if (InService.Length < 2) return false;
-                //InService = InService.Take(2).OrderBy(x => x).ToArray();
+                InService = HQTools.ParseEnumString<TimePeriod>(ini.GetValue<string>("Unit", "InService"), '-', "Decade");
+                if (InService.Length < 2) return false;
+                InService = InService.Take(2).OrderBy(x => x).ToArray();
 
-                //ExtraLua = ini.GetValue<string>("Unit", "ExtraLua");
+                ExtraLua = ini.GetValue<string>("Unit", "ExtraLua");
 
-                //// ---------------
-                //// [Comms] section
-                //// ---------------
-                //CommsRadioFrequency = ini.GetValue<float>("Comms", "RadioFrequency");
-                //CommsRadioFrequency = (CommsRadioFrequency <= 0) ? DEFAULT_RADIO_FREQUENCY : CommsRadioFrequency;
+                // ---------------
+                // [Comms] section
+                // ---------------
+                CommsRadioFrequency = ini.GetValue<float>("Comms", "RadioFrequency");
+                CommsRadioFrequency = (CommsRadioFrequency <= 0) ? DEFAULT_RADIO_FREQUENCY : CommsRadioFrequency;
 
-                //CommsTACANChannel = HQTools.Clamp(ini.GetValue<int>("Comms", "TACAN.Channel"), 0, 99);
-                //CommsTACANChannelMode = ini.GetValue<string>("Comms", "TACAN.ChannelMode").ToUpperInvariant();
-                //CommsTACANChannelMode = (CommsTACANChannelMode == "Y") ? "Y" : "X";
-                //CommsTACANCallsign = ini.GetValue<string>("Comms", "TACAN.Callsign").ToUpperInvariant();
+                CommsTACANChannel = HQTools.Clamp(ini.GetValue<int>("Comms", "TACAN.Channel"), 0, 99);
+                CommsTACANChannelMode = ini.GetValue<string>("Comms", "TACAN.ChannelMode").ToUpperInvariant();
+                CommsTACANChannelMode = (CommsTACANChannelMode == "Y") ? "Y" : "X";
+                CommsTACANCallsign = ini.GetValue<string>("Comms", "TACAN.Callsign").ToUpperInvariant();
 
-                //CommsILSChannel = HQTools.Clamp(ini.GetValue<int>("Comms", "ILS.Channel"), 0, 99);
+                CommsILSChannel = HQTools.Clamp(ini.GetValue<int>("Comms", "ILS.Channel"), 0, 99);
 
-                //// ----------------------------------------------------
-                //// [Aircraft] section (only for planes and helicopters)
-                //// ----------------------------------------------------
-                //if ((Category == UnitCategory.Helicopter) || (Category == UnitCategory.Plane))
-                //{
-                //    AircraftDefaultTask = ini.GetValue<DCSAircraftTask>("Aircraft", "DefaultTask");
-                //    AircraftAirToAirRating[0] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2APayload");
-                //    AircraftAirToAirRating[1] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2GPayload");
-                //    AircraftCruiseAltitude = ini.GetValue<int>("Aircraft", "CruiseAltitude") * HQTools.FEET_TO_METERS;
-                //    if (AircraftCruiseAltitude <= 0) AircraftCruiseAltitude = Category == UnitCategory.Helicopter ? 350 : 6000;
-                //    AircraftCruiseSpeed = ini.GetValue<int>("Aircraft", "CruiseSpeed") * HQTools.KNOTS_TO_METERSPERSECOND;
-                //    if (AircraftCruiseSpeed <= 0) AircraftCruiseSpeed = Category == UnitCategory.Helicopter ? 50 : 130;
-                //    AircraftPlayerControllable = ini.GetValue<bool>("Aircraft", "PlayerControllable");
-                //    AircraftCarrierShipType = ini.GetValueArray<CarrierGroupShipType>("Aircraft", "CarrierShipType");
+                // ----------------------------------------------------
+                // [Aircraft] section (only for planes and helicopters)
+                // ----------------------------------------------------
+                if ((Category == UnitCategory.Helicopter) || (Category == UnitCategory.Plane))
+                {
+                    AircraftDefaultTask = ini.GetValue<DCSAircraftTask>("Aircraft", "DefaultTask");
+                    AircraftAirToAirRating[0] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2APayload");
+                    AircraftAirToAirRating[1] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2GPayload");
+                    AircraftCruiseAltitude = ini.GetValue<int>("Aircraft", "CruiseAltitude") * HQTools.FEET_TO_METERS;
+                    if (AircraftCruiseAltitude <= 0) AircraftCruiseAltitude = Category == UnitCategory.Helicopter ? 350 : 6000;
+                    AircraftCruiseSpeed = ini.GetValue<int>("Aircraft", "CruiseSpeed") * HQTools.KNOTS_TO_METERSPERSECOND;
+                    if (AircraftCruiseSpeed <= 0) AircraftCruiseSpeed = Category == UnitCategory.Helicopter ? 50 : 130;
+                    AircraftPlayerControllable = ini.GetValue<bool>("Aircraft", "PlayerControllable");
+                    AircraftCarrierShipType = ini.GetValueArray<CarrierGroupShipType>("Aircraft", "CarrierShipType");
 
-                //    // -----------------------------------------------------------
-                //    // [AircraftPayload] section (only for planes and helicopters)
-                //    // -----------------------------------------------------------
-                //    int i, j;
+                    // -----------------------------------------------------------
+                    // [AircraftPayload] section (only for planes and helicopters)
+                    // -----------------------------------------------------------
+                    int i, j;
 
-                //    List<AircraftPayloadType> payloadsList = new List<AircraftPayloadType>();
+                    List<AircraftPayloadType> payloadsList = new List<AircraftPayloadType>();
 
-                //    for (i = 0; i < AircraftPayloadPylons.GetLength(0); i++)
-                //        for (j = 0; j < AircraftPayloadPylons.GetLength(1); j++)
-                //        {
-                //            AircraftPayloadPylons[i, j] = ini.GetValue<string>("AircraftPayload",
-                //                $"Pylons.{((AircraftPayloadType)i).ToString()}.Pylon{HQTools.ValToString(j + 1, "00")}");
+                    for (i = 0; i < AircraftPayloadPylons.GetLength(0); i++)
+                        for (j = 0; j < AircraftPayloadPylons.GetLength(1); j++)
+                        {
+                            AircraftPayloadPylons[i, j] = ini.GetValue<string>("AircraftPayload",
+                                $"Pylons.{((AircraftPayloadType)i).ToString()}.Pylon{HQTools.ValToString(j + 1, "00")}");
 
-                //            // Each payload with at least one pylon not empty is a valid payload
-                //            if (!payloadsList.Contains((AircraftPayloadType)i) && !string.IsNullOrEmpty(AircraftPayloadPylons[i, j]))
-                //                payloadsList.Add((AircraftPayloadType)i);
-                //        }
+                            // Each payload with at least one pylon not empty is a valid payload
+                            if (!payloadsList.Contains((AircraftPayloadType)i) && !string.IsNullOrEmpty(AircraftPayloadPylons[i, j]))
+                                payloadsList.Add((AircraftPayloadType)i);
+                        }
 
-                //    AircraftAvailablePayloads = payloadsList.ToArray();
-                //}
+                    AircraftAvailablePayloads = payloadsList.ToArray();
+                }
 
                 // ------------------
                 // [Liveries] section

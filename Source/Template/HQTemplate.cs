@@ -11,18 +11,42 @@ namespace Headquarters4DCS.Template
 {
     public sealed class HQTemplate : IDisposable
     {
-        private const string DEFAULT_THEATER = "Caucasus";
+        /// <summary>
+        /// Default language
+        /// </summary>
+        public const string DEFAULT_LANGUAGE = "English";
 
-        private readonly HQLibrary Library = null;
+        /// <summary>
+        /// Default blue coalition.
+        /// </summary>
+        public const string DEFAULT_BLUE_COALITION = "USA";
 
+        /// <summary>
+        /// Default red coalition.
+        /// </summary>
+        public const string DEFAULT_RED_COALITION = "Russia";
+
+        /// <summary>
+        /// Default theater.
+        /// </summary>
+        public const string DEFAULT_THEATER = "Caucasus";
+
+        /// <summary>
+        /// Default player aircraft.
+        /// </summary>
+        public const string DEFAULT_AIRCRAFT = "Su-25T";
+
+        /// <summary>
+        /// Theater in which the mission takes place.
+        /// </summary>
         public string Theater { get; private set; } = DEFAULT_THEATER;
+
         public readonly HQTemplateSettings Settings = null;
 
         public Dictionary<string, HQTemplateNode> Nodes = new Dictionary<string, HQTemplateNode>();
 
-        public HQTemplate(HQLibrary library)
+        public HQTemplate()
         {
-            Library = library;
             Settings = new HQTemplateSettings();
 
             Clear(DEFAULT_THEATER);
@@ -30,8 +54,8 @@ namespace Headquarters4DCS.Template
 
         public void Clear(string theaterID)
         {
-            Theater = Library.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : DEFAULT_THEATER;
-            DefinitionTheater theaterDefinition = Library.GetDefinition<DefinitionTheater>(Theater);
+            Theater = HQLibrary.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : DEFAULT_THEATER;
+            DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
 
             Nodes.Clear();
 
@@ -41,8 +65,8 @@ namespace Headquarters4DCS.Template
                     Nodes.Add(n.ID, new HQTemplateNodeAirbase(n));
                 //else if (n is DefinitionTheaterNodeCarrierLocation)
                 //    Nodes.Add(n.ID, new HQTemplateNodeCarrierGroup(n));
-                else if (n is DefinitionTheaterNodeLocation)
-                    Nodes.Add(n.ID, new HQTemplateNodeLocation(n));
+                else if (n is DefinitionTheaterNodeRegion)
+                    Nodes.Add(n.ID, new HQTemplateNodeRegion(n));
             }
         }
 
@@ -64,7 +88,7 @@ namespace Headquarters4DCS.Template
                 string theater = ini.GetValue<string>("Settings", "Theater");
                 Clear(theater);
 
-                DefinitionTheater theaterDefinition = Library.GetDefinition<DefinitionTheater>(Theater);
+                DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
 
                 foreach (string k in Nodes.Keys)
                 {

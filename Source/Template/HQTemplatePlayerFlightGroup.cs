@@ -4,7 +4,6 @@ namespace Headquarters4DCS.Template
 {
     public struct HQTemplatePlayerFlightGroup
     {
-        public const string DEFAULT_AIRCRAFT = "Su-25T";
         public const PlayerFlightGroupTask DEFAULT_TASK = PlayerFlightGroupTask.CAP;
         public const PlayerFlightGroupStartLocation DEFAULT_START_LOCATION = PlayerFlightGroupStartLocation.FromParking;
 

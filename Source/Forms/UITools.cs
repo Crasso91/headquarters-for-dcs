@@ -35,25 +35,13 @@ namespace Headquarters4DCS.Forms
     public static class UITools
     {
         /// <summary>
-        /// Tries to load an image from a file. If the file doesn't exist, return null.
-        /// </summary>
-        /// <param name="filePath">Full path to the image file.</param>
-        /// <returns>The image, or null if file doesn't exist.</returns>
-        public static Image TryImageFromFile(string filePath)
-        {
-            if (!File.Exists(filePath)) return null;
-            return Image.FromFile(filePath);
-        }
-
-        /// <summary>
         /// "Shortcut" method to set all parameters of an OpenFileDialog and display it.
         /// </summary>
         /// <param name="fileExtension">The desired file extension.</param>
         /// <param name="initialDirectory">The initial directory of the dialog.</param>
         /// <param name="fileTypeDescription">A description of the file type (e.g. "Windows PCM wave files")</param>
         /// <returns>The path to the file to load, or null if no file was selected.</returns>
-        public static string ShowOpenFileDialog(
-            string fileExtension, string initialDirectory, string fileTypeDescription = null)
+        public static string ShowOpenFileDialog(string fileExtension, string initialDirectory, string fileTypeDescription = null)
         {
             string fileName = null;
 
@@ -76,9 +64,7 @@ namespace Headquarters4DCS.Forms
         /// <param name="defaultFileName">The defaule file name.</param>
         /// <param name="fileTypeDescription">A description of the file type (e.g. "Windows PCM wave files")</param>
         /// <returns>The path to the file to save to, or null if no file was selected.</returns>
-        public static string ShowSaveFileDialog(
-            string fileExtension, string initialDirectory,
-            string defaultFileName = "", string fileTypeDescription = null)
+        public static string ShowSaveFileDialog(string fileExtension, string initialDirectory, string defaultFileName = "", string fileTypeDescription = null)
         {
             string fileName = null;
 
@@ -94,7 +80,11 @@ namespace Headquarters4DCS.Forms
             return fileName;
         }
 
-        // TODO: description
+        /// <summary>
+        /// Returns an icon from an embedded resource.
+        /// </summary>
+        /// <param name="resourcePath">Relative path to the icon from Headquarters4DCS.Resources.</param>
+        /// <returns>An icon or null if no resource was found.</returns>
         public static Icon GetIconFromResource(string resourcePath)
         {
             Icon icon = null;
@@ -108,7 +98,11 @@ namespace Headquarters4DCS.Forms
             return icon;
         }
 
-        // TODO: description
+        /// <summary>
+        /// Returns an image from an embedded resource.
+        /// </summary>
+        /// <param name="resourcePath">Relative path to the image from Headquarters4DCS.Resources.</param>
+        /// <returns>An image or null if no resource was found.</returns>
         public static Image GetImageFromResource(string resourcePath)
         {
             Image image = null;
@@ -120,6 +114,17 @@ namespace Headquarters4DCS.Forms
             }
 
             return image;
+        }
+
+        /// <summary>
+        /// Tries to load an image from a file. If the file doesn't exist, return null.
+        /// </summary>
+        /// <param name="filePath">Full path to the image file.</param>
+        /// <returns>The image, or null if file doesn't exist.</returns>
+        public static Image TryImageFromFile(string filePath)
+        {
+            if (!File.Exists(filePath)) return null;
+            return Image.FromFile(filePath);
         }
     }
 }

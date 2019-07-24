@@ -22,6 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using Headquarters4DCS.Template;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,29 +54,9 @@ namespace Headquarters4DCS.Library
         private static HQLibrary _Instance = null;
 
         /// <summary>
-        /// Default blue coalition for mission templates.
-        /// </summary>
-        public const string DEFAULT_BLUE_COALITION = "USA";
-
-        /// <summary>
-        /// Default red coalition for mission templates.
-        /// </summary>
-        public const string DEFAULT_RED_COALITION = "Russia";
-
-        /// <summary>
-        /// Common settings loaded from files in the Library directory.
-        /// </summary>
-        //public CommonSettings Common { get; private set; }
-
-        /// <summary>
         /// Definitions are stored by type in a dictionary of dictionaries.
         /// </summary>
         private readonly Dictionary<Type, Dictionary<string, Definition>> Definitions = new Dictionary<Type, Dictionary<string, Definition>>();
-
-        /// <summary>
-        /// An array of player-controllable aircraft. Must be static because it's used by PlayerAircraftListTypeConverter.
-        /// </summary>
-        public static string[] PlayerAircraft = null;
 
         /// <summary>
         /// Constructor.
@@ -96,9 +77,6 @@ namespace Headquarters4DCS.Library
                 HQDebugLog.Instance.Log("Loading HQ4DCS library...");
                 HQDebugLog.Instance.Log();
 
-                // Loads common settings
-                //Common = new CommonSettings();
-
                 // Load definitions
                 LoadDefinitions<DefinitionCoalition>("Coalitions", false);
                 LoadDefinitions<DefinitionLanguage>("Languages", false); // TODO: load from directory
@@ -108,21 +86,18 @@ namespace Headquarters4DCS.Library
                 LoadDefinitions<DefinitionUnit>("Units", false);
 
                 // Check default values are present
-                //CheckDefaultValuesExist<DefinitionLanguage>(HQTools.DEFAULT_LANGUAGE);
-                //CheckDefaultValuesExist<DefinitionCoalition>(DEFAULT_BLUE_COALITION);
-                //CheckDefaultValuesExist<DefinitionCoalition>(DEFAULT_RED_COALITION);
-
-                // Creates a dictionary of player-controlled aircraft
-                //PlayerAircraft = (from DefinitionUnit ac in Definitions[typeof(DefinitionUnit)].Values where ac.AircraftPlayerControllable select ac.ID).ToArray();
-                //HQDebugLog.Log();
-                //HQDebugLog.Log($"Found {PlayerAircraft.Length} player-controllable aircraft.: {string.Join(", ", PlayerAircraft)}");
+                CheckDefaultValuesExist<DefinitionLanguage>(HQTemplate.DEFAULT_LANGUAGE);
+                CheckDefaultValuesExist<DefinitionCoalition>(HQTemplate.DEFAULT_BLUE_COALITION);
+                CheckDefaultValuesExist<DefinitionCoalition>(HQTemplate.DEFAULT_RED_COALITION);
+                CheckDefaultValuesExist<DefinitionUnit>(HQTemplate.DEFAULT_AIRCRAFT);
+                if (!GetDefinition<DefinitionUnit>(HQTemplate.DEFAULT_AIRCRAFT).AircraftPlayerControllable) throw new Exception("Default player aircraft is not player-controllable.");
 
                 HQDebugLog.Instance.Log();
-                HQDebugLog.Instance.Log("Library loaded successfully.");
+                HQDebugLog.Instance.Log("Library .ini files loaded successfully.");
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"{e.Message}\r\n\r\nHQ4DCS will now terminate.", "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 loadedSuccessfully = false;
             }
 
@@ -138,7 +113,7 @@ namespace Headquarters4DCS.Library
         private void CheckDefaultValuesExist<T>(string definitionID) where T : Definition
         {
             if (!DefinitionExists<T>(definitionID))
-                throw new Exception($"Default {typeof(T).Name} ({definitionID}) not found in Library.\r\n\r\nHQ4DCS will now terminate.");
+                throw new Exception($"Default {typeof(T).Name} ({definitionID}) not found in library.");
         }
 
         /// <summary>
@@ -221,10 +196,7 @@ namespace Headquarters4DCS.Library
 
             Definitions.Add(typeof(T), dictionary);
 
-            //MessageBox.Show(typeof(T).Name + " - " + dictionary.Count);
-
-            //HQDebugLog.Log($"Loaded {dictionary.Keys.Count} {typeof(T).Name.Replace("Definition", "").ToUpperInvariant()} definition(s): {string.Join(", ", dictionary.Keys)}");
-            Console.WriteLine($"Loaded {dictionary.Keys.Count} {typeof(T).Name.Replace("Definition", "").ToUpperInvariant()} definition(s): {string.Join(", ", dictionary.Keys)}");
+            HQDebugLog.Instance.Log($"Loaded {dictionary.Keys.Count} {typeof(T).Name.Replace("Definition", "").ToUpperInvariant()} definition(s): {string.Join(", ", dictionary.Keys)}");
         }
 
         /// <summary>
@@ -237,42 +209,13 @@ namespace Headquarters4DCS.Library
         {
             Type type = typeof(T);
 
-            //if (type == typeof(ArmyDefinition)) return "Armies";
             if (type == typeof(DefinitionCoalition)) return "Coalitions";
             if (type == typeof(DefinitionNodeFeature)) return "Features";
             if (type == typeof(DefinitionLanguage)) return "Languages";
-            //if (type == typeof(DefinitionMissionObjective)) return "MissionObjectives";
             if (type == typeof(DefinitionTheater)) return "Theaters";
             if (type == typeof(DefinitionUnit)) return "Units";
 
             return type.Name;
         }
-
-        //public static string[] GetDefinitionFiles<T>() where T : Definition
-        //{
-        //    string definitionsDirectory = GetDirectoryFromType<T>();
-
-        //    if (!Directory.Exists(iniDirectory)) return;
-
-        //    List<string> fileNames = new List<string>();
-        //    AddINIFilesToList(fileNames, $"{HQTools.PATH_LIBRARY}\\{definitionsDirectory}");
-        //    fileNames.Sort();
-        //    return fileNames.ToArray();
-        //}
-
-        //private static void AddINIFilesToList(List<string> fileNames, string iniDirectory)
-        //{
-        //    if (!Directory.Exists(iniDirectory)) return;
-
-        //    foreach (string f in Directory.GetFiles(iniDirectory, "*.ini"))
-        //    {
-        //        string id = Path.GetFileNameWithoutExtension(f);
-        //        if (fileNames.Contains(id.ToLowerInvariant())) continue;
-        //        fileNames.Add(id);
-        //    }
-
-        //    foreach (string iniSubDirectory in Directory.GetDirectories(iniDirectory))
-        //        AddINIFilesToList(fileNames, iniSubDirectory);
-        //}
     }
 }
