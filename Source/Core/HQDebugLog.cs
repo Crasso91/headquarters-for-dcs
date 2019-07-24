@@ -33,8 +33,25 @@ namespace Headquarters4DCS
     /// <summary>
     /// A static class used to log notes, warnings and errors to text files in the Logs subdirectory.
     /// </summary>
-    public static class HQDebugLog
+    public sealed class HQDebugLog
     {
+        /// <summary>
+        /// HQDebugLog singleton.
+        /// </summary>
+        public static HQDebugLog Instance
+        {
+            get
+            {
+                if (_Instance == null) _Instance = new HQDebugLog();
+                return _Instance;
+            }
+        }
+
+        /// <summary>
+        /// HQDebugLog private singleton object.
+        /// </summary>
+        private static HQDebugLog _Instance = null;
+
         /// <summary>
         /// Maximum number of log files stored in the "Logs" subdirectory. If there are more, the oldest ones are deleted.
         /// </summary>
@@ -43,13 +60,13 @@ namespace Headquarters4DCS
         /// <summary>
         /// The lines in the log.
         /// </summary>
-        private static List<string> LogLines = new List<string>();
+        private List<string> LogLines = new List<string>();
 
         /// <summary>
         /// Logs a debug message.
         /// </summary>
         /// <param name="message">The message to log. Leave empty to print an empty line.</param>
-        public static void Log(string message = "")
+        public void Log(string message = "")
         {
             LogLines.Add(message);
         }
@@ -59,7 +76,7 @@ namespace Headquarters4DCS
         /// </summary>
         /// <param name="fileSuffix">A suffix to append to the date/time in the filename.</param>
         /// <returns>True if file was written successfully, false if something went wrong.</returns>
-        public static bool SaveToFileAndClear(string fileSuffix = null)
+        public bool SaveToFileAndClear(string fileSuffix = null)
         {
             DeleteOldLogFiles();
 
@@ -85,7 +102,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// If there's more than MAX_LOG_FILES in the Logs directory, delete the oldest files.
         /// </summary>
-        private static void DeleteOldLogFiles()
+        private void DeleteOldLogFiles()
         {
             if (!Directory.Exists(HQTools.PATH_LOGS)) return;
 
@@ -105,7 +122,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// Clears all logged messages.
         /// </summary>
-        public static void Clear()
+        public void Clear()
         {
             LogLines.Clear();
         }
@@ -114,7 +131,7 @@ namespace Headquarters4DCS
         /// Returns the whole log as a single string.
         /// </summary>
         /// <returns>All messages of the log joined in a single string.</returns>
-        public static string GetFullLog()
+        public string GetFullLog()
         {
             return string.Join("\r\n", LogLines);
         }
@@ -123,7 +140,7 @@ namespace Headquarters4DCS
         /// Returns the last line (message) of the log.
         /// </summary>
         /// <returns>The last line, or an empty string if the log is empty.</returns>
-        public static string GetLastMessage()
+        public string GetLastMessage()
         {
             if (LogLines.Count == 0) return "";
             return LogLines.Last();

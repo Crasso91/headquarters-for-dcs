@@ -35,6 +35,9 @@ namespace Headquarters4DCS.Library
     /// </summary>
     public sealed class HQLibrary : IDisposable
     {
+        /// <summary>
+        /// HQLibrary singleton.
+        /// </summary>
         public static HQLibrary Instance
         {
             get
@@ -44,6 +47,9 @@ namespace Headquarters4DCS.Library
             }
         }
 
+        /// <summary>
+        /// HQLibrary private singleton object.
+        /// </summary>
         private static HQLibrary _Instance = null;
 
         /// <summary>
@@ -86,9 +92,9 @@ namespace Headquarters4DCS.Library
 
             try
             {
-                HQDebugLog.Clear();
-                HQDebugLog.Log("Loading HQ4DCS library...");
-                HQDebugLog.Log();
+                HQDebugLog.Instance.Clear();
+                HQDebugLog.Instance.Log("Loading HQ4DCS library...");
+                HQDebugLog.Instance.Log();
 
                 // Loads common settings
                 //Common = new CommonSettings();
@@ -111,8 +117,8 @@ namespace Headquarters4DCS.Library
                 //HQDebugLog.Log();
                 //HQDebugLog.Log($"Found {PlayerAircraft.Length} player-controllable aircraft.: {string.Join(", ", PlayerAircraft)}");
 
-                HQDebugLog.Log();
-                HQDebugLog.Log("Library loaded successfully.");
+                HQDebugLog.Instance.Log();
+                HQDebugLog.Instance.Log("Library loaded successfully.");
             }
             catch (Exception e)
             {
@@ -120,7 +126,7 @@ namespace Headquarters4DCS.Library
                 loadedSuccessfully = false;
             }
 
-            HQDebugLog.SaveToFileAndClear("Startup");
+            HQDebugLog.Instance.SaveToFileAndClear("Startup");
             return loadedSuccessfully;
         }
 
