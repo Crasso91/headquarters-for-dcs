@@ -105,6 +105,7 @@
     <Compile Include="Enums\Season.cs" />
     <Compile Include="Enums\SpeedAndDistanceUnit.cs" />
     <Compile Include="Enums\TerritorySide.cs" />
+    <Compile Include="Enums\NodeSpawnPointType.cs" />
     <Compile Include="Enums\TheaterNodeType.cs" />
     <Compile Include="Enums\TimeOfDay.cs" />
     <Compile Include="Enums\TimePeriod.cs" />
@@ -148,18 +149,17 @@
     <Compile Include="Library\DefinitionObjective.cs" />
     <Compile Include="Library\DefinitionObjectiveUnitGroup.cs" />
     <Compile Include="Library\DefinitionTheater.cs" />
-    <Compile Include="Library\DefinitionTheaterAirbase - Copier.cs" />
     <Compile Include="Library\DefinitionTheaterNodeAirbase.cs" />
-    <Compile Include="Library\DefinitionTheaterNodeCarrierGroup.cs" />
     <Compile Include="Library\DefinitionTheaterNode.cs" />
-    <Compile Include="Library\DefinitionTheaterNodeLocation.cs" />
-    <Compile Include="Library\DefinitionTheaterNode - old.cs" />
+    <Compile Include="Library\DefinitionTheaterNodeCarrierGroup.cs" />
+    <Compile Include="Library\DefinitionTheaterNodeRegion.cs" />
     <Compile Include="Library\DefinitionTheaterWeather.cs" />
     <Compile Include="Library\DefinitionTheaterWind.cs" />
     <Compile Include="Library\DefinitionUnit.cs" />
     <Compile Include="Library\HQLibrary.cs" />
+    <Compile Include="Library\NodeSpawnPoint.cs" />
     <Compile Include="Template\HQTemplateNode.cs" />
-    <Compile Include="Template\HQTemplateNodeLocation.cs" />
+    <Compile Include="Template\HQTemplateNodeRegion.cs" />
     <Compile Include="Template\HQTemplateNodeCarrierGroup.cs" />
     <Compile Include="Template\HQTemplatePlayerFlightGroup.cs" />
     <Compile Include="Template\HQTemplateSettings.cs" />
@@ -168,13 +168,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeConverters\UITypeEditorPlayerFlightGroups.cs" />
     <Compile Include="TypeConverters\UITypeEditorNodeFeatures.cs" />
-    <Compile Include="TypeConverters\INIFileListTypeConverter.cs" />
+    <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />
     <Compile Include="TypeConverters\ArrayTypeConverter.cs" />
-    <Compile Include="TypeConverters\ListTypeConverter.cs" />
-    <Compile Include="TypeConverters\NumericConverter.cs" />
     <Compile Include="TypeConverters\NumericConverterMinMaxParameter.cs" />
-    <Compile Include="TypeConverters\PlayerAircraftListTypeConverter.cs" />
-    <Compile Include="TypeConverters\PlayerFlightGroupsCollectionEditor.cs" />
     <Compile Include="TypeConverters\TheaterNodeTypeAttribute.cs" />
     <EmbeddedResource Include="Forms\FormMissionOutput.resx">
       <DependentUpon>FormMissionOutput.cs</DependentUpon>
@@ -240,21 +236,16 @@
     <EmbeddedResource Include="Resources\Icons\website.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase - Copie.png" />
     <EmbeddedResource Include="Resources\MapIcons\airbase.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase00.png" />
     <EmbeddedResource Include="Resources\MapIcons\airbase_blue.png" />
     <EmbeddedResource Include="Resources\MapIcons\airbase_landing.png" />
     <EmbeddedResource Include="Resources\MapIcons\airbase_red.png" />
     <EmbeddedResource Include="Resources\MapIcons\airbase_takeoff.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase_target.png" />
     <EmbeddedResource Include="Resources\MapIcons\airplane.png" />
-    <EmbeddedResource Include="Resources\MapIcons\carrier - Copie.png" />
     <EmbeddedResource Include="Resources\MapIcons\carrier.png" />
     <EmbeddedResource Include="Resources\MapIcons\carrier_blue.png" />
     <EmbeddedResource Include="Resources\MapIcons\carrier_red.png" />
     <EmbeddedResource Include="Resources\MapIcons\favourite.png" />
-    <EmbeddedResource Include="Resources\MapIcons\icons-2.png" />
     <EmbeddedResource Include="Resources\MapIcons\location.png" />
     <EmbeddedResource Include="Resources\MapIcons\selected.png" />
     <EmbeddedResource Include="Resources\MapIcons\target.png" />
@@ -269,6 +260,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\add.png" />
     <EmbeddedResource Include="Resources\Icons\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\airbase_aircraft.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
