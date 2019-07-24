@@ -22,37 +22,31 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Forms;
-using Headquarters4DCS.Template;
+using Headquarters4DCS.Library;
+using System;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
 
 namespace Headquarters4DCS.TypeConverters
 {
-    public sealed class UITypeEditorPlayerFlightGroups : UITypeEditor
+    public sealed class DefinitionsStringConverter<T> : StringConverter, IDisposable where T : Definition
     {
-        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
-        { return UITypeEditorEditStyle.Modal; }
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        { return true; }
 
-        public override object EditValue(ITypeDescriptorContext context, System.IServiceProvider provider, object value)
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        { return true; }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            if (!(value is HQTemplatePlayerFlightGroup[])) return value;
-
-            HQTemplatePlayerFlightGroup[] valueArr = (HQTemplatePlayerFlightGroup[])value;
-
-            if (provider.GetService(typeof(IWindowsFormsEditorService)) is IWindowsFormsEditorService svc)
-            {
-                using (FormPlayerFlightGroups form = new FormPlayerFlightGroups())
-                {
-                    form.Values = valueArr;
-                    if (svc.ShowDialog(form) == DialogResult.OK)
-                        value = form.Values;
-                }
-            }
-
-            return value;
+            return new StandardValuesCollection(HQLibrary.Instance.GetAllDefinitionIDs<T>());
         }
+
+        public static string GetDefaultValue()
+        {
+            string[] vals = HQLibrary.Instance.GetAllDefinitionIDs<T>();
+            return (vals.Length == 0) ? "" : vals[0];
+        }
+
+        public void Dispose() { }
     }
 }
