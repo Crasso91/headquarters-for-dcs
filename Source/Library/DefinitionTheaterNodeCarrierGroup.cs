@@ -1,14 +1,14 @@
-﻿//namespace Headquarters4DCS.Library
-//{
-//    public sealed class DefinitionTheaterNodeCarrierGroup : DefinitionTheaterNode
-//    {
-//        public string Name { get; private set; }
+﻿namespace Headquarters4DCS.Library
+{
+    public sealed class DefinitionTheaterNodeCarrierGroup : DefinitionTheaterNode
+    {
+        protected override bool UseSpawnPoints { get { return false; } }
 
-//        public DefinitionTheaterNodeCarrierGroup(string id, string iniFilePath) : base(id, iniFilePath) { }
+        public DefinitionTheaterNodeCarrierGroup(string id, string iniFilePath) : base(id, iniFilePath) { }
 
-//        protected override void LoadNodeData(INIFile ini)
-//        {
-//            Name = ini.GetValue<string>("Node", "Name");
-//        }
-//    }
-//}
+        protected override void LoadNodeData(INIFile ini)
+        {
+
+        }
+    }
+}

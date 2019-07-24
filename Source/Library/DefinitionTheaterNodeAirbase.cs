@@ -31,6 +31,8 @@ namespace Headquarters4DCS.Library
     /// </summary>
     public sealed class DefinitionTheaterNodeAirbase : DefinitionTheaterNode
     {
+        protected override bool UseSpawnPoints { get { return true; } }
+
         /// <summary>
         /// The name of the airdrome.
         /// </summary>

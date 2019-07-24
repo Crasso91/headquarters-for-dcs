@@ -92,7 +92,7 @@ namespace Headquarters4DCS.Library
         /// <summary>
         /// All locations of this theater where targets can be spawned.
         /// </summary>
-        public Dictionary<string, DefinitionTheaterNodeLocation> Locations { get; private set; }
+        public Dictionary<string, DefinitionTheaterNodeRegion> Locations { get; private set; }
 
         /// <summary>
         /// Navigation path for the carrier group in this theater.
@@ -117,6 +117,8 @@ namespace Headquarters4DCS.Library
 
             using (INIFile ini = new INIFile(path + "Theater.ini"))
             {
+                if (!File.Exists(path + "Map.jpg")) return false;
+
                 // -----------------
                 // [Theater] section
                 // -----------------
@@ -164,10 +166,10 @@ namespace Headquarters4DCS.Library
 
                     if (k.ToLowerInvariant().StartsWith("airbase_"))
                         Nodes.Add(k, new DefinitionTheaterNodeAirbase(k, f));
-                    //else if (k.ToLowerInvariant().StartsWith("carriergroup_"))
-                    //    Nodes.Add(k, new DefinitionTheaterNodeCarrierGroup(k, f));
-                    else if (k.ToLowerInvariant().StartsWith("location_"))
-                        Nodes.Add(k, new DefinitionTheaterNodeLocation(k, f));
+                    else if (k.ToLowerInvariant().StartsWith("carriergroup_"))
+                        Nodes.Add(k, new DefinitionTheaterNodeCarrierGroup(k, f));
+                    else if (k.ToLowerInvariant().StartsWith("region_"))
+                        Nodes.Add(k, new DefinitionTheaterNodeRegion(k, f));
                 }
 
                 //foreach (string f in Directory.GetFiles(path + "CarrierLocations", "*.ini")) // FIXME: what if directory doesn't exist

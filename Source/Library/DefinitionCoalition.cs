@@ -69,11 +69,6 @@ namespace Headquarters4DCS.Library
         public string[] RequiredModules { get; private set; } = new string[0];
 
         /// <summary>
-        /// Ships in this coalition's carrier group, by ship type.
-        /// </summary>
-        public string[][] CarrierGroupShip { get; private set; } = new string[HQTools.EnumCount<CarrierGroupShipType>()][];
-
-        /// <summary>
         /// Loads data required by this definition.
         /// </summary>
         /// <param name="ini">The ini file to load from.</param>
@@ -104,12 +99,6 @@ namespace Headquarters4DCS.Library
                 // [LegacyUnits] section
                 // ---------------------
                 LegacyUnits = ini.GetAllValuesInSectionAsStringArray("LegacyUnits");
-
-                // ----------------------
-                // [CarrierGroup] section
-                // ----------------------
-                for (int i = 0; i < CarrierGroupShip.Length; i++)
-                    CarrierGroupShip[i] = ini.GetValueArray<string>("CarrierGroup", ((CarrierGroupShipType)i).ToString());
             }
 
             return true;
