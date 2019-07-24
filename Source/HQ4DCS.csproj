@@ -73,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Coordinates.cs" />
-    <Compile Include="Core\EnumLocalization.cs" />
     <Compile Include="Core\HQDebugLog.cs" />
     <Compile Include="Core\HQTools.cs" />
     <Compile Include="Core\INIFile.cs" />
