@@ -1,0 +1,7 @@
+Effects > Amplication (+30dB, allow saturation)
+Effects > High Pass Filter (Rolloff 24dB, cutoff frequency 1,000Hz)
+Effects > Distorsion (Hard saturation)
+Effects > Bass & Treble (0dB bass, -30db Treble)
+Effects > Amplification (-3dB, allow saturation)
+
+Then mix with radio FX .wav files from https://github.com/akaAgar/radio-message-generator

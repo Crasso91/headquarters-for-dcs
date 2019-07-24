@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+ <channel>
+  <title>Headquarters for DCS World</title>
+  <atom:link href="https://akaagar.github.io/headquarters-for-dcs/feed.rss" rel="self" type="application/rss+xml" />
+  <link>https://www.cafedefaune.org</link>
+  <description>A mission generator for Eagle Dynamics' DCS World flight simulator.</description>
+  <language>en-US</language>
+
+  <item>
+   <title>21 June 2019</title>
+   <link>https://akaagar.github.io/headquarters-for-dcs/</link>
+   <description>HQ4DCS Open Beta 2 will be open source! You read that right: the next version of HQ4DCS will be open source and hosted on GitHub...</description>
+  </item>
+
+  <item>
+   <title>25 May 2019</title>
+   <link>https://akaagar.github.io/headquarters-for-dcs/</link>
+   <description>It's been some time without news and an update is long overdue...</description>
+  </item>
+
+  <item>
+   <title>15 Apr 2019</title>
+   <link>https://akaagar.github.io/headquarters-for-dcs/</link>
+   <description>The cause of the false positive with some antivirus program has been found: it was triggered by the Lua code embedded...</description>
+  </item>
+
+  <item>
+   <title>01 Apr 2019</title>
+   <link>https://akaagar.github.io/headquarters-for-dcs/</link>
+   <description>I started working on the first hotfix, which should iron out most of the bugs users have found in Open Beta 1. Once...</description>
+  </item>
+ </channel>
+</rss>

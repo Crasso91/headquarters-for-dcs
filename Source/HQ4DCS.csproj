@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DB25F6F7-0A7F-4390-9047-939CAA99CD7C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Headquarters4DCS</RootNamespace>
+    <AssemblyName>HQ4DCS</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.2.0.0</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlRenderer, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>Packages\HtmlRenderer.Core.1.5.0.6\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.WinForms, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>Packages\HtmlRenderer.WinForms.1.5.0.6\lib\net45\HtmlRenderer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>Packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Coordinates.cs" />
+    <Compile Include="Core\EnumLocalization.cs" />
+    <Compile Include="Core\HQDebugLog.cs" />
+    <Compile Include="Core\HQTools.cs" />
+    <Compile Include="Core\INIFile.cs" />
+    <Compile Include="Core\INIFileValue.cs" />
+    <Compile Include="Core\MinMaxD.cs" />
+    <Compile Include="Core\MinMaxI.cs" />
+    <Compile Include="Enums\AircraftPayloadType.cs" />
+    <Compile Include="Enums\AirDefenseRange.cs" />
+    <Compile Include="Enums\AmountN.cs" />
+    <Compile Include="Enums\AmountNR.cs" />
+    <Compile Include="Enums\AmountR.cs" />
+    <Compile Include="Enums\CallsignFamily.cs" />
+    <Compile Include="Enums\CarrierGroupShipType.cs" />
+    <Compile Include="Enums\Coalition.cs" />
+    <Compile Include="Enums\Country.cs" />
+    <Compile Include="Enums\PlayerFlightGroupTask.cs" />
+    <Compile Include="Enums\DCSAircraftTask.cs" />
+    <Compile Include="Enums\DCSOption.cs" />
+    <Compile Include="Enums\DCSSkillLevel.cs" />
+    <Compile Include="Enums\Gender.cs" />
+    <Compile Include="Enums\HQSkillLevel.cs" />
+    <Compile Include="Enums\MissionFeatureType.cs" />
+    <Compile Include="Enums\MissionObjectiveFlags.cs" />
+    <Compile Include="Enums\MissionObjectiveUnitGroupFlags.cs" />
+    <Compile Include="Enums\MissionScriptScope.cs" />
+    <Compile Include="Enums\MissionTimeLimit.cs" />
+    <Compile Include="Enums\Month.cs" />
+    <Compile Include="Enums\PlayerFlightGroupStartLocation.cs" />
+    <Compile Include="Enums\Precipitation.cs" />
+    <Compile Include="Enums\Season.cs" />
+    <Compile Include="Enums\SpeedAndDistanceUnit.cs" />
+    <Compile Include="Enums\TerritorySide.cs" />
+    <Compile Include="Enums\TheaterNodeType.cs" />
+    <Compile Include="Enums\TimeOfDay.cs" />
+    <Compile Include="Enums\TimePeriod.cs" />
+    <Compile Include="Enums\UnitCategory.cs" />
+    <Compile Include="Enums\UnitFamily.cs" />
+    <Compile Include="Enums\UnitGroupFlag.cs" />
+    <Compile Include="Enums\UnitGroupFormation.cs" />
+    <Compile Include="Enums\Weather.cs" />
+    <Compile Include="Enums\Wind.cs" />
+    <Compile Include="Forms\FormMissionOutput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMissionOutput.Designer.cs">
+      <DependentUpon>FormMissionOutput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMapDrawer.cs" />
+    <Compile Include="Forms\FormPlayerFlightGroups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPlayerFlightGroups.Designer.cs">
+      <DependentUpon>FormPlayerFlightGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UIEditorFormNodeFeatures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UIEditorFormNodeFeatures.Designer.cs">
+      <DependentUpon>UIEditorFormNodeFeatures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UITools.cs" />
+    <Compile Include="HQ4DCS.cs" />
+    <Compile Include="Library\Definition.cs" />
+    <Compile Include="Library\DefinitionCoalition.cs" />
+    <Compile Include="Library\DefinitionLanguage.cs" />
+    <Compile Include="Library\DefinitionNodeFeature.cs" />
+    <Compile Include="Library\DefinitionObjective.cs" />
+    <Compile Include="Library\DefinitionObjectiveUnitGroup.cs" />
+    <Compile Include="Library\DefinitionTheater.cs" />
+    <Compile Include="Library\DefinitionTheaterAirbase - Copier.cs" />
+    <Compile Include="Library\DefinitionTheaterNodeAirbase.cs" />
+    <Compile Include="Library\DefinitionTheaterNodeCarrierGroup.cs" />
+    <Compile Include="Library\DefinitionTheaterNode.cs" />
+    <Compile Include="Library\DefinitionTheaterNodeLocation.cs" />
+    <Compile Include="Library\DefinitionTheaterNode - old.cs" />
+    <Compile Include="Library\DefinitionTheaterWeather.cs" />
+    <Compile Include="Library\DefinitionTheaterWind.cs" />
+    <Compile Include="Library\DefinitionUnit.cs" />
+    <Compile Include="Library\HQLibrary.cs" />
+    <Compile Include="Template\HQTemplateNode.cs" />
+    <Compile Include="Template\HQTemplateNodeLocation.cs" />
+    <Compile Include="Template\HQTemplateNodeCarrierGroup.cs" />
+    <Compile Include="Template\HQTemplatePlayerFlightGroup.cs" />
+    <Compile Include="Template\HQTemplateSettings.cs" />
+    <Compile Include="Template\HQTemplateNodeAirbase.cs" />
+    <Compile Include="Template\HQTemplate.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeConverters\UITypeEditorPlayerFlightGroups.cs" />
+    <Compile Include="TypeConverters\UITypeEditorNodeFeatures.cs" />
+    <Compile Include="TypeConverters\INIFileListTypeConverter.cs" />
+    <Compile Include="TypeConverters\ArrayTypeConverter.cs" />
+    <Compile Include="TypeConverters\ListTypeConverter.cs" />
+    <Compile Include="TypeConverters\NumericConverter.cs" />
+    <Compile Include="TypeConverters\NumericConverterMinMaxParameter.cs" />
+    <Compile Include="TypeConverters\PlayerAircraftListTypeConverter.cs" />
+    <Compile Include="TypeConverters\PlayerFlightGroupsCollectionEditor.cs" />
+    <Compile Include="TypeConverters\TheaterNodeTypeAttribute.cs" />
+    <EmbeddedResource Include="Forms\FormMissionOutput.resx">
+      <DependentUpon>FormMissionOutput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPlayerFlightGroups.resx">
+      <DependentUpon>FormPlayerFlightGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UIEditorFormNodeFeatures.resx">
+      <DependentUpon>UIEditorFormNodeFeatures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icon.ico" />
+    <EmbeddedResource Include="Resources\Icons\about.png" />
+    <EmbeddedResource Include="Resources\Icons\generate.png" />
+    <EmbeddedResource Include="Resources\Icons\exit.png" />
+    <EmbeddedResource Include="Resources\Icons\exportBriefing.png" />
+    <EmbeddedResource Include="Resources\Icons\exportMIZ.png" />
+    <EmbeddedResource Include="Resources\Icons\fileHTML.png" />
+    <EmbeddedResource Include="Resources\Icons\fileJPG.png" />
+    <EmbeddedResource Include="Resources\Icons\filePDF.png" />
+    <EmbeddedResource Include="Resources\Icons\filePNG.png" />
+    <EmbeddedResource Include="Resources\Icons\help.png" />
+    <EmbeddedResource Include="Resources\Icons\load.png" />
+    <EmbeddedResource Include="Resources\Icons\new.png" />
+    <EmbeddedResource Include="Resources\Icons\print.png" />
+    <EmbeddedResource Include="Resources\Icons\refresh.png" />
+    <EmbeddedResource Include="Resources\Icons\save.png" />
+    <EmbeddedResource Include="Resources\Icons\templatetab.png" />
+    <EmbeddedResource Include="Resources\Icons\website.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\airbase - Copie.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase00.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase_blue.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase_landing.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase_red.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase_takeoff.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airbase_target.png" />
+    <EmbeddedResource Include="Resources\MapIcons\airplane.png" />
+    <EmbeddedResource Include="Resources\MapIcons\carrier - Copie.png" />
+    <EmbeddedResource Include="Resources\MapIcons\carrier.png" />
+    <EmbeddedResource Include="Resources\MapIcons\carrier_blue.png" />
+    <EmbeddedResource Include="Resources\MapIcons\carrier_red.png" />
+    <EmbeddedResource Include="Resources\MapIcons\favourite.png" />
+    <EmbeddedResource Include="Resources\MapIcons\icons-2.png" />
+    <EmbeddedResource Include="Resources\MapIcons\location.png" />
+    <EmbeddedResource Include="Resources\MapIcons\selected.png" />
+    <EmbeddedResource Include="Resources\MapIcons\target.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\save_as.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\zoom_in.png" />
+    <EmbeddedResource Include="Resources\Icons\zoom_out.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\add.png" />
+    <EmbeddedResource Include="Resources\Icons\delete.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

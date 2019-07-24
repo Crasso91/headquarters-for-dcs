@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Headquarters for DCS World modding guide</title>
+  <style type="text/css">.container{max-width:1280px;margin-left:auto;margin-right:auto}body{font-family:Helvetica,arial,sans-serif;font-size:14px;line-height:1.6;padding-top:10px;padding-bottom:10px;background-color:#fff;padding:30px;color:#333}body>:first-child{margin-top:0!important}body>:last-child{margin-bottom:0!important}a{color:#4183c4;text-decoration:none}a.absent{color:#c00}a.anchor{display:block;padding-left:30px;margin-left:-30px;cursor:pointer;position:absolute;top:0;left:0;bottom:0}h1,h2,h3,h4,h5,h6{margin:20px 0 10px;padding:0;font-weight:700;-webkit-font-smoothing:antialiased;cursor:text;position:relative}h1:first-child,h1:first-child+h2,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0;padding-top:0}h1:hover a.anchor,h2:hover a.anchor,h3:hover a.anchor,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{text-decoration:none}h1 code,h1 tt{font-size:inherit}h2 code,h2 tt{font-size:inherit}h3 code,h3 tt{font-size:inherit}h4 code,h4 tt{font-size:inherit}h5 code,h5 tt{font-size:inherit}h6 code,h6 tt{font-size:inherit}h1{font-size:36px;border-bottom:1px solid #ccc;color:#000}h2{font-size:24px;border-bottom:1px solid #ccc;color:#000}h3{font-size:18px}h4{font-size:16px}h5{font-size:14px}h6{color:#777;font-size:14px}blockquote,dl,li,ol,p,pre,table,ul{margin:15px 0}hr{border:0 none;color:#ccc;height:4px;padding:0}body>h2:first-child{margin-top:0;padding-top:0}body>h1:first-child{margin-top:0;padding-top:0}body>h1:first-child+h2{margin-top:0;padding-top:0}body>h3:first-child,body>h4:first-child,body>h5:first-child,body>h6:first-child{margin-top:0;padding-top:0}a:first-child h1,a:first-child h2,a:first-child h3,a:first-child h4,a:first-child h5,a:first-child h6{margin-top:0;padding-top:0}h1 p,h2 p,h3 p,h4 p,h5 p,h6 p{margin-top:0}li p.first{display:inline-block}ol,ul{padding-left:30px}ol :first-child,ul :first-child{margin-top:0}ol :last-child,ul :last-child{margin-bottom:0}dl{padding:0}dl dt{font-size:14px;font-weight:700;font-style:italic;padding:0;margin:15px 0 5px}dl dt:first-child{padding:0}dl dt>:first-child{margin-top:0}dl dt>:last-child{margin-bottom:0}dl dd{margin:0 0 15px;padding:0 15px}dl dd>:first-child{margin-top:0}dl dd>:last-child{margin-bottom:0}blockquote{border-left:4px solid #ddd;padding:0 15px;color:#777}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}table{padding:0}table tr{border-top:1px solid #ccc;background-color:#fff;margin:0;padding:0}table tr:nth-child(2n){background-color:#f8f8f8}table tr th{font-weight:700;border:1px solid #ccc;text-align:left;margin:0;padding:6px 13px}table tr td{border:1px solid #ccc;text-align:left;margin:0;padding:6px 13px}table tr td :first-child,table tr th :first-child{margin-top:0}table tr td :last-child,table tr th :last-child{margin-bottom:0}img{max-width:100%}span.frame{display:block;overflow:hidden}span.frame>span{border:1px solid #ddd;display:block;float:left;overflow:hidden;margin:13px 0 0;padding:7px;width:auto}span.frame span img{display:block;float:left}span.frame span span{clear:both;color:#333;display:block;padding:5px 0 0}span.align-center{display:block;overflow:hidden;clear:both}span.align-center>span{display:block;overflow:hidden;margin:13px auto 0;text-align:center}span.align-center span img{margin:0 auto;text-align:center}span.align-right{display:block;overflow:hidden;clear:both}span.align-right>span{display:block;overflow:hidden;margin:13px 0 0;text-align:right}span.align-right span img{margin:0;text-align:right}span.float-left{display:block;margin-right:13px;overflow:hidden;float:left}span.float-left span{margin:13px 0 0}span.float-right{display:block;margin-left:13px;overflow:hidden;float:right}span.float-right>span{display:block;overflow:hidden;margin:13px auto 0;text-align:right}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;padding:0;white-space:pre;border:none;background:0 0}.highlight pre{background-color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}pre{background-color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}pre code,pre tt{background-color:transparent;border:none}</style>
+</head>
+<body><div class="container">
+
+<!-- EXPORTED MARKDOWN BEGINS HERE -->
+
+<h1 id="headquartersfordcsworldeditingguide">Headquarters for DCS World editing guide</h1>
+
+<p>This guide contains everything you need to mod or add features to HQ4DCS.</p>
+
+<p><strong>INDEX</strong></p>
+
+<ol>
+<li>The <em>Library</em> directory
+
+
+<ol>
+<li>CommonSettings.ini
+
+
+<ol>
+<li>The [DistanceToObjective] section</li>
+
+<li>The [EnemyAirDefense] section</li>
+
+<li>The [EnemyAirDefenseDistance] section</li>
+
+<li>The [EnemyCombatAirPatrols] section</li></ol>
+</li>
+
+<li>The <em>Coalitions</em> definitions</li>
+
+<li>The <em>Theaters</em> definitions
+
+
+<ol>
+<li>The <em>Include</em> directory</li>
+
+<li>The <em>Briefing.html</em> file</li>
+
+<li>The <em>Jpeg</em> directory</li>
+
+<li>The <em>Lua</em> directory
+
+
+<ol>
+<li><em>Dictionary.lua</em></li>
+
+<li><em>MapResource.lua</em></li>
+
+<li><em>Mission.lua</em></li>
+
+<li><em>Script.lua</em></li>
+
+<li><em>Warehouses.lua</em></li>
+
+<li>The <em>Mission</em> subdirectory</li>
+
+<li>The <em>Script</em> subdirectory</li>
+
+<li>The <em>Warehouses</em> subdirectory</li></ol>
+</li>
+
+<li>The <em>Ogg</em> directory</li></ol>
+</li></ol>
+</li>
+</ol>
+
+<h1 id="thelibrarydirectory">The <em>Library</em> directory</h1>
+
+<p>The <em>Library</em> directory contains data about everything required by the mission generator, from units to mission types, stored in Ini files, an old Windows file format which has the dual benefit of being very simple and more human-readable than more modern formats such as Xml (please read <a href="https://en.wikipedia.org/wiki/INI_file">the Wikipedia page on the Ini format</a> if you want to know more). All HQ4DCS Ini files should use the UTF-8 encoding.</p>
+
+<p>There are two main types of Ini files in HQ4DCS:</p>
+
+<ul>
+<li><strong>CommonSettings.ini</strong>: this single Ini file handles many parameters shared by all components of HQ4DCS. It governs the distance at which objectives should be spawned from one another, the amount of enemy air defense to spawn, etc.</li>
+
+<li><strong>Other Ini files, stored in subdirectories, also known as "definitions"</strong>: these files, stored in subdirectories of the Library directory, store information about a certain element of the game, such as an unit, a theater or a mission type. Each subdirectory can itself contain as many subdirectories as desired, but filenames must be unique (filenames are used to creatred unique case-insensitive ID for definitions. Duplicates will be ignored, even if files are stored in different subdirectories).</li>
+</ul>
+
+<h2 id="commonsettingsini">CommonSettings.ini</h2>
+
+<p>This file contains many sections.</p>
+
+<h3 id="thedistancetoobjectivesection">The [DistanceToObjective] section</h3>
+
+<p>Stores information about distance between targets.</p>
+
+<p>There are five distance categories, one for each possible value in the <em>"distance to objective"</em> setting in the mission template: <strong>VeryLow</strong>, <strong>Low</strong>, <strong>Average</strong>, <strong>High</strong> and <strong>VeryHigh</strong>.</p>
+
+<p>In each category the following values are expected:</p>
+
+<ul>
+<li><strong>DistanceFromStartLocation</strong>: Min,max distance between the departure airbase and the first target (in nautical miles)</li>
+
+<li><strong>DistanceBetweenObjectives</strong>: Min,max distance between one target and the next (in nautical miles)</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[DistanceToObjective]
+Low.DistanceFromStartLocation=40,60
+Low.DistanceBetweenObjectives=10,20
+
+Average.DistanceFromStartLocation=60,90
+Average.DistanceBetweenObjectives=15,30
+</code></pre>
+
+<h3 id="theenemyairdefensesection">The [EnemyAirDefense] section</h3>
+
+<p>Stores information about enemy surface-to-air defense parameters.</p>
+
+<p>There are six "air defense intensity" categories, one for each possible value in the <em>"enemy air defense"</em> setting in the mission template: <strong>None</strong>, <strong>VeryLow</strong>, <strong>Low</strong>, <strong>Average</strong>, <strong>High</strong> and <strong>VeryHigh</strong>.</p>
+
+<p>In each category the following values are expected:</p>
+
+<ul>
+<li><strong>Embedded.Count:</strong> The min,max number of short-range air defense units to embed in defended vehicle groups (such as APCs, tanks...)</li>
+
+<li><strong>Embedded.Families:</strong> Valid unit families for embedded short-range air defense units. Acceptable values are <em>VehicleAAA</em>, <em>VehicleInfantryMANPADS</em>, <em>VehicleSAMShort</em> and <em>VehicleSAMShortIR</em>. A value can be included multiple times to increase its chance of spawning. (e.g. <em>"VehicleAAA,VehicleAAA,VehicleSAMShortIR"</em> means "spawn a AAA 2 times out of 3 and an IR SAM 1 time out of 3")</li>
+
+<li><strong>InArea.<em>[ShortRange/MediumRange/LongRange]</em>.GroupCount:</strong> The min,max number of air defense unit groups to spawn in the area around objectives</li>
+
+<li><strong>InArea.<em>[ShortRange/MediumRange/LongRange]</em>.GroupSize:</strong> The min,max number of units in each unit group. Be aware that some units (such as most MERAD/LORAD SAMs) are spawned as a group - all units are spawned at once. So a min,max value of <em>"1,1"</em> should be enough for long-range SAMs as it means "one complete S-300 site", not "one S-300 launcher"</li>
+
+<li><strong>InArea.<em>[ShortRange/MediumRange/LongRange]</em>.Families:</strong> Valid unit families. Acceptable values are <em>VehicleAAA</em>, <em>VehicleInfantryMANPADS</em>, <em>VehicleSAMShort</em>, <em>VehicleSAMShortIR</em>, <em>VehicleSAMMedium</em>, <em>VehicleSAMLong</em>. Just like with <strong>Embedded.Families</strong>, a value can be included multiple times to increase its chance of spawning</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[EnemyAirDefense]
+Average.Embedded.Chance=60
+Average.Embedded.Count=1,3
+Average.Embedded.Families=VehicleAAA,VehicleAAA,VehicleAAA,VehicleSAMShort,VehicleSAMShortIR,VehicleSAMShortIR
+Average.InArea.ShortRange.GroupCount=2,6
+Average.InArea.ShortRange.GroupSize=1,1
+Average.InArea.ShortRange.Families=VehicleAAA,VehicleAAA,VehicleInfantryMANPADS,VehicleSAMShortIR,VehicleSAMShortIR,VehicleSAMShort
+Average.InArea.MediumRange.GroupCount=0,2
+Average.InArea.MediumRange.GroupSize=1,1
+Average.InArea.MediumRange.Families=VehicleSAMShort,VehicleSAMShort,VehicleSAMShort,VehicleSAMMedium
+Average.InArea.LongRange.GroupCount=0,0
+Average.InArea.LongRange.GroupSize=0,0
+Average.InArea.LongRange.Families=
+
+High.Embedded.Chance=70
+High.Embedded.Count=1,4
+High.Embedded.Families=VehicleAAA,VehicleAAA,VehicleSAMShort,VehicleSAMShortIR,VehicleSAMShortIR
+High.InArea.ShortRange.GroupCount=2,6
+High.InArea.ShortRange.GroupSize=1,1
+High.InArea.ShortRange.Families=VehicleAAA,VehicleAAA,VehicleInfantryMANPADS,VehicleSAMShortIR,VehicleSAMShortIR,VehicleSAMShort
+High.InArea.MediumRange.GroupCount=1,3
+High.InArea.MediumRange.GroupSize=1,1
+High.InArea.MediumRange.Families=VehicleSAMShort,VehicleSAMShort,VehicleSAMShort,VehicleSAMMedium
+High.InArea.LongRange.GroupCount=0,1
+High.InArea.LongRange.GroupSize=1,1
+High.InArea.LongRange.Families=VehicleSAMLong
+</code></pre>
+
+<h3 id="theenemyairdefensedistancesection">The [EnemyAirDefenseDistance] section</h3>
+
+<p>Stores information about where to spawn enemy air defense.</p>
+
+<p>There are five air defense range categories: <strong>ShortRange</strong>, <strong>MediumRange</strong> and <strong>LongRange</strong>.</p>
+
+<p>In each category the following values are expected:</p>
+
+<ul>
+<li><strong>DistanceFromTarget</strong>: min,max distance between the air defense system and the mission target(s) (in nautical miles)</li>
+
+<li><strong>MinDistanceFromTakeOffLocation</strong>: minimum distance from the player(s) starting location, to make sure noone gets spiked by an S-300 just after taking off.</li>
+
+<li><strong>NodeTypes</strong>: on which map nodes (stored in <em>Theater</em> definitions) should air defense of this type be spawned. Acceptable values are <em>LandSmall</em>, <em>LandMedium</em> and <em>LandLarge</em></li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[EnemyAirDefenseDistance]
+ShortRange.DistanceFromTarget=0,10
+ShortRange.MinDistanceFromTakeOffLocation=15
+ShortRange.NodeTypes=LandSmall,LandMedium,LandLarge
+
+MediumRange.DistanceFromTarget=12,24
+MediumRange.MinDistanceFromTakeOffLocation=25
+MediumRange.NodeTypes=LandMedium,LandLarge
+</code></pre>
+
+<h3 id="theenemycombatairpatrolssection">The [EnemyCombatAirPatrols] section</h3>
+
+<p>Stores information about the amount (and location) of enemy combat air patrols defending the objective(s). This section contains two global values, and six "multiplier" values.</p>
+
+<ul>
+<li><strong>DistanceFromObjective</strong>: how far from the objective(s), in nautical miles, should the CAP flight groups be spawned?</li>
+
+<li><strong>MinDistanceFromTakeOffLocation</strong>: minimum distance from the player(s) starting location, in nautical miles.</li>
+
+<li><strong>Multiplier.<em>[None/VeryLow/Low/Average/High/VeryHigh]</em></strong>: the relative strength of the enemy combat air patrols for the various <em>"Enemy CAP power"</em> settings. 0 means no enemy CAP, 100 means "as strong as the allied air force", 200 means "twice as strong", etc. The strength of an air force is the sum of the air-to-air power rating (see <em>Units</em> definitions) of all its units.</li>
+</ul>
+
+<pre><code>[EnemyCombatAirPatrols]
+DistanceFromObjective=0,100
+MinDistanceFromTakeOffLocation=100
+
+Multiplier.None=0
+Multiplier.VeryLow=25
+Multiplier.Low=70
+Multiplier.Average=100
+Multiplier.High=200
+Multiplier.VeryHigh=300
+</code></pre>
+
+<h2 id="thecoalitionsdefinitions">The <em>Coalitions</em> definitions</h2>
+
+<p>A series of files. Each files contains information about a single HQ4DCS coalition (a group a countries and armies). The name of the file is used as the unique ID of the coalition in HQ4DCS.</p>
+
+<ul>
+<li><strong>Name:</strong> The ID of the coalition's name in the language .ini file.</li>
+
+<li><strong>NATOCallsigns:</strong> Does this coalition uses NATO callsigns? (<em>true</em>/<em>false</em>)</li>
+
+<li><strong>Countries:</strong> A comma-separated list of the DCS countries belonging to this coalition. During the mission, all units will belong to the first country in the list (the "primary" country). Others are just for show in the briefing and to know which liveries should be used. Acceptable values are: <em>Abkhazia, Aggressors, Algeria, Australia, Austria, Bahrain, Belarus, Belgium, Brazil, Bulgaria, Canada, Chile, China, Croatia, Cuba, CzechRepublic, Denmark, Egypt, Ethiopia, Finland, France, Georgia, Germany, Greece, Honduras, Hungary, India, Indonesia, Insurgents, Iran, Iraq, Israel, ItalianSocialRepublic, Italy, Japan, Jordan, Kazakhstan, Kuwait, Libya, Malaysia, Mexico, Morocco, NorthKorea, Norway, Oman, Pakistan, Philippines, Poland, Qatar, Romania, Russia, SaudiArabia, Serbia, Slovakia, SouthAfrica, SouthKorea, SouthOsetia, Spain, Sudan, Sweden, Switzerland, Syria, Thailand, TheNetherlands, ThirdReich, Tunisia, Turkey, UK, USA, USSR, Ukraine, UnitedArabEmirates, Venezuela, Vietnam, Yemen</em> and <em>Yugoslavia</em>.</li>
+
+<li><strong>Armies:</strong> A comma-separated list of army .ini files the IDs of armies which are part of this coalition.</li>
+
+<li><strong>RequiredModules:</strong> An comma-separated list of the names required DCS World modules.</li>
+
+<li><strong>TimePeriod:</strong> Min/max decades (comma-separated) during which this coalition can be used. Acceptable values are: <em>Decade1940</em>, <em>Decade1950</em>, <em>Decade1960</em>, <em>Decade1970</em>, <em>Decade1980</em>, <em>Decade1990</em>, <em>Decade2000</em> and <em>Decade2010</em></li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Coalition]
+Name=USA
+NATOCallsigns=True
+Countries=USA
+Armies=USA
+RequiredModules=
+TimePeriod=Decade1960,Decade2010
+</code></pre>
+
+<h2 id="thetheatersdefinitions">The <em>Theaters</em> definitions</h2>
+
+<p>A series of files found in the <strong>Library/Theaters</strong> subdirectory. Each files contains information about a single DCS World theater. The name of the file is used as the unique ID of the theater in HQ4DCS.</p>
+
+<ul>
+<li><strong>[Theater]</strong>
+
+
+<ul>
+<li><strong>DCSID:</strong> The internal ID of the theater in DCS World. Case-sensitive.</li>
+
+<li><strong>DefaultMapCenter:</strong> The default X,Y point on which to center the F10 map.</li>
+
+<li><strong>RequiredModules:</strong> The name of the DCS World module required to fly in this theater. Leave empty if none.</li></ul>
+</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Theater]
+DCSID=Caucasus
+DefaultMapCenter=-186462.32296594,680206.74315168
+RequiredModules=
+</code></pre>
+
+<ul>
+<li><strong>[Daytime]</strong>
+
+
+<ul>
+<li><strong><em>[Month]</em></strong>: The sunrise and sunset time (in minutes since midnight) for each month of the year.</li></ul>
+</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Daytime]
+;08:26 - 17:57
+January=506,1077
+;07:49 - 18:30
+February=469,1110
+;07:14 - 19:01
+March=434,1141
+;07:30 - 19:34
+April=450,1174
+;06:35 - 20:06
+May=395,1206
+;05:33 - 20:40
+June=333,1240
+;06:06 - 20:18
+July=366,1218
+;06:39 - 19:45
+August=399,1185
+;07:11 - 19:13
+September=431,1153
+;08:02 - 18:40
+October=482,1120
+;08:17 - 18:07
+November=497,1087
+;08:39 - 17:45
+December=519,1065
+</code></pre>
+
+<ul>
+<li><strong>[Temperature]</strong>
+
+
+<ul>
+<li><strong><em>[Month]</em></strong>: Min/max temperatures for each month, in °C.</li></ul>
+</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Temperature]
+January=-7,5
+February=-5,7
+March=0,10
+April=5,17
+May=12,23
+June=15,28
+July=18,32
+August=19,33
+September=14,26
+October=7,19
+November=1,11
+December=-5,7
+</code></pre>
+
+<ul>
+<li><strong>[Airbases]</strong>
+
+
+<ul>
+<li><strong><em>[AirbaseUniqueID]</em>.ATC</strong>: The ATC radio frequency (in Mhz).</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.Coalition</strong>: The coalition this airbase belongs to.</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.Coordinates</strong>: The map X,Y coordinates of the runway (the point where aircraft are spawned when "takeoff from runway" is selected in the editor).</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.DCSID</strong>: The internal numerical ID of the airbase in DCS World.</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.ILS</strong>: A string representation of the ILS frequency, only used in briefings. Empty if none.</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.Military</strong>: The ATC radio frequency (in Mhz).</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.Name</strong>: The full name of the airbase (for briefings).</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.NearWater</strong>: Is the airbase near water (less than 10-15nm)?</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.ParkingSpots</strong>: The number of parking spots.</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.Runways</strong>: Comma-separated list of runways.</li>
+
+<li><strong><em>[AirbaseUniqueID]</em>.TACAN</strong>: A string of the TACAN, only used in briefings. Empty if none.</li></ul>
+</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Airbases]
+Vaziani.ATC=140.0
+Vaziani.Coalition=Blue
+Vaziani.Coordinates=-319064.875,903148.53125
+Vaziani.DCSID=31
+Vaziani.ILS=14, 108.75
+Vaziani.Military=true
+Vaziani.Name=Vaziani
+Vaziani.NearWater=false
+Vaziani.ParkingSpots=92
+Vaziani.Runways=14,32
+Vaziani.TACAN=22X VAS
+</code></pre>
+
+<ul>
+<li><strong>[Weather]</strong>
+
+
+<ul>
+<li><strong>Level[00-10].Clouds.Base</strong>: Min,max base cloud height (in meters).</li>
+
+<li><strong>Level[00-10].Clouds.Density</strong>: Min,max cloud density (0-10).</li>
+
+<li><strong>Level[00-10].Clouds.Precipitation</strong>: Precipitation type (<em>None</em>, <em>Rain</em> or <em>Thunderstorm</em>). Be aware that DCS only allow some values is cloud density if high enough (<em>Rain</em> required 5 or more, <em>Thunderstorm</em> requires 9 or 10). Invalid values will be ignored by DCS.</li>
+
+<li><strong>Level[00-10].Clouds.Thickness</strong>: Min,max base cloud thickness in meters</li>
+
+<li><strong>Level[00-10].Dust.Enabled</strong>: Are dust storm enabled (true or false). If multiple values can be provided, a random value will be selected (e.g. true,true,false gives 66% chance of duststorm).</li>
+
+<li><strong>Level[00-10].Dust.Density</strong>: Min,max dust storm density, if enabled (0-10).</li>
+
+<li><strong>Level[00-10].Fog.Enabled</strong>: Is fog enabled (<em>true</em> or <em>false</em>). If multiple values can be provided, a random value will be selected (e.g. <em>"true,true,false"</em> gives 66% chance of fog)</li>
+
+<li><strong>Level[00-10].Fog.Thickness</strong>: Min,max fog thickness.</li>
+
+<li><strong>Level[00-10].Fog.Visibility</strong>: Min,max fog visibility in meters.</li>
+
+<li><strong>Level[00-10].QNH</strong>: Min,max atmospheric pressure at mean sea level.</li>
+
+<li><strong>Level[00-10].Turbulence</strong>: Min,max turbulence in meters/second.</li>
+
+<li><strong>Level[00-10].Visibility</strong>: Min,max visibility in meters.</li></ul>
+</li>
+</ul>
+
+<p><em>NOTE:</em> There are 11 weather quality levels, 00 being the best, 10 the worst.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>Level02.Clouds.Base=1000,1000
+Level02.Clouds.Density=2,2
+Level02.Clouds.Precipitation=None
+Level02.Clouds.Thickness=300,400
+Level02.Dust.Enabled=false
+Level02.Dust.Density=0,0
+Level02.Fog.Enabled=false
+Level02.Fog.Thickness=0,0
+Level02.Fog.Visibility=0,0
+Level02.QNH=752,762
+Level02.Turbulence=2,4
+Level02.Visibility=80000,80000
+</code></pre>
+
+<ul>
+<li><strong>[Wind]</strong>
+
+
+<ul>
+<li><strong>Level[00-10].Wind</strong>: Min,max wind speed in meters/second.</li>
+
+<li><strong>Level[00-10].Turbulence</strong>: Min,max turbulence in meters/second.</li></ul>
+</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Wind]
+Level05.Wind=10,15
+Level05.Turbulence=15,25
+</code></pre>
+
+<ul>
+<li><strong>[CarrierPath]</strong>
+
+
+<ul>
+<li><strong><em>[XXXXXX]</em></strong>: X,Y map coordinates.</li></ul>
+</li>
+</ul>
+
+<p>A list of X,Y map coordinates carrier groups on this map will follow as navigation path. The name of each waypoint has no effect, but each must be unique.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[CarrierPath]
+Waypoint000=-42805.371428571,204536.68571429
+Waypoint001=-65622.514285714,239675.08571429
+Waypoint002=-85245.257142857,288047.42857143
+Waypoint003=-116276.57142857,345546.62857143
+Waypoint004=-151871.31428571,381141.37142857
+Waypoint005=-179251.88571429,430882.74285714
+Waypoint006=-208914.17142857,468302.85714286
+Waypoint007=-221235.42857143,501159.54285714
+Waypoint008=-247703.31428571,534472.57142857
+Waypoint009=-266413.37142857,570067.31428571
+Waypoint010=-299726.4,588777.37142857
+Waypoint011=-340340.91428571,589690.05714286
+</code></pre>
+
+<ul>
+<li><strong>[Nodes]</strong>
+
+
+<ul>
+<li><strong><em>[XXXXXX]</em></strong>: X coordinate, Y coordinate, node type, coalition</li></ul>
+</li>
+</ul>
+
+<p>A list of points where surface, sea and air units can be spawned. The name of each node has no effect, but each must be unique. As there can (and should) be <strong>MANY</strong> nodes in a theater, format has be made deliberately compact with <em>four</em> comma-separated values on each line.</p>
+
+<ul>
+<li><strong><em>X coordinate</em></strong> and <strong><em>Y coordinate</em></strong> shouldn't require any explanation.</li>
+
+<li><strong><em>Node type</em></strong> determines what kind of unit should be spawned here: <em>Sea</em> means open water, <em>LandSmall</em> means forest/city streets where small units can be hidden, <em>LandMedium</em> means open land areas not suitable for buildings (like the middle of a field), <em>LandLarge</em> means open areas where building can be spawned.</li>
+
+<li><strong><em>Coalition</em></strong> is the default coalition of the country where this node is located.</li>
+</ul>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>[Nodes]
+node0835=-310179.49727513,911258.89521983,LandMedium,Blue
+node0836=-308093.23564731,910157.16155121,LandMedium,Blue
+node0837=-308116.6767892,908211.5467747,LandMedium,Blue
+node0838=28021.026938074,277684.97455456,LandMedium,Red
+node0839=20698.902003499,277049.72170636,LandMedium,Red
+node0840=24744.459615753,263341.6339293,LandMedium,Red
+node0841=15884.354101312,269794.46549264,LandMedium,Red
+node0842=10835.765676103,271064.97118905,LandMedium,Red
+node0843=11638.190326467,277885.58071715,LandMedium,Red
+node0844=8094.1481206912,283903.76559489,LandMedium,Red
+node0845=6923.9455055764,289219.82890355,LandMedium,Red
+node0846=19394.961946657,289487.303787,LandMedium,Red
+node0847=18124.456250246,295472.05430431,LandMedium,Red
+</code></pre>
+
+<h1 id="theincludedirectory">The <em>Include</em> directory</h1>
+
+<p>Unlike the <em>Library</em> directory, which contains data that will be interpreted by HQ4DCS, the <em>Include</em> directory, as its name indicates, contains files that will be included <strong>as is</strong> when the mission is exported to a Miz file. Well, almost. In all text files (Html pages and Lua scripts), you'll find uppercased words encased in dollar signs, such as <em>$PLAYERCOALITION$</em> or <em>$MISSIONNAME$</em>. These are <em>"variables"</em>, which HQ4DCS will replace with values appropriate for the mission.</p>
+
+<h2 id="thebriefinghtmlfile">The <em>Briefing.html</em> file</h2>
+
+<p>Briefing.html is an HTML file used as a template for all generated briefings. It has two purposes :</p>
+
+<ul>
+<li>It provides the minimal HTML5 structure (html, head and body tags, etc.) to ensure the briefing is a valid HTML document.</li>
+
+<li>It contains a complete CSS stylesheet. Changing it will change the looks of all HQ4DCS briefings.</li>
+</ul>
+
+<p>There are only three variables in Briefing.html. <em>$LANGUAGEISOCODE$</em> is the international ISO code for the briefing language (found in the Language definition), <em>$TITLE$</em> is the mission name, <em>$BRIEFING$</em> is the full briefing in HTML format.</p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang='$LANGUAGEISOCODE$'&gt;
+ &lt;head&gt;
+  &lt;meta charset='utf-8'&gt;
+  &lt;title&gt;$TITLE$&lt;/title&gt;
+  &lt;style&gt;...&lt;/style
+ &lt;/head&gt;
+ &lt;body&gt;
+$BRIEFING$
+ &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h2 id="thejpegsubdirectory">The <em>Jpeg</em> subdirectory</h2>
+
+<p>As of now, the Jpeg subdirectory contains only one file, Title.jpg, which is used as a decoration on the DCS World briefing screen (HQ4DCS just draws the mission name over it).</p>
+
+<h2 id="theluasubdirectory">The <em>Lua</em> subdirectory</h2>
+
+<h3 id="dictionarylua"><em>Dictionary.lua</em></h3>
+
+<h3 id="mapresourcelua"><em>MapResource.lua</em></h3>
+
+<h3 id="missionlua"><em>Mission.lua</em></h3>
+
+<h3 id="scriptlua"><em>Script.lua</em></h3>
+
+<h3 id="warehouseslua"><em>Warehouses.lua</em></h3>
+
+<h3 id="themissionsubdirectory">The <em>Mission</em> subdirectory</h3>
+
+<h3 id="thescriptsubdirectory">The <em>Script</em> subdirectory</h3>
+
+<h3 id="thewarehousessubdirectory">The <em>Warehouses</em> subdirectory</h3>
+
+<h2 id="theoggsubdirectory">The <em>Ogg</em> subdirectory</h2>
+
+<!-- EXPORTED MARKDOWN ENDS HERE -->
+
+</div></body>
+</html>

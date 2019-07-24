@@ -1,0 +1,13 @@
+[Node]
+; TODO: this is wrong. Fix/remove
+;SenakiTskhakaya.ATC=132.0
+;SenakiTskhakaya.Coalition=Blue
+;SenakiTskhakaya.Coordinates=
+;SenakiTskhakaya.DCSID=
+;SenakiTskhakaya.ILS=09, 108.90
+;SenakiTskhakaya.Military=true
+;SenakiTskhakaya.Name=Senaki-Tskhakaya
+;SenakiTskhakaya.NearWater=true
+;SenakiTskhakaya.ParkingSpots=
+;SenakiTskhakaya.Runways=
+;SenakiTskhakaya.TACAN=31X TSK
