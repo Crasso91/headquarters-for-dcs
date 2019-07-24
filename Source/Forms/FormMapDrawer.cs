@@ -19,7 +19,6 @@ namespace Headquarters4DCS.Forms
         private const int ICON_SIZE = 24;
         private const int ICON_SIZE_HALF = ICON_SIZE / 2;
 
-        private readonly HQLibrary Library = null;
         private readonly HQTemplate Mission = null;
 
         public Image Image { get; private set; } = null;
@@ -31,15 +30,14 @@ namespace Headquarters4DCS.Forms
 
         private readonly Dictionary<string, Image> Icons = new Dictionary<string, Image>();
 
-        public FormMapDrawer(HQLibrary library, HQTemplate mission)
+        public FormMapDrawer(HQTemplate mission)
         {
-            Library = library;
             Mission = mission;
 
             LoadIcon("airbase");
             LoadIcon("airbase_blue");
             LoadIcon("airbase_red");
-            //LoadIcon("airbase_takeoff");
+            LoadIcon("airbase_aircraft");
             LoadIcon("favourite");
             LoadIcon("carrier");
             LoadIcon("carrier_blue");
@@ -51,9 +49,6 @@ namespace Headquarters4DCS.Forms
 
         private void LoadIcon(string iconName)
         {
-            // TODO: add empty file if missing
-            //Icons.Add(iconName, Image.FromFile(HQTools.PATH_MEDIA + iconName + ".png"));
-
             Image image = UITools.GetImageFromResource($"MapIcons.{iconName}.png");
             // TODO: if (image == null) create new image
 
@@ -69,10 +64,11 @@ namespace Headquarters4DCS.Forms
         {
             DestroyImage();
 
-            DefinitionTheater theater = Library.GetDefinition<DefinitionTheater>("Caucasus");
+            DefinitionTheater theater = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Mission.Theater);
             string icon = "";
 
-            Image srcImage = Image.FromFile(HQTools.PATH_LIBRARY + "Theaters/Caucasus/Map.png");
+            // TODO: what if image is null?
+            Image srcImage = Image.FromFile(HQTools.PATH_LIBRARY + $"Theaters/{Mission.Theater}/Map.jpg");
             Image = new Bitmap((int)(srcImage.Width * ZoomMultiplier), (int)(srcImage.Height * ZoomMultiplier));
 
             using (Graphics g = Graphics.FromImage(Image))
@@ -97,13 +93,8 @@ namespace Headquarters4DCS.Forms
 
                         if (missionAB != null)
                         {
-                            //if (missionAB.PrimaryAirdrome)
                             if (missionAB.PlayerFlightGroups.Length > 0)
-                            {
-                                //DrawIcon(g, "airbase_takeoff", n.MapPosition);
-                                //DrawIcon(g, "airbase_landing", n.MapPosition);
-                                DrawIcon(g, "favourite", n.MapPosition);
-                            }
+                                DrawIcon(g, "airbase_aircraft", n.MapPosition);
                         }
                     }
                     //else if (n is DefinitionTheaterNodeCarrierLocation cg)
@@ -114,10 +105,10 @@ namespace Headquarters4DCS.Forms
 
                     //    DrawIcon(g, icon, n.MapPosition);
                     //}
-                    else if (n is DefinitionTheaterNodeLocation loc)
+                    else if (n is DefinitionTheaterNodeRegion loc)
                     {
                         icon = "location";
-                        HQTemplateNodeLocation missionLoc = (Mission.Nodes.ContainsKey(n.ID) && (Mission.Nodes[n.ID] is HQTemplateNodeLocation)) ? (HQTemplateNodeLocation)Mission.Nodes[n.ID] : null;
+                        HQTemplateNodeRegion missionLoc = (Mission.Nodes.ContainsKey(n.ID) && (Mission.Nodes[n.ID] is HQTemplateNodeRegion)) ? (HQTemplateNodeRegion)Mission.Nodes[n.ID] : null;
                         if (missionLoc != null)
                         {
                             if ((from DefinitionNodeFeature fDef in

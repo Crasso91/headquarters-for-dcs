@@ -35,10 +35,10 @@ namespace Headquarters4DCS.Forms
             InitializeComponent();
 
             HQ = hq;
-            Mission = new HQTemplate(HQLibrary.Instance);
+            Mission = new HQTemplate();
             SettingsPropertyGrid.SelectedObject = Mission.Settings;
 
-            MapDrawer = new FormMapDrawer(HQLibrary.Instance, Mission);
+            MapDrawer = new FormMapDrawer(Mission);
         }
 
         private void FormMain_Load(object sender, EventArgs e)

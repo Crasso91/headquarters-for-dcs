@@ -4,6 +4,7 @@ using Headquarters4DCS.Template;
 using Headquarters4DCS.TypeConverters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Headquarters4DCS.Forms
@@ -22,8 +23,7 @@ namespace Headquarters4DCS.Forms
             AddGroupToolStripButton.Image = UITools.GetImageFromResource("Icons.add.png");
             RemoveGroupToolStripButton.Image = UITools.GetImageFromResource("Icons.delete.png");
 
-            ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[0]).Items.Add("Su-25T"); // TODO: remove
-            ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[0]).Items.AddRange(INIFileListTypeConverter<DefinitionUnit>.GetINIFiles());
+            ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[0]).Items.AddRange((from DefinitionUnit u in HQLibrary.Instance.GetAllDefinitions<DefinitionUnit>() where u.AircraftPlayerControllable select u.ID).ToArray());
             ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[1]).Items.AddRange("1", "2", "3", "4");
             ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[2]).Items.AddRange(Enum.GetNames(typeof(PlayerFlightGroupTask)));
             ((DataGridViewComboBoxColumn)FlightGroupsDataGridView.Columns[4]).Items.AddRange(Enum.GetNames(typeof(PlayerFlightGroupStartLocation)));
@@ -61,7 +61,7 @@ namespace Headquarters4DCS.Forms
         {
             if (sender == AddGroupToolStripButton)
                 FlightGroupsDataGridView.Rows.Add(
-                    HQTemplatePlayerFlightGroup.DEFAULT_AIRCRAFT,
+                    HQTemplate.DEFAULT_AIRCRAFT,
                     "1",
                     HQTemplatePlayerFlightGroup.DEFAULT_TASK.ToString(),
                     false,
