@@ -26,6 +26,7 @@ namespace Headquarters4DCS.Enums
 {
     /// <summary>
     /// A DCS World coalition color. Blue or red.
+    /// Cast to int32 must be 0 or 1
     /// </summary>
     public enum Coalition
     {

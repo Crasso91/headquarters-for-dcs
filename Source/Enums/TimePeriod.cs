@@ -29,13 +29,13 @@ namespace Headquarters4DCS.Enums
     /// </summary>
     public enum TimePeriod
     {
-        Decade1940,
-        Decade1950,
-        Decade1960,
-        Decade1970,
-        Decade1980,
-        Decade1990,
-        Decade2000,
-        Decade2010
+        Decade1940 = 1940,
+        Decade1950 = 1950,
+        Decade1960 = 1960,
+        Decade1970 = 1970,
+        Decade1980 = 1980,
+        Decade1990 = 1990,
+        Decade2000 = 2000,
+        Decade2010 = 2010
     }
 }
