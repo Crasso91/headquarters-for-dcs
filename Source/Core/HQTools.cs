@@ -22,7 +22,6 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -567,7 +566,7 @@ namespace Headquarters4DCS
         {
             if (string.IsNullOrEmpty(filePath)) return "";
             if (!filePath.ToLowerInvariant().EndsWith(".lua")) filePath += ".lua";
-            filePath = HQTools.PATH_INCLUDE + "Lua\\" + filePath;
+            filePath = $"{PATH_INCLUDE}Lua\\{filePath}";
             if (!File.Exists(filePath)) return "";
             return File.ReadAllText(filePath);
         }
