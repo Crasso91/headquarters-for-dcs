@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     /// <summary>
     /// Pilot gender. For audio radio messages.

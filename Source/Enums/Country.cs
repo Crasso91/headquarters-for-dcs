@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     // A list of DCS World countries can be found here: https://wiki.hoggitworld.com/view/DCS_enum_country
 

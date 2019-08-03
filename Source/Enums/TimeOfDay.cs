@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     /// <summary>
     /// The time of the day (used by mission starting time), with "Random" and "Random, but not at night" options.

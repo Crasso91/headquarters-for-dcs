@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     /// <summary>
     /// Special flags for HQMissionUnitGroups.
@@ -30,8 +30,13 @@ namespace Headquarters4DCS.Enums
     public enum UnitGroupFlag
     {
         /// <summary>
-        /// Overrides the skill level of the first unit of the group to make it client-controlled.
+        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Player" skill level instead of "Client").
         /// </summary>
-        FirstUnitIsClient
+        FirstUnitIsClient,
+
+        /// <summary>
+        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Player" skill level instead of "Client").
+        /// </summary>
+        FirstUnitIsPlayer,
     }
 }

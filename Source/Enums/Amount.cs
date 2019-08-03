@@ -22,17 +22,17 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     /// <summary>
-    /// A type of node spawn point. Used to know what can be spawned at its location.
+    /// A relative amount value, from "VeryLow" to "Very high"
     /// </summary>
-    public enum NodeSpawnPointType
+    public enum Amount
     {
-        LandSmall,
-        LandMedium,
-        LandLarge,
-        LandRoad,
-        Sea,
+        VeryLow = 1,
+        Low = 2,
+        Average = 3,
+        High = 4,
+        VeryHigh = 5
     }
 }

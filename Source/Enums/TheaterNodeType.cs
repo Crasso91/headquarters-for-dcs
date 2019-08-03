@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     /// <summary>
     /// A type of theater node. Used to know what can be spawned at its location.
@@ -33,10 +33,5 @@ namespace Headquarters4DCS.Enums
         CarrierGroup,
         Land,
         Sea
-
-        //Sea,
-        //LandSmall,
-        //LandMedium,
-        //LandLarge,
     }
 }

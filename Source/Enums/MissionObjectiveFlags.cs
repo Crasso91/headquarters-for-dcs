@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Enums
+namespace Headquarters4DCS
 {
     // I'm not using [Flags] because storing flags in an array and searching them with Contains() makes it easier to load them with INIFile.GetValueArray()
 

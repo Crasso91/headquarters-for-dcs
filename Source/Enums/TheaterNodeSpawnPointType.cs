@@ -25,13 +25,16 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A category of ship to be used in a carrier group. Used to make sure aircraft requiring a CATOBAR carrier are not spawn on a STOBAR one, etc.
+    /// A type of node spawn point. Used to know what can be spawned at its location.
     /// </summary>
-    public enum CarrierGroupShipType
+    public enum TheaterNodeSpawnPointType
     {
-        CATOBAR,
-        STOBAR,
-        STOVL,
-        Escort
+        LandSmall,
+        LandMedium,
+        LandLarge,
+        LandRoad,
+        LandMapObject,
+
+        Sea
     }
 }

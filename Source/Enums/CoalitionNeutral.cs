@@ -25,13 +25,13 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A category of ship to be used in a carrier group. Used to make sure aircraft requiring a CATOBAR carrier are not spawn on a STOBAR one, etc.
+    /// A DCS World coalition color, with a neutral option. Blue or red.
+    /// Cast to int32 of Blue and Red must match Headquarters4DCS.Enums.Coalition
     /// </summary>
-    public enum CarrierGroupShipType
+    public enum CoalitionNeutral
     {
-        CATOBAR,
-        STOBAR,
-        STOVL,
-        Escort
+        Blue,
+        Red,
+        Neutral
     }
 }
