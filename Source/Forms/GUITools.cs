@@ -22,6 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using Headquarters4DCS.Library;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -32,8 +33,13 @@ namespace Headquarters4DCS.Forms
     /// <summary>
     /// A "toolbox" static class with some useful methods to help with the user interface.
     /// </summary>
-    public static class UITools
+    public static class GUITools
     {
+        /// <summary>
+        /// The language definition to use in the forms. Ugly, but has to be static so type converters can use it.
+        /// </summary>
+        public static DefinitionLanguage Language = null;
+
         /// <summary>
         /// "Shortcut" method to set all parameters of an OpenFileDialog and display it.
         /// </summary>
@@ -125,6 +131,19 @@ namespace Headquarters4DCS.Forms
         {
             if (!File.Exists(filePath)) return null;
             return Image.FromFile(filePath);
+        }
+
+        public static void SetupFormForPanel(Form form, Control parentControl)
+        {
+            form.TopLevel = false;
+            form.FormBorderStyle = FormBorderStyle.None;
+            form.Text = "";
+            form.ControlBox = false;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.Parent = parentControl;
+            form.Dock = DockStyle.Fill;
+            form.Show();
         }
     }
 }
