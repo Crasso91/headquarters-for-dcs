@@ -28,44 +28,84 @@ using System.Linq;
 
 namespace Headquarters4DCS.Template
 {
-    public abstract class MissionTemplateNode
+    /// <summary>
+    /// A mission template location. Stores all mission features, player flight groups... assigned to this location.
+    /// </summary>
+    public sealed class MissionTemplateLocation
     {
-        protected string INISection { get { return $"node_{Definition.ID.ToLowerInvariant()}"; } }
+        /// <summary>
+        /// The ini section of the HQT file to load from/save to.
+        /// </summary>
+        private string INISection { get { return $"location_{Definition.ID.ToLowerInvariant()}"; } }
 
-        public readonly DefinitionTheaterNode Definition;
+        /// <summary>
+        /// Definition of this location in the library.
+        /// </summary>
+        public readonly DefinitionTheaterLocation Definition;
 
-        public virtual bool InUse { get { return (Features.Length > 0) || (PlayerFlightGroups.Length > 0); } }
+        /// <summary>
+        /// Coalition this location belongs to (if applicable).
+        /// </summary>
+        public CoalitionNeutral Coalition { get; set; } = CoalitionNeutral.Neutral;
 
+        /// <summary>
+        /// Is this location in use (are there mission features or flight groups located here)?
+        /// </summary>
+        public bool InUse { get { return (Features.Length > 0) || (PlayerFlightGroups.Length > 0); } }
+
+        /// <summary>
+        /// Mission features assigned to this location.
+        /// </summary>
         public string[] Features { get; set; } = new string[0];
+
+        /// <summary>
+        /// Player flight groups starting on this location.
+        /// </summary>
         public MissionTemplatePlayerFlightGroup[] PlayerFlightGroups { get; set; } = new MissionTemplatePlayerFlightGroup[0];
 
-        public MissionTemplateNode(DefinitionTheaterNode nodeDefinition)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="locationDefinition">The definition of the location in the library's theater definition.</param>
+        public MissionTemplateLocation(DefinitionTheaterLocation locationDefinition)
         {
-            Definition = nodeDefinition;
+            Definition = locationDefinition;
             Clear();
         }
 
-        protected virtual void Clear()
+        /// <summary>
+        /// Resets this location to default settings, remove all flight groups and features.
+        /// </summary>
+        private void Clear()
         {
+            Coalition = Definition.Coalition;
             Features = new string[0];
             PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[0];
         }
 
-        public virtual void LoadFromFile(INIFile ini)
+        /// <summary>
+        /// Loads this location from an HQT ini file.
+        /// </summary>
+        /// <param name="ini">Ini file to load from.</param>
+        public void LoadFromFile(INIFile ini)
         {
             Clear();
 
-            Features = ini.GetValueArray<string>(INISection, "Features", '|');
+            Features = ini.GetValueArray<string>(INISection, "Features");
 
             PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[Math.Max(0, ini.GetValue<int>(INISection, "FlightGroupsCount"))];
             for (int i = 0; i < PlayerFlightGroups.Length; i++)
                 PlayerFlightGroups[i] = new MissionTemplatePlayerFlightGroup(ini, INISection, i);
         }
 
-        public virtual void SaveToFile(INIFile ini)
+        /// <summary>
+        /// Saves this location to an HQT ini file.
+        /// </summary>
+        /// <param name="ini">Ini file to save to.</param>
+        public void SaveToFile(INIFile ini)
         {
             if (Features.Length > 0)
-                ini.SetValueArray(INISection, "Features", Features, '|');
+                ini.SetValueArray(INISection, "Features", Features);
 
             if (PlayerFlightGroups.Length > 0)
             {
@@ -76,6 +116,10 @@ namespace Headquarters4DCS.Template
             }
         }
 
+        /// <summary>
+        /// Returns the definitions of all mission features used by this location.
+        /// </summary>
+        /// <returns>An array of DefinitionFeature</returns>
         public DefinitionFeature[] GetFeaturesDefinitions()
         {
             return
@@ -83,15 +127,6 @@ namespace Headquarters4DCS.Template
                      (from string fID in Features
                       select HQLibrary.Instance.GetDefinition<DefinitionFeature>(fID))
                  where f != null select f).OrderBy(x => x).ToArray();
-        }
-
-        public virtual string GetInformationString()
-        {
-            string infoString = "";
-
-            infoString += string.Join(", ", (from DefinitionFeature featureDef in GetFeaturesDefinitions() select featureDef.DisplayName).ToArray());
-
-            return infoString;
         }
     }
 }

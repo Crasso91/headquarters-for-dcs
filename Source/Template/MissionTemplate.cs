@@ -29,6 +29,9 @@ using System.Linq;
 
 namespace Headquarters4DCS.Template
 {
+    /// <summary>
+    /// An HQ4DCS mission template, which can be loaded or saved from/to a file, or used to generate a mission using the MissionGenerator class.
+    /// </summary>
     public sealed class MissionTemplate : IDisposable
     {
         /// <summary>
@@ -36,64 +39,86 @@ namespace Headquarters4DCS.Template
         /// </summary>
         public string Theater { get; private set; } = HQLibrary.Instance.Common.DefaultTheater;
 
+        /// <summary>
+        /// Global settings for the mission.
+        /// </summary>
         public readonly MissionTemplateSettings Settings = null;
 
-        public Dictionary<string, MissionTemplateNode> Nodes = new Dictionary<string, MissionTemplateNode>();
+        /// <summary>
+        /// All locations on the map. Each location can feature units, scripts, player flight groups...
+        /// </summary>
+        public Dictionary<string, MissionTemplateLocation> Locations = new Dictionary<string, MissionTemplateLocation>();
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public MissionTemplate()
         {
             Settings = new MissionTemplateSettings();
-
             Clear(HQLibrary.Instance.Common.DefaultTheater);
         }
 
+        /// <summary>
+        /// Sets a new "clean" template for the given theater. Resets all global settings, and recreate template nodes from the theater library definition.
+        /// </summary>
+        /// <param name="theaterID">The theater to use.</param>
         public void Clear(string theaterID)
         {
             Theater = HQLibrary.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : HQLibrary.Instance.Common.DefaultTheater;
             DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
 
-            Nodes.Clear();
+            Locations.Clear();
 
-            foreach (DefinitionTheaterNode n in theaterDefinition.Nodes.Values)
-            {
-                if (n is DefinitionTheaterNodeAirbase)
-                    Nodes.Add(n.ID, new MissionTemplateNodeAirbase(n));
-                //else if (n is DefinitionTheaterNodeCarrierLocation)
-                //    Nodes.Add(n.ID, new HQTemplateNodeCarrierGroup(n));
-                else if (n is DefinitionTheaterNodeLand)
-                    Nodes.Add(n.ID, new MissionTemplateNodeLand(n));
-            }
+            foreach (DefinitionTheaterLocation n in theaterDefinition.Nodes.Values)
+                Locations.Add(n.ID, new MissionTemplateLocation(n));
         }
 
-        public void InvertAirbasesCoalition()
+        /// <summary>
+        /// Switch the coalition of all nodes on the map. Red nodes become blue, and vice-versa. Neutral nodes are not affected.
+        /// </summary>
+        public void InvertCoalitions()
         {
-            string[] keys = Nodes.Keys.ToArray();
-
-            foreach (string k in keys)
+            foreach (string k in Locations.Keys)
             {
-                if (!(Nodes[k] is MissionTemplateNodeAirbase)) continue;
-                ((MissionTemplateNodeAirbase)Nodes[k]).Coalition = 1 - ((MissionTemplateNodeAirbase)Nodes[k]).Coalition;
+                switch (Locations[k].Coalition)
+                {
+                    case CoalitionNeutral.Blue: Locations[k].Coalition = CoalitionNeutral.Red; break;
+                    case CoalitionNeutral.Red: Locations[k].Coalition = CoalitionNeutral.Blue; break;
+                }
             }
         }
 
+        /// <summary>
+        /// Loads the template from an HQT file.
+        /// </summary>
+        /// <param name="filePath">The path of the file to load from.</param>
+        /// <returns>True if everything went right, false if an error happened.</returns>
         public bool LoadFromFile(string filePath)
         {
             using (INIFile ini = new INIFile(filePath))
             {
                 string theater = ini.GetValue<string>("Settings", "Theater");
+                if (!HQLibrary.Instance.DefinitionExists<DefinitionTheater>(theater))
+                {
+                    Clear(HQLibrary.Instance.Common.DefaultTheater);
+                    return false;
+                }
                 Clear(theater);
 
                 DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
 
-                foreach (string k in Nodes.Keys)
-                {
-                    Nodes[k].LoadFromFile(ini);
-                }
+                foreach (string k in Locations.Keys)
+                    Locations[k].LoadFromFile(ini);
             }
 
             return true;
         }
 
+        /// <summary>
+        /// Save the template to an HQT file.
+        /// </summary>
+        /// <param name="filePath">The path of the file to save to.</param>
+        /// <returns>True if everything went right, false if an error happened.</returns>
         public bool SaveToFile(string filePath)
         {
             using (INIFile ini = new INIFile())
@@ -101,8 +126,8 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Theater", Theater);
                 Settings.SaveToFile(ini);
 
-                foreach (string k in Nodes.Keys)
-                    Nodes[k].SaveToFile(ini);
+                foreach (string k in Locations.Keys)
+                    Locations[k].SaveToFile(ini);
 
                 ini.SaveToFile(filePath);
             }
@@ -111,21 +136,23 @@ namespace Headquarters4DCS.Template
         }
 
         /// <summary>
-        /// IDisposable implementation
+        /// Returns the total number of client-controlled aircraft (not flight groups) in this template.
         /// </summary>
-        public void Dispose() { }
-
+        /// <returns>Number of players</returns>
         public int GetPlayerCount()
         {
             int playerCount = 0;
 
-            foreach (MissionTemplateNode node in Nodes.Values)
-            {
+            foreach (MissionTemplateLocation node in Locations.Values)
                 foreach (MissionTemplatePlayerFlightGroup fg in node.PlayerFlightGroups)
                     playerCount += fg.AIWingmen ? 1 : fg.Count;
-            }
 
             return playerCount;
         }
+
+        /// <summary>
+        /// IDisposable implementation.
+        /// </summary>
+        public void Dispose() { }
     }
 }
