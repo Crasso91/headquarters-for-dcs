@@ -37,9 +37,7 @@ namespace Headquarters4DCS.TypeConverters
         { return true; }
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        {
-            return new StandardValuesCollection(HQLibrary.Instance.GetAllDefinitionIDs<T>());
-        }
+        { return new StandardValuesCollection(HQLibrary.Instance.GetAllDefinitionIDs<T>()); }
 
         public static string GetDefaultValue()
         {

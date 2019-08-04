@@ -22,16 +22,20 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Forms;
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Headquarters4DCS.TypeConverters
 {
-    public sealed class LocalizedEnumTypeConverter<T> : EnumConverter where T : struct
+    /// <summary>
+    /// Splits words in camelcase to make enums prettier in PropertyGrids
+    /// </summary>
+    /// <typeparam name="T">The type of enum to convert</typeparam>
+    public sealed class SplitEnumTypeConverter<T> : EnumConverter where T : struct, IConvertible
     {
-        public LocalizedEnumTypeConverter() : base(typeof(T)) { }
+        public SplitEnumTypeConverter() : base(typeof(T)) { }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
@@ -47,23 +51,22 @@ namespace Headquarters4DCS.TypeConverters
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            return FormatEnum((T)value);
+            string enumString = ((T)value).ToString();
+            if (typeof(T) == typeof(TimePeriod)) enumString = enumString.Substring("Decade".Length) + "s";
+
+            string[] words = Regex.Split(enumString, "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+            for (int i = 1; i < words.Length; i++) words[i] = words[i].ToLowerInvariant();
+            return string.Join(" ", words);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            foreach (T e in Enum.GetValues(typeof(T)))
-            {
-                if (GUITools.Language.GetString("Enumerations", $"{typeof(T).Name}.{e.ToString()}") == value.ToString())
-                    return e;
-            }
+            string enumString = value.ToString().Replace(" ", "");
+            if (typeof(T) == typeof(TimePeriod)) enumString = "Decade" + enumString.Substring(0, enumString.Length - 1);
+
+            if (Enum.TryParse(enumString, true, out T parsedEnum)) return parsedEnum;
 
             return default(T);
-        }
-
-        public static string FormatEnum(T value)
-        {
-            return GUITools.Language.GetString("Enumerations", $"{typeof(T).Name}.{value.ToString()}");
         }
     }
 }

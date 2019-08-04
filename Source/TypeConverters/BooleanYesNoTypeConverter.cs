@@ -23,19 +23,33 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.Forms;
+using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Headquarters4DCS.TypeConverters
 {
-    public sealed class LocalizedDescriptionAttribute : DescriptionAttribute
+    /// <summary>
+    /// Displays a boolean as "Yes" or "No" instead of "True" or "False", because it looks better.
+    /// </summary>
+    public sealed class BooleanYesNoTypeConverter : BooleanConverter
     {
-        private readonly string LanguageID;
-
-        public LocalizedDescriptionAttribute(string languageID) { LanguageID = languageID; }
-
-        public override string Description
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            get { return GUITools.Language.GetString("Properties", $"Description.{LanguageID}"); }
+            if (destinationType == typeof(string)) return true;
+            return base.CanConvertTo(context, destinationType);
         }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            if (sourceType == typeof(bool)) return true;
+            return base.CanConvertTo(context, sourceType);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        { return (bool)value ? "Yes" : "No"; }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        { return value.ToString().ToLowerInvariant() == "yes"; }
     }
 }
