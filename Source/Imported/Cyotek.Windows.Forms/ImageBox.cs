@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -36,7 +37,11 @@ namespace Cyotek.Windows.Forms
         private TextureBrush _texture;
         private int _zoom;
         private int _zoomIncrement;
-        private bool _zoomOnClick;
+
+        [Browsable(true), DefaultValue(null), Category("Appearance")]
+        public ImageList ImageList { get; set; } = null;
+
+        public Dictionary<string, ImageBoxOverlayIcon> IconsLocation = new Dictionary<string, ImageBoxOverlayIcon>();
 
         public ImageBox()
         {
@@ -300,7 +305,7 @@ namespace Cyotek.Windows.Forms
         {
             base.OnMouseMove(e);
 
-            if (e.Button == MouseButtons.Left && AutoPan && Image != null)
+            if ((e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) && AutoPan && Image != null)
             {
                 if (!IsPanning)
                 {
@@ -803,11 +808,7 @@ namespace Cyotek.Windows.Forms
         }
 
         [DefaultValue(true), Category("Behavior")]
-        public bool ZoomOnClick
-        {
-            get { return _zoomOnClick; }
-            set { _zoomOnClick = value; }
-        }
+        public bool ZoomOnClick { get; set; }
 
         private int GetBorderOffset()
         {
@@ -933,6 +934,25 @@ namespace Cyotek.Windows.Forms
         {
             g.InterpolationMode = InterpolationMode;
             g.DrawImage(Image, GetImageViewPort(), GetSourceImageRegion(), GraphicsUnit.Pixel);
+
+            if (ImageList == null) return;
+
+            Rectangle srcRegion = GetSourceImageRegion();
+            float zoomF = Zoom / 100f;
+
+            foreach (ImageBoxOverlayIcon icon in IconsLocation.Values)
+            {
+                if (!ImageList.Images.ContainsKey(icon.IconKey)) continue;
+                Image iconImage = ImageList.Images[icon.IconKey];
+                g.DrawImage(
+                    iconImage,
+                    new RectangleF(
+                        (icon.Location.X - srcRegion.X) * zoomF - iconImage.Width / 2,
+                        (icon.Location.Y - srcRegion.Y) * zoomF - iconImage.Height / 2,
+                        iconImage.Width, iconImage.Height),
+                    new Rectangle(Point.Empty, iconImage.Size),
+                    GraphicsUnit.Pixel);
+            }
         }
 
         protected virtual void OnAutoCenterChanged(EventArgs e)
