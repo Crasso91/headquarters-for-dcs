@@ -29,7 +29,7 @@ namespace Headquarters4DCS
     /// </summary>
     public enum SpeedAndDistanceUnit
     {
-        ByCountry,
+        ByCoalition,
         Imperial,
         Metric
     }

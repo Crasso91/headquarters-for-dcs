@@ -30,6 +30,6 @@ namespace Headquarters4DCS
     public enum UnitGroupFormation
     {
         Random
-        // TODO: add proper rotations
+        // TODO: add proper formations
     }
 }

@@ -30,12 +30,12 @@ namespace Headquarters4DCS
     public enum UnitGroupFlag
     {
         /// <summary>
-        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Player" skill level instead of "Client").
+        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Player" skill level, for SP missions).
         /// </summary>
         FirstUnitIsClient,
 
         /// <summary>
-        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Player" skill level instead of "Client").
+        /// Overrides the skill level of the first unit of the group to make it client-controlled (use "Client" skill level, for MP missions).
         /// </summary>
         FirstUnitIsPlayer,
     }

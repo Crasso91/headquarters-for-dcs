@@ -38,7 +38,6 @@ namespace Headquarters4DCS
         CAP,
         Escort,
         FighterSweep,
-        //GAI,
         GroundAttack,
         Intercept,
         PinpointStrike,
@@ -47,30 +46,5 @@ namespace Headquarters4DCS
         RunwayAttack,
         SEAD,
         Transport,
-
-
-        /*
-        None,
-
-        AntiShip,
-        AWACS,
-        Bombing,
-        CAP,
-        CAS,
-        CSAR,
-        Escort,
-        Intercept,
-        Interdiction, // does not exist in DCS, only to display in the briefing, converted to CAS in-game
-        Recon,
-        SEAD,
-        Strike,
-        Tanker,
-        Transport,
-
-        // Escort tasks must be last in the enum, so they appear after "primary mission groups" in the briefing
-        // (flight groups are sorted by task)
-        CAPEscort, // does not exist in DCS, only to display in the briefing, converted to CAP in-game
-        SEADEscort // does not exist in DCS, only to display in the briefing, converted to SEAD in-game
-        */
     }
 }
