@@ -31,18 +31,18 @@ using System.Text;
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A static class used to log notes, warnings and errors to text files in the Logs subdirectory.
+    /// Logs notes, warnings and errors to text files in the Logs directory.
     /// </summary>
-    public sealed class HQDebugLog
+    public sealed class DebugLog
     {
         /// <summary>
         /// HQDebugLog singleton.
         /// </summary>
-        public static HQDebugLog Instance
+        public static DebugLog Instance
         {
             get
             {
-                if (_Instance == null) _Instance = new HQDebugLog();
+                if (_Instance == null) _Instance = new DebugLog();
                 return _Instance;
             }
         }
@@ -50,7 +50,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// HQDebugLog private singleton object.
         /// </summary>
-        private static HQDebugLog _Instance = null;
+        private static DebugLog _Instance = null;
 
         /// <summary>
         /// Maximum number of log files stored in the "Logs" subdirectory. If there are more, the oldest ones are deleted.

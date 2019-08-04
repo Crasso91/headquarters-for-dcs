@@ -423,17 +423,6 @@ namespace Headquarters4DCS
         }
 
         /// <summary>
-        /// If an AmountR is set to "Random", returns a random value, else return the original AmountR value.
-        /// </summary>
-        /// <param name="amount">The AmountR to check for random values.</param>
-        /// <returns>A non-random AmountNR</returns>
-        public static AmountR ResolveRandomAmount(AmountR amount)
-        {
-            if (amount != AmountR.Random) return amount;
-            return (AmountR)RandomInt(EnumCount<AmountR>() - 1);
-        }
-
-        /// <summary>
         /// Clamps a value between min and max.
         /// </summary>
         /// <param name="value">The value to clamp</param>
