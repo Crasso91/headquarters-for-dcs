@@ -22,26 +22,29 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Enums;
 using System.Linq;
 
-
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
     /// The definition of a coalition, to be selected in the mission template.
     /// </summary>
     public sealed class DefinitionCoalition : Definition
     {
-        /// <summary>
-        /// The ID of the coalition's name in the language .ini file.
-        /// </summary>
-        public string Name { get; private set; } = "";
+        ///// <summary>
+        ///// The ID of the coalition's name in the language .ini file.
+        ///// </summary>
+        //public string Name { get; private set; } = "";
 
         /// <summary>
         /// Min/max time period during which this coalition can be used.
         /// </summary>
         public TimePeriod[] MinMaxTimePeriod { get; private set; } = new TimePeriod[] { TimePeriod.Decade1940, TimePeriod.Decade2010 };
+
+        /// <summary>
+        /// Unit system to use in briefings.
+        /// </summary>
+        public UnitSystem UnitSystem { get; private set; }
 
         /// <summary>
         /// The name of the DCS countries belonging to this coalition. During the mission, all units will belong to the first country in the list (the "primary" country). Others are just for show in the briefing and to know which liveries should be used.
@@ -80,12 +83,14 @@ namespace Headquarters4DCS.Library
                 // -------------------
                 // [Coalition] section
                 // -------------------
-                Name = ini.GetValue<string>("Coalition", "Name");
+                DisplayName = ini.GetValue<string>("Coalition", "DisplayName");
 
                 MinMaxI timePeriodInteger = ini.GetValue<MinMaxI>("Coalition", "TimePeriod");
                 MinMaxTimePeriod = new TimePeriod[] { (TimePeriod)timePeriodInteger.Min, (TimePeriod)timePeriodInteger.Max };
 
                 NATOCallsigns = ini.GetValue<bool>("Coalition", "NATOCallsigns");
+                UnitSystem = ini.GetValue<UnitSystem>("Coalition", "UnitSystem");
+                if (UnitSystem == UnitSystem.ByCoalition) UnitSystem = UnitSystem.Metric;
                 RequiredModules = ini.GetValueArray<string>("Coalition", "RequiredModules");
                 Countries = ini.GetValueArray<Country>("Coalition", "Countries").Distinct().ToArray();
                 if (Countries.Length == 0) return false; // No countries, bad coalition
@@ -113,8 +118,7 @@ namespace Headquarters4DCS.Library
         /// <param name="extendSearchToUnitsOfOtherFamilies">If true and no unit of the matching family is found, extend search to "nearby" families (PlaneInterceptor for PlaneFlighter, etc.)</param>
         /// <param name="returnDefaultIfNoneFound">If true and no unit is found, return default unit. If false and no unit is found, return an empty array.</param>
         /// <returns>An array of DCS unit IDs.</returns>
-        public string[] GetUnits(HQLibrary library, TimePeriod timePeriod, UnitFamily family,
-            bool extendSearchToUnitsOfOtherFamilies, bool returnDefaultIfNoneFound)
+        public string[] GetUnits(TimePeriod timePeriod, UnitFamily family, bool extendSearchToUnitsOfOtherFamilies, bool returnDefaultIfNoneFound)
         {
             // If extendSearchToUnitsOfOtherFamilies if true, get an array of families to search, by order of priority
             // else create an array with family as the only value.
@@ -127,11 +131,11 @@ namespace Headquarters4DCS.Library
             for (int i = 0; i < validFamilies.Length; i++)
             {
                 validUnits =
-                    (from u in (from uID in Units select library.GetDefinition<DefinitionUnit>(uID))
+                    (from u in (from uID in Units select Library.Instance.GetDefinition<DefinitionUnit>(uID))
                      where u != null && u.Families.Contains(validFamilies[i]) &&
                      timePeriod >= u.InService[0] &&
                      (LegacyUnits.Contains(u.ID) || (timePeriod <= u.InService[1]))
-                     select u.ID).Distinct().ToArray();
+                     select u.DCSID).Distinct().ToArray();
 
                 if (validUnits.Length > 0) break;
             }

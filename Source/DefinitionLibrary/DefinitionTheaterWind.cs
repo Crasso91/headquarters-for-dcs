@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
     /// Stores information about wind conditions in a theater definition.

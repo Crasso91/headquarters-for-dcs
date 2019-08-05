@@ -22,9 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Enums;
-
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
     /// Stores information about weather conditions in a theater definition.

@@ -29,6 +29,10 @@ namespace Headquarters4DCS
     /// </summary>
     public enum TheaterLocationSpawnPointType
     {
+        AirbaseParking,
+        AirbaseSmall,
+        AirbaseLarge,
+
         LandSmall,
         LandMedium,
         LandLarge,

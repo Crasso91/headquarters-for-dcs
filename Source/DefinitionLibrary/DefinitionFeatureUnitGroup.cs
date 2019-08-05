@@ -22,15 +22,15 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Enums;
+using System;
 using System.Linq;
 
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
     /// An unit group template.
     /// </summary>
-    public struct DefinitionObjectiveUnitGroup
+    public struct DefinitionFeatureUnitGroup
     {
         /// <summary>
         /// Default unit family to use if none is provided.
@@ -58,6 +58,11 @@ namespace Headquarters4DCS.Library
         public readonly MinMaxI UnitCount;
 
         /// <summary>
+        /// The type of spawn points where this unit group can be spawned.
+        /// </summary>
+        public readonly TheaterLocationSpawnPointType[] SpawnPointTypes;
+
+        /// <summary>
         /// Special flags for this unit group.
         /// </summary>
         public readonly MissionObjectiveUnitGroupFlags[] Flags;
@@ -68,26 +73,43 @@ namespace Headquarters4DCS.Library
         public string[] CustomValues;
 
         /// <summary>
+        /// The chance this group will appear.
+        /// </summary>
+        public readonly double AppearChance;
+
+        /// <summary>
+        /// Min/max number of times this group will appear.
+        /// </summary>
+        public readonly MinMaxI GroupCount;
+
+        /// <summary>
         /// Constructor. Loads the group template from an INI file.
         /// </summary>
-        /// <param name="ini">The INI file to load from.</param>
-        /// <param name="section">The INI section.</param>
-        /// <param name="isObjectiveGroup">Is this group an "objective group" that should be spawned once at each objective?</param>
-        public DefinitionObjectiveUnitGroup(INIFile ini, string section, bool isObjectiveGroup)
+        /// <param name="ini">Ini file to load from.</param>
+        /// <param name="section">Ini file section.</param>
+        /// <param name="key">Ini file top level key.</param>
+        /// <param name="isObjectiveFeature">Does this group belong to an "Objective" feature? If true, AppearChance will always be 100%.</param>
+        public DefinitionFeatureUnitGroup(INIFile ini, string section, string key, bool isObjectiveFeature)
         {
-            LuaGroup = ini.GetValue<string>(section, "Lua.Group");
-            LuaUnit = ini.GetValue<string>(section, "Lua.Unit");
+            AppearChance = HQTools.Clamp(ini.GetValue<int>(section, $"{key}.AppearChance"), 0, 100) / 100.0;
+            if (isObjectiveFeature) GroupCount = new MinMaxI(1, 1);
+            else GroupCount = ini.GetValue<MinMaxI>(section, $"{key}.Count");
+
+            LuaGroup = ini.GetValue<string>(section, $"{key}.Lua.Group");
+            LuaUnit = ini.GetValue<string>(section, $"{key}.Lua.Unit");
 
             // Load the list of possible unit famillies, make sure they all belong to the same unit category (can't have planes mixed with ground vehicles)
-            Families = ini.GetValueArray<UnitFamily>(section, "Unit.Family");
+            Families = ini.GetValueArray<UnitFamily>(section, $"{key}.Unit.Family");
             if (Families.Length == 0) Families = new UnitFamily[] { DEFAULT_UNIT_FAMILY };
             UnitFamily defaultFamilly = Families[0];
             Families = (from uf in Families where HQTools.GetUnitCategoryFromUnitFamily(uf) == HQTools.GetUnitCategoryFromUnitFamily(defaultFamilly) select uf).Distinct().ToArray();
 
-            UnitCount = ini.GetValue<MinMaxI>(section, "Unit.Count");
+            UnitCount = ini.GetValue<MinMaxI>(section, $"{key}.Unit.Count");
+            SpawnPointTypes = ini.GetValueArray<TheaterLocationSpawnPointType>("Node", $"{key}.SpawnPointTypes").Distinct().ToArray();
+            if (SpawnPointTypes.Length == 0) SpawnPointTypes = (TheaterLocationSpawnPointType[])Enum.GetValues(typeof(TheaterLocationSpawnPointType));
 
-            Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>(section, "Flags").Distinct().ToArray();
-            CustomValues = ini.GetValueArray<string>(section, "CustomValues");
+            Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>(section, $"{key}.Flags").Distinct().ToArray();
+            CustomValues = ini.GetValueArray<string>(section, $"{key}.CustomValues");
         }
     }
 }

@@ -22,11 +22,10 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     public sealed class DefinitionUnit : Definition
     {
@@ -63,7 +62,7 @@ namespace Headquarters4DCS.Library
         /// <summary>
         /// The public ID of this unit in DCS World.
         /// </summary>
-        //public string DCSID { get; private set; } = "";
+        public string DCSID { get; private set; } = "";
 
         /// <summary>
         /// The category this unit belongs to (vehicle, helicopter, plane, static or ship). Not loaded from the file but generated from Families.
@@ -176,8 +175,11 @@ namespace Headquarters4DCS.Library
                 // --------------
                 // [Unit] section
                 // --------------
-                ID = ini.GetValue<string>("Unit", "DCSID");
+                ID = ini.GetValue<string>("Unit", "ID");
                 if (string.IsNullOrEmpty(ID)) return false;
+
+                DCSID = ini.GetValue<string>("Unit", "DCSID");
+                if (string.IsNullOrEmpty(DCSID)) DCSID = ID;
 
                 Families = ini.GetValueArray<UnitFamily>("Unit", "Families"); if (Families.Length == 0) return false;
 

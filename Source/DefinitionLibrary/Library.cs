@@ -22,28 +22,32 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Template;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
     /// Stores all definitions and settings from the .ini files in the Library subdirectory.
     /// </summary>
-    public sealed class HQLibrary : IDisposable
+    public sealed class Library : IDisposable
     {
+        /// <summary>
+        /// Default language
+        /// </summary>
+        public const string DEFAULT_LANGUAGE = "English";
+
         /// <summary>
         /// HQLibrary singleton.
         /// </summary>
-        public static HQLibrary Instance
+        public static Library Instance
         {
             get
             {
-                if (_Instance == null) _Instance = new HQLibrary();
+                if (_Instance == null) _Instance = new Library();
                 return _Instance;
             }
         }
@@ -51,7 +55,12 @@ namespace Headquarters4DCS.Library
         /// <summary>
         /// HQLibrary private singleton object.
         /// </summary>
-        private static HQLibrary _Instance = null;
+        private static Library _Instance = null;
+
+        /// <summary>
+        /// Common HQ4DCS settings (default units types, etc.) loaded from Library/Settings.ini.
+        /// </summary>
+        public LibraryCommonSettings Common { get; private set; }
 
         /// <summary>
         /// Definitions are stored by type in a dictionary of dictionaries.
@@ -61,7 +70,7 @@ namespace Headquarters4DCS.Library
         /// <summary>
         /// Constructor.
         /// </summary>
-        public HQLibrary() { }
+        public Library() { }
 
         /// <summary>
         /// Loads all values from the .ini files.
@@ -73,35 +82,41 @@ namespace Headquarters4DCS.Library
 
             try
             {
-                HQDebugLog.Instance.Clear();
-                HQDebugLog.Instance.Log("Loading HQ4DCS library...");
-                HQDebugLog.Instance.Log();
+                DebugLog.Instance.Clear();
+                DebugLog.Instance.Log("Loading HQ4DCS library...");
+                DebugLog.Instance.Log();
+
+                Common = new LibraryCommonSettings();
 
                 // Load definitions
                 LoadDefinitions<DefinitionCoalition>("Coalitions", false);
-                LoadDefinitions<DefinitionLanguage>("Languages", false); // TODO: load from directory
-                LoadDefinitions<DefinitionNodeFeature>("NodeFeatures", false);
-                LoadDefinitions<DefinitionObjective>("Objectives", false);
+                LoadDefinitions<DefinitionLanguage>("Languages", true);
+                LoadDefinitions<DefinitionFeature>("Features", false);
+                //LoadDefinitions<DefinitionObjective>("Objectives", false);
                 LoadDefinitions<DefinitionTheater>("Theaters", true);
                 LoadDefinitions<DefinitionUnit>("Units", false);
 
                 // Check default values are present
-                CheckDefaultValuesExist<DefinitionLanguage>(HQTemplate.DEFAULT_LANGUAGE);
-                CheckDefaultValuesExist<DefinitionCoalition>(HQTemplate.DEFAULT_BLUE_COALITION);
-                CheckDefaultValuesExist<DefinitionCoalition>(HQTemplate.DEFAULT_RED_COALITION);
-                CheckDefaultValuesExist<DefinitionUnit>(HQTemplate.DEFAULT_AIRCRAFT);
-                if (!GetDefinition<DefinitionUnit>(HQTemplate.DEFAULT_AIRCRAFT).AircraftPlayerControllable) throw new Exception("Default player aircraft is not player-controllable.");
+                CheckDefaultValuesExist<DefinitionLanguage>(Common.DefaultLanguage);
+                CheckDefaultValuesExist<DefinitionCoalition>(Common.DefaultCoalitionBlue);
+                CheckDefaultValuesExist<DefinitionCoalition>(Common.DefaultCoalitionRed);
+                CheckDefaultValuesExist<DefinitionUnit>(Common.DefaultPlayerAircraft);
+                if (!GetDefinition<DefinitionUnit>(Common.DefaultPlayerAircraft).AircraftPlayerControllable) throw new HQ4DCSException("Default player aircraft is not player-controllable.");
 
-                HQDebugLog.Instance.Log();
-                HQDebugLog.Instance.Log("Library .ini files loaded successfully.");
+                DebugLog.Instance.Log();
+                DebugLog.Instance.Log("Library .ini files loaded successfully.");
             }
+#if DEBUG
+            catch (HQ4DCSException e)
+#else
             catch (Exception e)
+#endif
             {
                 MessageBox.Show($"{e.Message}\r\n\r\nHQ4DCS will now terminate.", "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 loadedSuccessfully = false;
             }
 
-            HQDebugLog.Instance.SaveToFileAndClear("Startup");
+            DebugLog.Instance.SaveToFileAndClear("Startup");
             return loadedSuccessfully;
         }
 
@@ -113,7 +128,7 @@ namespace Headquarters4DCS.Library
         private void CheckDefaultValuesExist<T>(string definitionID) where T : Definition
         {
             if (!DefinitionExists<T>(definitionID))
-                throw new Exception($"Default {typeof(T).Name} ({definitionID}) not found in library.");
+                throw new HQ4DCSException($"Default {typeof(T).Name} ({definitionID}) not found in library.");
         }
 
         /// <summary>
@@ -149,6 +164,12 @@ namespace Headquarters4DCS.Library
             return (T)Definitions[typeof(T)][id];
         }
 
+        // TODO: description
+        public T[] GetMultipleDefinitions<T>(params string[] ids) where T : Definition
+        {
+            return (from T definition in Definitions[typeof(T)] where ids.Contains(definition.ID) select definition).ToArray();
+        }
+
         /// <summary>
         /// Does a definition exist?
         /// </summary>
@@ -157,7 +178,6 @@ namespace Headquarters4DCS.Library
         /// <returns>True if the definition exist, false if it doesn't.</returns>
         public bool DefinitionExists<T>(string id) where T : Definition
         { return Definitions[typeof(T)].ContainsKey(id); }
-
 
         /// <summary>
         /// Creates and populate a definition dictionary.
@@ -176,7 +196,7 @@ namespace Headquarters4DCS.Library
                     T def = new T();
                     if (!def.Load(Path.GetFileName(d), HQTools.NormalizeDirectoryPath(d))) continue;
 
-                    // ID is null/empty or already exists - must be after def.Load because some definition override the default ID
+                    // ID is null/empty or already exists - must be after def.Load because some definitions override the default ID
                     if (string.IsNullOrEmpty(def.ID) || dictionary.ContainsKey(def.ID)) continue;
                     dictionary.Add(def.ID, def);
                 }
@@ -188,7 +208,7 @@ namespace Headquarters4DCS.Library
                     T def = new T();
                     if (!def.Load(Path.GetFileNameWithoutExtension(f), f)) continue;
 
-                    // ID is null/empty or already exists - must be after def.Load because some definition override the default ID
+                    // ID is null/empty or already exists - must be after def.Load because some definitions override the default ID
                     if (string.IsNullOrEmpty(def.ID) || dictionary.ContainsKey(def.ID)) continue;
                     dictionary.Add(def.ID, def);
                 }
@@ -196,26 +216,7 @@ namespace Headquarters4DCS.Library
 
             Definitions.Add(typeof(T), dictionary);
 
-            HQDebugLog.Instance.Log($"Loaded {dictionary.Keys.Count} {typeof(T).Name.Replace("Definition", "").ToUpperInvariant()} definition(s): {string.Join(", ", dictionary.Keys)}");
-        }
-
-        /// <summary>
-        /// Returns the name of the Library subdirectory where .ini files for this definition are stored.
-        /// Has to be static, because it's used by INIFileListTypeConverter to get a list of available .ini files.
-        /// </summary>
-        /// <typeparam name="T">The type of definition.</typeparam>
-        /// <returns>The name of the directory.</returns>
-        public static string GetDirectoryFromType<T>() where T : Definition
-        {
-            Type type = typeof(T);
-
-            if (type == typeof(DefinitionCoalition)) return "Coalitions";
-            if (type == typeof(DefinitionNodeFeature)) return "Features";
-            if (type == typeof(DefinitionLanguage)) return "Languages";
-            if (type == typeof(DefinitionTheater)) return "Theaters";
-            if (type == typeof(DefinitionUnit)) return "Units";
-
-            return type.Name;
+            DebugLog.Instance.Log($"Loaded {dictionary.Keys.Count} {typeof(T).Name.Replace("Definition", "").ToUpperInvariant()} definition(s): {string.Join(", ", dictionary.Keys)}");
         }
     }
 }

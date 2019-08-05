@@ -24,10 +24,10 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 
 using System;
 
-namespace Headquarters4DCS.Library
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
-    /// Abstract. Parent class for all HQ library definition classes. The Load() method loads data from an .ini file.
+    /// Abstract parent class for all HQ library definition classes. The Load() method loads data from an .ini file.
     /// </summary>
     public abstract class Definition : IDisposable
     {
@@ -59,9 +59,10 @@ namespace Headquarters4DCS.Library
         /// <returns>True is successful, false if an error happened.</returns>
         public bool Load(string id, string path)
         {
-            ID = id;
+            ID = id.Trim();
             bool result = OnLoad(path);
-            ID = string.IsNullOrEmpty(ID) ? "" : ID;
+            if (string.IsNullOrEmpty(ID)) ID = id.Trim();
+            if (ID.Contains(",")) return false; // Commas are not allowed as they're used as separators
             DisplayName = string.IsNullOrEmpty(DisplayName) ? ID : DisplayName;
             return result;
         }
