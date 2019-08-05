@@ -5,7 +5,6 @@
 *.exe.config
 *.pdb
 *.user
-*.wav
 *.xml
 
 [Ll]ogs/*.txt
