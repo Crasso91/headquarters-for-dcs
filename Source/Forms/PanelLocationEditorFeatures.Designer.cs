@@ -1,6 +1,6 @@
 ﻿namespace Headquarters4DCS.Forms
 {
-    partial class PanelNodeEditorFeatures
+    partial class PanelLocationEditorFeatures
     {
         /// <summary>
         /// Required designer variable.

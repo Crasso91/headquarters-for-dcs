@@ -1,4 +1,4 @@
-﻿using Headquarters4DCS.Library;
+﻿using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.Template;
 using System;
 using System.Drawing;
@@ -10,9 +10,11 @@ namespace Headquarters4DCS.Forms
     {
         private readonly FormMain MainForm = null;
         private MissionTemplate Template { get { return MainForm.Template; } }
-        private string SelectedNodeID { get { return MainForm.SelectedNodeID; } }
+        private string SelectedNodeID { get { return MainForm.SelectedLocationID; } }
 
-        private DefinitionTheater Theater { get { return HQLibrary.Instance.GetDefinition<DefinitionTheater>(Template.Theater); } }
+        private DefinitionTheater Theater { get { return Library.Instance.GetDefinition<DefinitionTheater>(Template.Theater); } }
+
+        private bool DisableAutoSelect = false;
 
         public PanelMainFormSidePanel(FormMain mainForm)
         {
@@ -25,11 +27,13 @@ namespace Headquarters4DCS.Forms
         private void FormLoad(object sender, EventArgs e)
         {
             TemplateSettingsPropertyGrid.SelectedObject = Template.Settings;
-            //TemplateSettingsPropertyGrid.Font = new Font(TemplateSettingsPropertyGrid.Font.FontFamily, TemplateSettingsPropertyGrid.Font.Size * 1.25f);
 
             SidePanelimageList.Images.Add("airbase", GUITools.GetImageFromResource("MapIcons.airbase.png"));
             SidePanelimageList.Images.Add("airbase_blue", GUITools.GetImageFromResource("MapIcons.airbase_blue.png"));
             SidePanelimageList.Images.Add("airbase_red", GUITools.GetImageFromResource("MapIcons.airbase_red.png"));
+            SidePanelimageList.Images.Add("location", GUITools.GetImageFromResource("MapIcons.location.png"));
+
+            RefreshTheaterValues();
         }
 
         public void UpdateTheater(bool fullUpdate)
@@ -38,7 +42,7 @@ namespace Headquarters4DCS.Forms
             DefinitionTheater theater = Theater;
             if (theater == null) return;
 
-            foreach (DefinitionTheaterNode n in theater.Nodes.Values)
+            foreach (DefinitionTheaterLocation n in theater.Locations.Values)
                 NodesTreeView.Nodes.Add(n.ID, n.DisplayName);
 
             NodesTreeView.Sort();
@@ -53,32 +57,28 @@ namespace Headquarters4DCS.Forms
 
             foreach (TreeNode n in NodesTreeView.Nodes)
             {
-                if (!Template.Nodes.ContainsKey(n.Name)) continue;
+                if (!Template.Locations.ContainsKey(n.Name)) continue;
 
                 if (n.NodeFont != null) { n.NodeFont.Dispose(); n.NodeFont = null; }
-                n.NodeFont = new Font(NodesTreeView.Font, Template.Nodes[n.Name].InUse ? FontStyle.Bold : FontStyle.Regular);
+                n.NodeFont = new Font(NodesTreeView.Font, Template.Locations[n.Name].InUse ? FontStyle.Bold : FontStyle.Regular);
 
-                if (Template.Nodes[n.Name] is MissionTemplateNodeAirbase airbaseNode)
+                switch (Template.Locations[n.Name].Definition.LocationType)
                 {
-                    switch (airbaseNode.Coalition)
-                    {
-                        default: n.ImageKey = "airbase"; break;
-                        case CoalitionNeutral.Blue: n.ImageKey = "airbase_blue"; break;
-                        case CoalitionNeutral.Red: n.ImageKey = "airbase_red"; break;
-                    }
+                    case TheaterLocationType.Airbase:
+                        switch (Template.Locations[n.Name].Coalition)
+                        {
+                            default: n.ImageKey = "airbase"; break;
+                            case CoalitionNeutral.Blue: n.ImageKey = "airbase_blue"; break;
+                            case CoalitionNeutral.Red: n.ImageKey = "airbase_red"; break;
+                        }
+                        break;
+                    default:
+                        n.ImageKey = "location";
+                        break;
                 }
 
                 n.SelectedImageKey = n.ImageKey;
             }
-        }
-
-        public void UpdateLanguage()
-        {
-            SettingsTabPage.Text = GUITools.Language.GetString("UserInterface", "Misc.MissionSettings");
-            NodesTabPage.Text = GUITools.Language.GetString("UserInterface", "Misc.Nodes");
-            TemplateSettingsPropertyGrid.SelectedObject = Template.Settings;
-            RefreshTheaterValues();
-            NodesTreeView.Sort();
         }
 
         private void NodesTreeViewNodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -89,16 +89,14 @@ namespace Headquarters4DCS.Forms
         private void NodesTreeViewNodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node == null) return;
-            if (!Template.Nodes.ContainsKey(e.Node.Name)) return;
+            if (!Template.Locations.ContainsKey(e.Node.Name)) return;
             NodesTreeView.SelectedNode = e.Node;
 
-            using (FormNodeEditor nodeEditorForm = new FormNodeEditor(Template.Nodes[e.Node.Name]))
+            using (FormLocationEditor nodeEditorForm = new FormLocationEditor(Template.Locations[e.Node.Name]))
             {
                 if (nodeEditorForm.ShowDialog() == DialogResult.OK)
                 {
-                    Template.Nodes[e.Node.Name] = nodeEditorForm.EditedNode;
-                    //UpdateMap();
-                    //UpdateStatusBar();
+                    Template.Locations[e.Node.Name] = nodeEditorForm.EditedLocation;
                     RefreshTheaterValues();
                 }
             }
@@ -106,22 +104,36 @@ namespace Headquarters4DCS.Forms
 
         public void SidePanelMouseEnter(object sender, EventArgs e)
         {
-            MainForm.SetStatusBarMessage(MainTabControl.SelectedTab.Text);
+            if (MainTabControl.SelectedTab == MissionTabPage)
+                MainForm.SetStatusBarMessage("This panel allows you to change global mission settings.");
+            else if (MainTabControl.SelectedTab == LocationsTabPage)
+                MainForm.SetStatusBarMessage("Left-click a location to select it. Double-click or right-click a location to edit it.");
+            else
+                MainForm.SetStatusBarMessage("");
         }
 
-        public void UpdateSelectedNode()
+        public void UpdateSelectedLocation()
         {
-            if (MainForm.SelectedNodeID == null)
-            {
+            DisableAutoSelect = true;
+            if (MainForm.SelectedLocationID == null)
                 NodesTreeView.SelectedNode = null;
-                return;
+            else if (NodesTreeView.Nodes.ContainsKey(MainForm.SelectedLocationID))
+            {
+                NodesTreeView.SelectedNode = NodesTreeView.Nodes[MainForm.SelectedLocationID];
+                NodesTreeView.Nodes[MainForm.SelectedLocationID].EnsureVisible();
+                MainTabControl.SelectedTab = LocationsTabPage;
             }
+            DisableAutoSelect = false;
+        }
 
-            if (!NodesTreeView.Nodes.ContainsKey(MainForm.SelectedNodeID)) return;
+        private void NodesTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (DisableAutoSelect) return;
 
-            NodesTreeView.SelectedNode = NodesTreeView.Nodes[MainForm.SelectedNodeID];
-            NodesTreeView.Nodes[MainForm.SelectedNodeID].EnsureVisible();
-            MainTabControl.SelectedTab = NodesTabPage;
+            if (e.Node == null)
+                MainForm.UpdateSelectedLocation(null);
+            else
+                MainForm.UpdateSelectedLocation(e.Node.Name);
         }
     }
 }

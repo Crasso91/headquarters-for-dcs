@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -35,11 +35,6 @@ namespace Headquarters4DCS.Forms
     /// </summary>
     public static class GUITools
     {
-        /// <summary>
-        /// The language definition to use in the forms. Ugly, but has to be static so type converters can use it.
-        /// </summary>
-        public static DefinitionLanguage Language = null;
-
         /// <summary>
         /// "Shortcut" method to set all parameters of an OpenFileDialog and display it.
         /// </summary>

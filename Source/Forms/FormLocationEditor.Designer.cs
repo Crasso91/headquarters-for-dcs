@@ -1,6 +1,6 @@
 ﻿namespace Headquarters4DCS.Forms
 {
-    partial class FormNodeEditor
+    partial class FormLocationEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -86,7 +86,7 @@
             this.MainTabControl.Size = new System.Drawing.Size(618, 395);
             this.MainTabControl.TabIndex = 6;
             // 
-            // FormNodeEditor
+            // FormLocationEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -95,10 +95,9 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(512, 384);
-            this.Name = "FormNodeEditor";
+            this.Name = "FormLocationEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Node editor";
-            this.Load += new System.EventHandler(this.FormNodeEditor_Load);
+            this.Text = "Location Editor";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormNodeEditor_KeyDown);
             this.MainTableLayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);

@@ -55,6 +55,7 @@
             this.MapImageBox.TabIndex = 5;
             this.MapImageBox.ZoomIncrement = 15;
             this.MapImageBox.ZoomOnClick = false;
+            this.MapImageBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MapImageBoxMouseDoubleClick);
             this.MapImageBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapImageBoxMouseDown);
             this.MapImageBox.MouseEnter += new System.EventHandler(this.MapImageBoxMouseEnter);
             this.MapImageBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MapImageBoxMouseUp);

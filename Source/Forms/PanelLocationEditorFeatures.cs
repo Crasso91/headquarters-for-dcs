@@ -1,4 +1,4 @@
-﻿using Headquarters4DCS.Library;
+﻿using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.Template;
 using System;
 using System.Linq;
@@ -6,16 +6,16 @@ using System.Windows.Forms;
 
 namespace Headquarters4DCS.Forms
 {
-    public partial class PanelNodeEditorFeatures : Form
+    public partial class PanelLocationEditorFeatures : Form
     {
         public string[] SelectedFeatures
         {
             get { return (from TreeNode n in SelectedFeaturesTreeView.Nodes select n.Tag.ToString()).ToArray(); }
         }
 
-        private readonly MissionTemplateNode EditedNode;
+        private readonly MissionTemplateLocation EditedNode;
 
-        public PanelNodeEditorFeatures(MissionTemplateNode editedNode)
+        public PanelLocationEditorFeatures(MissionTemplateLocation editedNode)
         {
             InitializeComponent();
             EditedNode = editedNode;
@@ -26,17 +26,17 @@ namespace Headquarters4DCS.Forms
             AvailableFeaturesTreeView.Nodes.Clear();
 
             DefinitionFeature[] validNodes =
-                (from DefinitionFeature n in HQLibrary.Instance.GetAllDefinitions<DefinitionFeature>()
-                 where n.ValidNodeTypes.Contains(EditedNode.Definition.NodeType) select n).ToArray();
+                (from DefinitionFeature n in Library.Instance.GetAllDefinitions<DefinitionFeature>()
+                 where n.FeatureLocationTypes.Contains(EditedNode.Definition.LocationType) select n).ToArray();
 
             foreach (DefinitionFeature feature in validNodes)
             {
-                string categoryKey = feature.Category.ToString();
+                string categoryKey = feature.FeatureCategory.ToString();
 
                 if (!AvailableFeaturesTreeView.Nodes.ContainsKey(categoryKey))
                     AvailableFeaturesTreeView.Nodes.Add(categoryKey, categoryKey);
 
-                TreeNode node = new TreeNode(feature.Category.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.Description };
+                TreeNode node = new TreeNode(feature.FeatureCategory.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
                 AvailableFeaturesTreeView.Nodes[categoryKey].Nodes.Add(node);
             }
             AvailableFeaturesTreeView.Sort();
@@ -44,11 +44,11 @@ namespace Headquarters4DCS.Forms
             SelectedFeaturesTreeView.Nodes.Clear();
             foreach (string s in EditedNode.Features)
             {
-                DefinitionFeature feature = HQLibrary.Instance.GetDefinition<DefinitionFeature>(s);
+                DefinitionFeature feature = Library.Instance.GetDefinition<DefinitionFeature>(s);
                 if (feature == null) continue;
-                if (!feature.ValidNodeTypes.Contains(EditedNode.Definition.NodeType)) continue;
+                if (!feature.FeatureLocationTypes.Contains(EditedNode.Definition.LocationType)) continue;
 
-                TreeNode node = new TreeNode(feature.Category.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.Description };
+                TreeNode node = new TreeNode(feature.FeatureCategory.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
                 SelectedFeaturesTreeView.Nodes.Add(node);
             }
             SelectedFeaturesTreeView.Sort();

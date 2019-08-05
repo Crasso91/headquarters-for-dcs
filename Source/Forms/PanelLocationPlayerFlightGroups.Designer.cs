@@ -1,6 +1,6 @@
 ﻿namespace Headquarters4DCS.Forms
 {
-    partial class PanelNodePlayerFlightGroups
+    partial class PanelLocationPlayerFlightGroups
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelNodePlayerFlightGroups));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelLocationPlayerFlightGroups));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.AddGroupToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.RemoveGroupToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -55,22 +55,20 @@
             // 
             // AddGroupToolStripButton
             // 
-            this.AddGroupToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.AddGroupToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("AddGroupToolStripButton.Image")));
             this.AddGroupToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AddGroupToolStripButton.Name = "AddGroupToolStripButton";
-            this.AddGroupToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.AddGroupToolStripButton.Text = "toolStripButton1";
+            this.AddGroupToolStripButton.Size = new System.Drawing.Size(115, 22);
+            this.AddGroupToolStripButton.Text = "Add flight group";
             this.AddGroupToolStripButton.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
             // RemoveGroupToolStripButton
             // 
-            this.RemoveGroupToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.RemoveGroupToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("RemoveGroupToolStripButton.Image")));
             this.RemoveGroupToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RemoveGroupToolStripButton.Name = "RemoveGroupToolStripButton";
-            this.RemoveGroupToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.RemoveGroupToolStripButton.Text = "toolStripButton2";
+            this.RemoveGroupToolStripButton.Size = new System.Drawing.Size(136, 22);
+            this.RemoveGroupToolStripButton.Text = "Remove flight group";
             this.RemoveGroupToolStripButton.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
             // FlightGroupsDataGridView
@@ -93,7 +91,12 @@
             this.FlightGroupsDataGridView.Name = "FlightGroupsDataGridView";
             this.FlightGroupsDataGridView.RowHeadersVisible = false;
             this.FlightGroupsDataGridView.RowTemplate.Height = 24;
+            this.FlightGroupsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.FlightGroupsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.FlightGroupsDataGridView.ShowCellErrors = false;
+            this.FlightGroupsDataGridView.ShowCellToolTips = false;
+            this.FlightGroupsDataGridView.ShowEditingIcon = false;
+            this.FlightGroupsDataGridView.ShowRowErrors = false;
             this.FlightGroupsDataGridView.Size = new System.Drawing.Size(624, 416);
             this.FlightGroupsDataGridView.TabIndex = 5;
             // 
@@ -128,7 +131,7 @@
             this.DGVColumnStartLocation.HeaderText = "Start location";
             this.DGVColumnStartLocation.Name = "DGVColumnStartLocation";
             // 
-            // PanelNodePlayerFlightGroups
+            // PanelLocationPlayerFlightGroups
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -140,7 +143,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(512, 384);
-            this.Name = "PanelNodePlayerFlightGroups";
+            this.Name = "PanelLocationPlayerFlightGroups";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Player flight groups";
             this.Load += new System.EventHandler(this.FormPlayerFlightGroups_Load);

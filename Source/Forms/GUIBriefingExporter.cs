@@ -33,7 +33,7 @@ namespace Headquarters4DCS.Forms
     /// <summary>
     /// Exports an HTML mission briefing to various file formats.
     /// </summary>
-    public sealed class BriefingExporter : IDisposable
+    public sealed class GUIBriefingExporter : IDisposable
     {
         /// <summary>
         /// Minimum image height (in pixels).
@@ -58,7 +58,7 @@ namespace Headquarters4DCS.Forms
         /// <summary>
         /// Constructor.
         /// </summary>
-        public BriefingExporter() { }
+        public GUIBriefingExporter() { }
 
         /// <summary>
         /// IDisposable implementation.

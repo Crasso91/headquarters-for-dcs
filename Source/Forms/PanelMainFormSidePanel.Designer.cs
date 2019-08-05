@@ -30,20 +30,20 @@
         {
             this.components = new System.ComponentModel.Container();
             this.MainTabControl = new System.Windows.Forms.TabControl();
-            this.SettingsTabPage = new System.Windows.Forms.TabPage();
+            this.MissionTabPage = new System.Windows.Forms.TabPage();
             this.TemplateSettingsPropertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.NodesTabPage = new System.Windows.Forms.TabPage();
+            this.LocationsTabPage = new System.Windows.Forms.TabPage();
             this.NodesTreeView = new System.Windows.Forms.TreeView();
             this.SidePanelimageList = new System.Windows.Forms.ImageList(this.components);
             this.MainTabControl.SuspendLayout();
-            this.SettingsTabPage.SuspendLayout();
-            this.NodesTabPage.SuspendLayout();
+            this.MissionTabPage.SuspendLayout();
+            this.LocationsTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainTabControl
             // 
-            this.MainTabControl.Controls.Add(this.SettingsTabPage);
-            this.MainTabControl.Controls.Add(this.NodesTabPage);
+            this.MainTabControl.Controls.Add(this.MissionTabPage);
+            this.MainTabControl.Controls.Add(this.LocationsTabPage);
             this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTabControl.Location = new System.Drawing.Point(0, 0);
             this.MainTabControl.Name = "MainTabControl";
@@ -51,16 +51,16 @@
             this.MainTabControl.Size = new System.Drawing.Size(384, 561);
             this.MainTabControl.TabIndex = 1;
             // 
-            // SettingsTabPage
+            // MissionTabPage
             // 
-            this.SettingsTabPage.Controls.Add(this.TemplateSettingsPropertyGrid);
-            this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.SettingsTabPage.Name = "SettingsTabPage";
-            this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.SettingsTabPage.Size = new System.Drawing.Size(376, 535);
-            this.SettingsTabPage.TabIndex = 0;
-            this.SettingsTabPage.Text = "SettingsTabPage";
-            this.SettingsTabPage.UseVisualStyleBackColor = true;
+            this.MissionTabPage.Controls.Add(this.TemplateSettingsPropertyGrid);
+            this.MissionTabPage.Location = new System.Drawing.Point(4, 22);
+            this.MissionTabPage.Name = "MissionTabPage";
+            this.MissionTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.MissionTabPage.Size = new System.Drawing.Size(376, 535);
+            this.MissionTabPage.TabIndex = 0;
+            this.MissionTabPage.Text = "Mission";
+            this.MissionTabPage.UseVisualStyleBackColor = true;
             // 
             // TemplateSettingsPropertyGrid
             // 
@@ -70,16 +70,16 @@
             this.TemplateSettingsPropertyGrid.Size = new System.Drawing.Size(370, 529);
             this.TemplateSettingsPropertyGrid.TabIndex = 0;
             // 
-            // NodesTabPage
+            // LocationsTabPage
             // 
-            this.NodesTabPage.Controls.Add(this.NodesTreeView);
-            this.NodesTabPage.Location = new System.Drawing.Point(4, 22);
-            this.NodesTabPage.Name = "NodesTabPage";
-            this.NodesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.NodesTabPage.Size = new System.Drawing.Size(376, 535);
-            this.NodesTabPage.TabIndex = 1;
-            this.NodesTabPage.Text = "NodesTabPage";
-            this.NodesTabPage.UseVisualStyleBackColor = true;
+            this.LocationsTabPage.Controls.Add(this.NodesTreeView);
+            this.LocationsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.LocationsTabPage.Name = "LocationsTabPage";
+            this.LocationsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.LocationsTabPage.Size = new System.Drawing.Size(376, 535);
+            this.LocationsTabPage.TabIndex = 1;
+            this.LocationsTabPage.Text = "Locations";
+            this.LocationsTabPage.UseVisualStyleBackColor = true;
             // 
             // NodesTreeView
             // 
@@ -97,6 +97,7 @@
             this.NodesTreeView.ShowRootLines = false;
             this.NodesTreeView.Size = new System.Drawing.Size(370, 529);
             this.NodesTreeView.TabIndex = 1;
+            this.NodesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.NodesTreeView_AfterSelect);
             this.NodesTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.NodesTreeViewNodeMouseClick);
             this.NodesTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.NodesTreeViewNodeMouseDoubleClick);
             this.NodesTreeView.MouseEnter += new System.EventHandler(this.SidePanelMouseEnter);
@@ -114,12 +115,12 @@
             this.ClientSize = new System.Drawing.Size(384, 561);
             this.Controls.Add(this.MainTabControl);
             this.Name = "PanelMainFormSidePanel";
-            this.Text = "PanelMainFormSidePanel";
+            this.Text = "Side panel";
             this.Load += new System.EventHandler(this.FormLoad);
             this.MouseEnter += new System.EventHandler(this.SidePanelMouseEnter);
             this.MainTabControl.ResumeLayout(false);
-            this.SettingsTabPage.ResumeLayout(false);
-            this.NodesTabPage.ResumeLayout(false);
+            this.MissionTabPage.ResumeLayout(false);
+            this.LocationsTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -127,8 +128,8 @@
         #endregion
 
         private System.Windows.Forms.TabControl MainTabControl;
-        private System.Windows.Forms.TabPage SettingsTabPage;
-        private System.Windows.Forms.TabPage NodesTabPage;
+        private System.Windows.Forms.TabPage MissionTabPage;
+        private System.Windows.Forms.TabPage LocationsTabPage;
         private System.Windows.Forms.PropertyGrid TemplateSettingsPropertyGrid;
         private System.Windows.Forms.TreeView NodesTreeView;
         private System.Windows.Forms.ImageList SidePanelimageList;

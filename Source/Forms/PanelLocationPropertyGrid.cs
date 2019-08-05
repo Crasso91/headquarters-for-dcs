@@ -4,11 +4,11 @@ using System.Windows.Forms;
 
 namespace Headquarters4DCS.Forms
 {
-    public partial class PanelNodePropertyGrid : Form
+    public partial class PanelLocationPropertyGrid : Form
     {
-        private readonly MissionTemplateNode EditedNode = null;
+        private readonly MissionTemplateLocation EditedNode = null;
 
-        public PanelNodePropertyGrid(MissionTemplateNode editedNode)
+        public PanelLocationPropertyGrid(MissionTemplateLocation editedNode)
         {
             InitializeComponent();
             EditedNode = editedNode;

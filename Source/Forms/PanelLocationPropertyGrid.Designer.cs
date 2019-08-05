@@ -1,6 +1,6 @@
 ﻿namespace Headquarters4DCS.Forms
 {
-    partial class PanelNodePropertyGrid
+    partial class PanelLocationPropertyGrid
     {
         /// <summary>
         /// Required designer variable.

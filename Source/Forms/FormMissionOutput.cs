@@ -1,5 +1,5 @@
 ﻿using Headquarters4DCS.Generator;
-using Headquarters4DCS.Mission;
+using Headquarters4DCS.GeneratedMission;
 using Headquarters4DCS.MizExport;
 using Headquarters4DCS.Template;
 using System;
@@ -12,7 +12,7 @@ namespace Headquarters4DCS.Forms
         private readonly MissionGenerator MissGenerator;
         private readonly MissionTemplate Template;
 
-        private HQMission Mission = null;
+        private Mission Mission = null;
 
         public FormMissionOutput(MissionTemplate template)
         {
@@ -26,6 +26,7 @@ namespace Headquarters4DCS.Forms
         {
             GenerateToolStripButton.Image = GUITools.GetImageFromResource("Icons.refresh.png");
             ExportMizToolStripButton.Image = GUITools.GetImageFromResource("Icons.exportMIZ.png");
+            ExportBriefingToolStripDropDownButton.Image = GUITools.GetImageFromResource("Icons.exportBriefing.png");
             GenerateMission();
             if (Mission == null) Close();
         }
@@ -41,7 +42,10 @@ namespace Headquarters4DCS.Forms
                 string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
                 if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "NewMission";
 
-                string mizFilePath = GUITools.ShowSaveFileDialog("miz", HQTools.GetDCSMissionPath(), defaultFileName, "DCS World mission files");
+                string mizFilePath = GUITools.ShowSaveFileDialog(
+                    "miz", HQTools.GetDCSMissionPath(),
+                    defaultFileName, "DCS World mission files");
+
                 if (!string.IsNullOrEmpty(mizFilePath))
                 {
                     using (MizExporter mizExporters = new MizExporter())
@@ -51,9 +55,12 @@ namespace Headquarters4DCS.Forms
                     }
                 }
             }
-            else if (sender == ExportBriefingToHTMLToolStripMenuItem) ExportBriefing("html");
-            else if (sender == ExportBriefingToJPEGToolStripMenuItem) ExportBriefing("jpg");
-            else if (sender == ExportBriefingToPNGToolStripMenuItem) ExportBriefing("png");
+            else if (sender == ExportBriefingToHTMLToolStripMenuItem)
+                ExportBriefing("html");
+            else if (sender == ExportBriefingToJPGToolStripMenuItem)
+                ExportBriefing("jpg");
+            else if (sender == ExportBriefingToPNGToolStripMenuItem)
+                ExportBriefing("png");
         }
 
         private void ExportBriefing(string fileFormat)
@@ -63,13 +70,15 @@ namespace Headquarters4DCS.Forms
             string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
             if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "NewMission";
 
-            string briefingFilePath = GUITools.ShowSaveFileDialog(fileFormat, HQTools.GetDCSMissionPath(), defaultFileName, $"{fileFormat.ToUpperInvariant()} files");
+            string briefingFilePath = GUITools.ShowSaveFileDialog(
+                fileFormat, HQTools.GetDCSMissionPath(),
+                defaultFileName, $"{fileFormat.ToUpperInvariant()} files");
 
             if (briefingFilePath == null) return;
 
             bool result;
 
-            using (BriefingExporter briefingExporter = new BriefingExporter())
+            using (GUIBriefingExporter briefingExporter = new GUIBriefingExporter())
             {
                 switch (fileFormat)
                 {
