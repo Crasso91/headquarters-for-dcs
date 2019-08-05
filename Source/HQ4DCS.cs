@@ -49,11 +49,11 @@ namespace Headquarters4DCS
             GC.WaitForPendingFinalizers();
             GC.Collect();
         }
-        
+
         /// <summary>
         /// A string represenation of HQ4DCS's current version.
         /// </summary>
-        public static string HQ4DCS_VERSION_STRING { get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
+        public static string HQ4DCS_VERSION_STRING = "Open Beta 2 PROTOTYPE";
 
         /// <summary>
         /// Targeted DCS World version. Only for information purposes, generated missions should work with other versions.
