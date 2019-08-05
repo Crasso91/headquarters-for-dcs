@@ -34,8 +34,8 @@ namespace Headquarters4DCS
         AirbaseLarge,
 
         LandSmall,
-        LandMedium,
         LandLarge,
+        LandLargeBuildable,
         LandRoad,
         LandMapObject,
 
