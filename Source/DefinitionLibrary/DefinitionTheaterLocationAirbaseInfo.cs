@@ -42,12 +42,12 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// ILS frequency (null or empty if none).
         /// </summary>
-        public readonly string ILS;
+        public readonly string[] ILS;
 
         /// <summary>
         /// TACAN frequency (null or empty if none).
         /// </summary>
-        public readonly string TACAN;
+        public readonly string[] TACAN;
 
         /// <summary>
         /// Internal ID of this airdrome in DCS World.
@@ -77,12 +77,12 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             ATC = ini.GetValueArray<float>("Airbase", "ATC");
             ID = ini.GetValue<int>("Airbase", "ID");
-            ILS = ini.GetValue<string>("Airbase", "ILS");
+            ILS = ini.GetValueArray<string>("Airbase", "ILS");
             IsMilitary = ini.GetValue<bool>("Airbase", "Military");
             Name = ini.GetValue<string>("Airbase", "Name");
             ParkingSpots = ini.GetValue<int>("Airbase", "ParkingSpots");
             Runways = ini.GetValueArray<int>("Airbase", "Runways");
-            TACAN = ini.GetValue<string>("Airbase", "TACAN");
+            TACAN = ini.GetValueArray<string>("Airbase", "TACAN");
         }
     }
 }

@@ -87,14 +87,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// All airdromes in this theater.
         /// </summary>
-        public Dictionary<string, DefinitionTheaterLocation> Nodes { get; private set; }
-
-        /// <summary>
-        /// Nodes (points where to spawn units) for this theater.
-        /// </summary>
-        //public DefinitionTheaterNode[] Nodes { get; private set; }
-
-        private List<int> ExcludedNodeIDs = new List<int>();
+        public Dictionary<string, DefinitionTheaterLocation> Locations { get; private set; }
 
         /// <summary>
         /// Loads data required by this definition.
@@ -105,11 +98,14 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             int i;
 
+            // No common settings? No map? No theater.
+            if (!File.Exists(path + "CommonSettings.ini") || !File.Exists(path + "GUIMap.jpg"))
+                return false;
+
+            // Load common settings
+            // --------------------
             using (INIFile ini = new INIFile(path + "CommonSettings.ini"))
             {
-                if (!File.Exists(path + "Map.jpg")) return false;
-
-                // -----------------
                 // [Theater] section
                 // -----------------
                 DCSID = ini.GetValue<string>("Theater", "DCSID");
@@ -120,55 +116,42 @@ namespace Headquarters4DCS.DefinitionLibrary
                 RequiredModules = ini.GetValueArray<string>("Theater", "RequiredModules");
                 MagneticDeclination = ini.GetValue<float>("Theater", "MagneticDeclination");
 
-                // -----------------
                 // [Daytime] section
                 // -----------------
                 DayTime = new MinMaxI[12];
                 for (i = 0; i < 12; i++)
                     DayTime[i] = ini.GetValue<MinMaxI>("Daytime", ((Month)i).ToString());
 
-                // ---------------------
                 // [Temperature] section
                 // ---------------------
                 Temperature = new MinMaxI[12];
                 for (i = 0; i < 12; i++)
                     Temperature[i] = ini.GetValue<MinMaxI>("Temperature", ((Month)i).ToString());
 
-                // -----------------
                 // [Weather] section
                 // -----------------
                 Weather = new DefinitionTheaterWeather[HQTools.EnumCount<Weather>() - 1]; // -1 because we don't want "Random"
                 for (i = 0; i < Weather.Length; i++)
                     Weather[i] = new DefinitionTheaterWeather(ini, ((Weather)i).ToString());
 
-                // --------------
                 // [Wind] section
                 // --------------
                 Wind = new DefinitionTheaterWind[HQTools.EnumCount<Wind>() - 1]; // -1 because we don't want "Auto"
                 for (i = 0; i < Wind.Length; i++)
                     Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
+            }
 
-                // ------------------
-                // [Airbases] section
-                // ------------------
-                Nodes = new Dictionary<string, DefinitionTheaterLocation>(StringComparer.InvariantCultureIgnoreCase);
-                foreach (string f in Directory.GetFiles(path, "Node_*.ini"))
-                {
-                    string k = DefinitionTheaterLocation.GetNodeIDFromINIFileName(f);
-                    if (string.IsNullOrEmpty(k) || Nodes.ContainsKey(k)) continue;
-                    Nodes.Add(k, new DefinitionTheaterLocation(f));
-                }
+            // Location files
+            // ------------------
+            Locations = new Dictionary<string, DefinitionTheaterLocation>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (string f in Directory.GetFiles(path, "Location_*.ini"))
+            {
+                string k = DefinitionTheaterLocation.GetLocationIDFromINIFileName(f);
+                if (string.IsNullOrEmpty(k) || Locations.ContainsKey(k)) continue;
+                Locations.Add(k, new DefinitionTheaterLocation(f));
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Clears the list of already used nodes.
-        /// </summary>
-        public void ClearExcludedNodes()
-        {
-            ExcludedNodeIDs.Clear();
         }
     }
 }
