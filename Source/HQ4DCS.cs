@@ -23,7 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.Forms;
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using System;
 using System.Reflection;
 using System.Windows.Forms;
@@ -70,16 +70,8 @@ namespace Headquarters4DCS
         /// </summary>
         public HQ4DCS()
         {
-            // Load library from INI files
-            //Library = new HQLibrary();
-            if (!HQLibrary.Instance.LoadAll()) return; // If failed to load library, abort and exit.
-
-            // Create the mission template
-            //Template = new MissionTemplate(Library);
-
-            // Show the main form
-            Form = new FormMain(this);
-            Application.Run(Form);
+            if (!Library.Instance.LoadAll()) return; // If failed to load the definitions library, abort and exit.
+            using (Form = new FormMain()) { Application.Run(Form); } // Show the main form
         }
 
         /// <summary>
@@ -87,7 +79,7 @@ namespace Headquarters4DCS
         /// </summary>
         public void Dispose()
         {
-            if (HQLibrary.Instance != null) HQLibrary.Instance.Dispose();
+            if (Library.Instance != null) Library.Instance.Dispose();
         }
     }
 }

@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>0.2.0.0</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -63,50 +63,68 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>Packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="OggVorbisEncoder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\OggVorbisEncoder.1.1.0\lib\netstandard1.1\OggVorbisEncoder.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Coordinates.cs" />
-    <Compile Include="Core\HQDebugLog.cs" />
+    <Compile Include="Core\HQ4DCSException.cs" />
+    <Compile Include="Core\DebugLog.cs" />
     <Compile Include="Core\HQTools.cs" />
     <Compile Include="Core\INIFile.cs" />
     <Compile Include="Core\INIFileValue.cs" />
     <Compile Include="Core\MinMaxD.cs" />
     <Compile Include="Core\MinMaxI.cs" />
+    <Compile Include="DevTools\TTSAMRadioFilter.cs" />
+    <Compile Include="DevTools\FormMizToINI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevTools\FormMizToINI.designer.cs">
+      <DependentUpon>FormMizToINI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DevTools\FormRadioMessageGenerator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevTools\FormRadioMessageGenerator.designer.cs">
+      <DependentUpon>FormRadioMessageGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DevTools\TTSRadioMessageGenerator.cs" />
+    <Compile Include="DevTools\TTSWavToOgg.cs" />
     <Compile Include="Enums\AircraftPayloadType.cs" />
-    <Compile Include="Enums\AirDefenseRange.cs" />
-    <Compile Include="Enums\AmountN.cs" />
     <Compile Include="Enums\AmountNR.cs" />
-    <Compile Include="Enums\AmountR.cs" />
     <Compile Include="Enums\CallsignFamily.cs" />
     <Compile Include="Enums\CarrierGroupShipType.cs" />
+    <Compile Include="Enums\CoalitionNeutral.cs" />
     <Compile Include="Enums\Coalition.cs" />
     <Compile Include="Enums\Country.cs" />
+    <Compile Include="Enums\FeatureFlag.cs" />
     <Compile Include="Enums\PlayerFlightGroupTask.cs" />
     <Compile Include="Enums\DCSAircraftTask.cs" />
     <Compile Include="Enums\DCSOption.cs" />
     <Compile Include="Enums\DCSSkillLevel.cs" />
     <Compile Include="Enums\Gender.cs" />
     <Compile Include="Enums\HQSkillLevel.cs" />
-    <Compile Include="Enums\MissionFeatureType.cs" />
-    <Compile Include="Enums\MissionObjectiveFlags.cs" />
+    <Compile Include="Enums\FeatureCategory.cs" />
     <Compile Include="Enums\MissionObjectiveUnitGroupFlags.cs" />
     <Compile Include="Enums\MissionScriptScope.cs" />
-    <Compile Include="Enums\MissionTimeLimit.cs" />
     <Compile Include="Enums\Month.cs" />
     <Compile Include="Enums\PlayerFlightGroupStartLocation.cs" />
     <Compile Include="Enums\Precipitation.cs" />
     <Compile Include="Enums\Season.cs" />
-    <Compile Include="Enums\SpeedAndDistanceUnit.cs" />
-    <Compile Include="Enums\TerritorySide.cs" />
-    <Compile Include="Enums\NodeSpawnPointType.cs" />
-    <Compile Include="Enums\TheaterNodeType.cs" />
+    <Compile Include="Enums\UnitSystem.cs" />
+    <Compile Include="Enums\TheaterLocationSpawnPointType.cs" />
+    <Compile Include="Enums\TheaterLocationType.cs" />
     <Compile Include="Enums\TimeOfDay.cs" />
     <Compile Include="Enums\TimePeriod.cs" />
     <Compile Include="Enums\UnitCategory.cs" />
@@ -115,6 +133,7 @@
     <Compile Include="Enums\UnitGroupFormation.cs" />
     <Compile Include="Enums\Weather.cs" />
     <Compile Include="Enums\Wind.cs" />
+    <Compile Include="Forms\GUIBriefingExporter.cs" />
     <Compile Include="Forms\FormMissionOutput.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,62 +146,131 @@
     <Compile Include="Forms\FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormMapDrawer.cs" />
-    <Compile Include="Forms\FormPlayerFlightGroups.cs">
+    <Compile Include="Forms\FormLocationEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormPlayerFlightGroups.Designer.cs">
-      <DependentUpon>FormPlayerFlightGroups.cs</DependentUpon>
+    <Compile Include="Forms\FormLocationEditor.Designer.cs">
+      <DependentUpon>FormLocationEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UIEditorFormNodeFeatures.cs">
+    <Compile Include="Forms\PanelMainFormMap.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UIEditorFormNodeFeatures.Designer.cs">
-      <DependentUpon>UIEditorFormNodeFeatures.cs</DependentUpon>
+    <Compile Include="Forms\PanelMainFormMap.Designer.cs">
+      <DependentUpon>PanelMainFormMap.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UITools.cs" />
+    <Compile Include="Forms\PanelMainFormSidePanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanelMainFormSidePanel.Designer.cs">
+      <DependentUpon>PanelMainFormSidePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Imported\Cyotek.Windows.Forms\ImageBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Imported\Cyotek.Windows.Forms\ImageBox.designer.cs">
+      <DependentUpon>ImageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxGridDisplayMode.cs" />
+    <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxGridScale.cs" />
+    <Compile Include="Forms\PanelLocationPlayerFlightGroups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanelLocationPlayerFlightGroups.Designer.cs">
+      <DependentUpon>PanelLocationPlayerFlightGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PanelLocationEditorFeatures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanelLocationEditorFeatures.Designer.cs">
+      <DependentUpon>PanelLocationEditorFeatures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GUITools.cs" />
+    <Compile Include="Forms\PanelLocationPropertyGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PanelLocationPropertyGrid.Designer.cs">
+      <DependentUpon>PanelLocationPropertyGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="HQ4DCS.cs" />
-    <Compile Include="Library\Definition.cs" />
-    <Compile Include="Library\DefinitionCoalition.cs" />
-    <Compile Include="Library\DefinitionLanguage.cs" />
-    <Compile Include="Library\DefinitionNodeFeature.cs" />
-    <Compile Include="Library\DefinitionObjective.cs" />
-    <Compile Include="Library\DefinitionObjectiveUnitGroup.cs" />
-    <Compile Include="Library\DefinitionTheater.cs" />
-    <Compile Include="Library\DefinitionTheaterNodeAirbase.cs" />
-    <Compile Include="Library\DefinitionTheaterNode.cs" />
-    <Compile Include="Library\DefinitionTheaterNodeCarrierGroup.cs" />
-    <Compile Include="Library\DefinitionTheaterNodeRegion.cs" />
-    <Compile Include="Library\DefinitionTheaterWeather.cs" />
-    <Compile Include="Library\DefinitionTheaterWind.cs" />
-    <Compile Include="Library\DefinitionUnit.cs" />
-    <Compile Include="Library\HQLibrary.cs" />
-    <Compile Include="Library\NodeSpawnPoint.cs" />
-    <Compile Include="Template\HQTemplateNode.cs" />
-    <Compile Include="Template\HQTemplateNodeRegion.cs" />
-    <Compile Include="Template\HQTemplateNodeCarrierGroup.cs" />
-    <Compile Include="Template\HQTemplatePlayerFlightGroup.cs" />
-    <Compile Include="Template\HQTemplateSettings.cs" />
-    <Compile Include="Template\HQTemplateNodeAirbase.cs" />
-    <Compile Include="Template\HQTemplate.cs" />
+    <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxOverlayIcon.cs" />
+    <Compile Include="DefinitionLibrary\Definition.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionCoalition.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionLanguage.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionFeature.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionFeatureUnitGroup.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheater.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterLocationAirbaseInfo.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterLocation.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterWeather.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterWind.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionUnit.cs" />
+    <Compile Include="DefinitionLibrary\Library.cs" />
+    <Compile Include="DefinitionLibrary\LibraryCommonSettings.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterLocationSpawnPoint.cs" />
+    <Compile Include="Generator\MissionGeneratorBriefing.cs" />
+    <Compile Include="Generator\MissionGeneratorCallsign.cs" />
+    <Compile Include="Generator\MissionGeneratorEnvironment.cs" />
+    <Compile Include="Generator\MissionGeneratorFlightPlan.cs" />
+    <Compile Include="Generator\MissionGeneratorUnitGroups.cs" />
+    <Compile Include="Generator\MissionGenerator.cs" />
+    <Compile Include="Generator\MGCallsign.cs" />
+    <Compile Include="Generator\MGTools.cs" />
+    <Compile Include="GeneratedMission\Mission.cs" />
+    <Compile Include="GeneratedMission\MissionBriefingFlightGroup.cs" />
+    <Compile Include="GeneratedMission\MissionObjectiveLocation.cs" />
+    <Compile Include="GeneratedMission\MissionUnitGroup.cs" />
+    <Compile Include="GeneratedMission\MissionUnitGroupCustomValueKey.cs" />
+    <Compile Include="GeneratedMission\MissionWaypoint.cs" />
+    <Compile Include="GeneratedMission\MissionScript.cs" />
+    <Compile Include="MizExport\MizExporter.cs" />
+    <Compile Include="MizExport\MizExporterLuaDictionary.cs" />
+    <Compile Include="MizExport\MizExporterLuaMapResource.cs" />
+    <Compile Include="MizExport\MizExporterLuaMission.cs" />
+    <Compile Include="MizExport\MizExporterLuaOptions.cs" />
+    <Compile Include="MizExport\MizExporterLuaScript.cs" />
+    <Compile Include="MizExport\MizExporterLuaWarehouse.cs" />
+    <Compile Include="MizExport\MizExporterMediaAudio.cs" />
+    <Compile Include="MizExport\MizExporterMediaImages.cs" />
+    <Compile Include="MizExport\MizExporterMediaKneeboard.cs" />
+    <Compile Include="Generator\MissionGeneratorTemplateChecker.cs" />
+    <Compile Include="Template\MissionTemplateLocation.cs" />
+    <Compile Include="Template\MissionTemplatePlayerFlightGroup.cs" />
+    <Compile Include="Template\MissionTemplateSettings.cs" />
+    <Compile Include="Template\MissionTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeConverters\UITypeEditorPlayerFlightGroups.cs" />
-    <Compile Include="TypeConverters\UITypeEditorNodeFeatures.cs" />
+    <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />
-    <Compile Include="TypeConverters\ArrayTypeConverter.cs" />
-    <Compile Include="TypeConverters\NumericConverterMinMaxParameter.cs" />
-    <Compile Include="TypeConverters\TheaterNodeTypeAttribute.cs" />
+    <Compile Include="TypeConverters\CleanEnumTypeConverter.cs" />
+    <EmbeddedResource Include="DevTools\FormMizToINI.resx">
+      <DependentUpon>FormMizToINI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DevTools\FormRadioMessageGenerator.resx">
+      <DependentUpon>FormRadioMessageGenerator.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMissionOutput.resx">
       <DependentUpon>FormMissionOutput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormPlayerFlightGroups.resx">
-      <DependentUpon>FormPlayerFlightGroups.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormLocationEditor.resx">
+      <DependentUpon>FormLocationEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UIEditorFormNodeFeatures.resx">
-      <DependentUpon>UIEditorFormNodeFeatures.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\PanelMainFormMap.resx">
+      <DependentUpon>PanelMainFormMap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanelMainFormSidePanel.resx">
+      <DependentUpon>PanelMainFormSidePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanelLocationPlayerFlightGroups.resx">
+      <DependentUpon>PanelLocationPlayerFlightGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanelLocationEditorFeatures.resx">
+      <DependentUpon>PanelLocationEditorFeatures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PanelLocationPropertyGrid.resx">
+      <DependentUpon>PanelLocationPropertyGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -236,21 +324,6 @@
     <EmbeddedResource Include="Resources\Icons\website.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase_blue.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase_landing.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase_red.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airbase_takeoff.png" />
-    <EmbeddedResource Include="Resources\MapIcons\airplane.png" />
-    <EmbeddedResource Include="Resources\MapIcons\carrier.png" />
-    <EmbeddedResource Include="Resources\MapIcons\carrier_blue.png" />
-    <EmbeddedResource Include="Resources\MapIcons\carrier_red.png" />
-    <EmbeddedResource Include="Resources\MapIcons\favourite.png" />
-    <EmbeddedResource Include="Resources\MapIcons\location.png" />
-    <EmbeddedResource Include="Resources\MapIcons\selected.png" />
-    <EmbeddedResource Include="Resources\MapIcons\target.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\save_as.png" />
   </ItemGroup>
   <ItemGroup>
@@ -262,7 +335,25 @@
     <EmbeddedResource Include="Resources\Icons\delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase_aircraft.png" />
+    <None Include="Imported\Credits.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\switchSides.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\airbase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\airbase_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\airbase_blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\location.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
