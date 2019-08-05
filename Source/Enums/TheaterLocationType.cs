@@ -25,12 +25,13 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// The type of speed and distance units to use in briefing.
+    /// A type of theater location.
     /// </summary>
-    public enum SpeedAndDistanceUnit
+    public enum TheaterLocationType
     {
-        ByCoalition,
-        Imperial,
-        Metric
+        Airbase,
+        CarrierGroup,
+        Land,
+        Sea
     }
 }

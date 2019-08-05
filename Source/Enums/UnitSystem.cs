@@ -25,13 +25,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A type of theater node. Used to know what can be spawned at its location.
+    /// The type of speed and distance units to use in briefing.
     /// </summary>
-    public enum TheaterNodeType
+    public enum UnitSystem
     {
-        Airbase,
-        CarrierGroup,
-        Land,
-        Sea
+        ByCoalition,
+        Imperial,
+        Metric
     }
 }

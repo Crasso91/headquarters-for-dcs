@@ -25,9 +25,9 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A type of node spawn point. Used to know what can be spawned at its location.
+    /// A type of location spawn point. Used to know what can be spawned at its location.
     /// </summary>
-    public enum TheaterNodeSpawnPointType
+    public enum TheaterLocationSpawnPointType
     {
         LandSmall,
         LandMedium,
