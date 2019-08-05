@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +37,7 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Theater in which the mission takes place.
         /// </summary>
-        public string Theater { get; private set; } = HQLibrary.Instance.Common.DefaultTheater;
+        public string Theater { get; private set; } = Library.Instance.Common.DefaultTheater;
 
         /// <summary>
         /// Global settings for the mission.
@@ -55,7 +55,7 @@ namespace Headquarters4DCS.Template
         public MissionTemplate()
         {
             Settings = new MissionTemplateSettings();
-            Clear(HQLibrary.Instance.Common.DefaultTheater);
+            Clear(Library.Instance.Common.DefaultTheater);
         }
 
         /// <summary>
@@ -64,12 +64,12 @@ namespace Headquarters4DCS.Template
         /// <param name="theaterID">The theater to use.</param>
         public void Clear(string theaterID)
         {
-            Theater = HQLibrary.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : HQLibrary.Instance.Common.DefaultTheater;
-            DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
+            Theater = Library.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : Library.Instance.Common.DefaultTheater;
+            DefinitionTheater theaterDefinition = Library.Instance.GetDefinition<DefinitionTheater>(Theater);
 
             Locations.Clear();
 
-            foreach (DefinitionTheaterLocation n in theaterDefinition.Nodes.Values)
+            foreach (DefinitionTheaterLocation n in theaterDefinition.Locations.Values)
                 Locations.Add(n.ID, new MissionTemplateLocation(n));
         }
 
@@ -98,14 +98,14 @@ namespace Headquarters4DCS.Template
             using (INIFile ini = new INIFile(filePath))
             {
                 string theater = ini.GetValue<string>("Settings", "Theater");
-                if (!HQLibrary.Instance.DefinitionExists<DefinitionTheater>(theater))
+                if (!Library.Instance.DefinitionExists<DefinitionTheater>(theater))
                 {
-                    Clear(HQLibrary.Instance.Common.DefaultTheater);
+                    Clear(Library.Instance.Common.DefaultTheater);
                     return false;
                 }
                 Clear(theater);
 
-                DefinitionTheater theaterDefinition = HQLibrary.Instance.GetDefinition<DefinitionTheater>(Theater);
+                DefinitionTheater theaterDefinition = Library.Instance.GetDefinition<DefinitionTheater>(Theater);
 
                 foreach (string k in Locations.Keys)
                     Locations[k].LoadFromFile(ini);

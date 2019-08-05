@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using System;
 using System.ComponentModel;
 
@@ -37,11 +37,11 @@ namespace Headquarters4DCS.TypeConverters
         { return true; }
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        { return new StandardValuesCollection(HQLibrary.Instance.GetAllDefinitionIDs<T>()); }
+        { return new StandardValuesCollection(Library.Instance.GetAllDefinitionIDs<T>()); }
 
         public static string GetDefaultValue()
         {
-            string[] vals = HQLibrary.Instance.GetAllDefinitionIDs<T>();
+            string[] vals = Library.Instance.GetAllDefinitionIDs<T>();
             return (vals.Length == 0) ? "" : vals[0];
         }
 

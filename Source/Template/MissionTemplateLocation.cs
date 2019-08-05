@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using System;
 using System.Linq;
 
@@ -125,7 +125,7 @@ namespace Headquarters4DCS.Template
             return
                 (from f in
                      (from string fID in Features
-                      select HQLibrary.Instance.GetDefinition<DefinitionFeature>(fID))
+                      select Library.Instance.GetDefinition<DefinitionFeature>(fID))
                  where f != null select f).OrderBy(x => x).ToArray();
         }
     }

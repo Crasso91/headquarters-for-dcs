@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Library;
+using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.TypeConverters;
 using System;
 using System.ComponentModel;
@@ -220,8 +220,8 @@ namespace Headquarters4DCS.Template
             BriefingName = "";
             BriefingUnits = UnitSystem.ByCoalition;
 
-            ContextCoalitionBlue = HQLibrary.Instance.Common.DefaultCoalitionBlue;
-            ContextCoalitionRed = HQLibrary.Instance.Common.DefaultCoalitionRed;
+            ContextCoalitionBlue = Library.Instance.Common.DefaultCoalitionBlue;
+            ContextCoalitionRed = Library.Instance.Common.DefaultCoalitionRed;
             ContextPlayerCoalition = Coalition.Blue;
             ContextTimePeriod = TimePeriod.Decade2000;
 
@@ -232,7 +232,7 @@ namespace Headquarters4DCS.Template
 
             PreferencesEnemiesOnF10Map = false;
             PreferencesForceClientInSP = false;
-            PreferencesLanguage = HQLibrary.Instance.Common.DefaultLanguage;
+            PreferencesLanguage = Library.Instance.Common.DefaultLanguage;
             PreferencesPilotGender = Gender.Male;
 
             RealismAllowExternalViews = DCSOption.Default;
