@@ -55,6 +55,32 @@
                                             ["speed_locked"] = true,
                                         }, -- end of [1]
 $WAYPOINTS$
+                                        [$FINALPLAYERWPINDEX$] = 
+                                        {
+                                            ["alt"] = 13,
+                                            ["action"] = "Landing",
+                                            ["alt_type"] = "BARO",
+                                            ["speed"] = 138.88888888889,
+                                            ["task"] = 
+                                            {
+                                                ["id"] = "ComboTask",
+                                                ["params"] = 
+                                                {
+                                                    ["tasks"] = 
+                                                    {
+                                                    }, -- end of ["tasks"]
+                                                }, -- end of ["params"]
+                                            }, -- end of ["task"]
+                                            ["type"] = "Land",
+                                            ["ETA"] = 0,
+                                            ["ETA_locked"] = false,
+                                            ["y"] = $Y$,
+                                            ["x"] = $X$,
+                                            ["name"] = "LANDING",
+                                            ["formation_template"] = "",
+                                            ["airdromeId"] = $AIRDROMEID$,
+                                            ["speed_locked"] = true,
+                                        }, -- end of [$FINALPLAYERWPINDEX$]
                                     }, -- end of ["points"]
                                 }, -- end of ["route"]
                                 ["groupId"] = $GROUPID$,
