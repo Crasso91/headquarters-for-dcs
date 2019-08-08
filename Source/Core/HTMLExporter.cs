@@ -28,12 +28,12 @@ using System.Drawing.Imaging;
 using System.IO;
 using TheArtOfDev.HtmlRenderer.WinForms;
 
-namespace Headquarters4DCS.Forms
+namespace Headquarters4DCS
 {
     /// <summary>
     /// Exports an HTML mission briefing to various file formats.
     /// </summary>
-    public sealed class GUIBriefingExporter : IDisposable
+    public sealed class HTMLExporter : IDisposable
     {
         /// <summary>
         /// Minimum image height (in pixels).
@@ -58,7 +58,7 @@ namespace Headquarters4DCS.Forms
         /// <summary>
         /// Constructor.
         /// </summary>
-        public GUIBriefingExporter() { }
+        public HTMLExporter() { }
 
         /// <summary>
         /// IDisposable implementation.
