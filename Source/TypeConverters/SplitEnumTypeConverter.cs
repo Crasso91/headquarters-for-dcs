@@ -22,10 +22,10 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using Headquarters4DCS.Forms;
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Headquarters4DCS.TypeConverters
 {
@@ -51,22 +51,12 @@ namespace Headquarters4DCS.TypeConverters
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            string enumString = ((T)value).ToString();
-            if (typeof(T) == typeof(TimePeriod)) enumString = enumString.Substring("Decade".Length) + "s";
-
-            string[] words = Regex.Split(enumString, "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-            for (int i = 1; i < words.Length; i++) words[i] = words[i].ToLowerInvariant();
-            return string.Join(" ", words);
+            return GUITools.SplitEnumCamelCase((T)value);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            string enumString = value.ToString().Replace(" ", "");
-            if (typeof(T) == typeof(TimePeriod)) enumString = "Decade" + enumString.Substring(0, enumString.Length - 1);
-
-            if (Enum.TryParse(enumString, true, out T parsedEnum)) return parsedEnum;
-
-            return default(T);
+            return GUITools.JoinEnumCamelCase<T>(value.ToString());
         }
     }
 }

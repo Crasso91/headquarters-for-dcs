@@ -133,7 +133,7 @@
     <Compile Include="Enums\UnitGroupFormation.cs" />
     <Compile Include="Enums\Weather.cs" />
     <Compile Include="Enums\Wind.cs" />
-    <Compile Include="Forms\GUIBriefingExporter.cs" />
+    <Compile Include="Core\HTMLExporter.cs" />
     <Compile Include="Forms\FormMissionOutput.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,12 +145,6 @@
     </Compile>
     <Compile Include="Forms\FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormLocationEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormLocationEditor.Designer.cs">
-      <DependentUpon>FormLocationEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\PanelMainFormMap.cs">
       <SubType>Form</SubType>
@@ -164,7 +158,8 @@
     <Compile Include="Forms\PanelMainFormSidePanel.Designer.cs">
       <DependentUpon>PanelMainFormSidePanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TheaterUpdateType.cs" />
+    <Compile Include="Enums\TheaterUpdateType.cs" />
+    <Compile Include="Forms\SidePanelLocationContextMenu.cs" />
     <Compile Include="Imported\Cyotek.Windows.Forms\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -173,25 +168,7 @@
     </Compile>
     <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxGridDisplayMode.cs" />
     <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxGridScale.cs" />
-    <Compile Include="Forms\PanelLocationPlayerFlightGroups.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PanelLocationPlayerFlightGroups.Designer.cs">
-      <DependentUpon>PanelLocationPlayerFlightGroups.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\PanelLocationEditorFeatures.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PanelLocationEditorFeatures.Designer.cs">
-      <DependentUpon>PanelLocationEditorFeatures.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\GUITools.cs" />
-    <Compile Include="Forms\PanelLocationPropertyGrid.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PanelLocationPropertyGrid.Designer.cs">
-      <DependentUpon>PanelLocationPropertyGrid.cs</DependentUpon>
-    </Compile>
     <Compile Include="HQ4DCS.cs" />
     <Compile Include="Imported\Cyotek.Windows.Forms\ImageBoxOverlayIcon.cs" />
     <Compile Include="DefinitionLibrary\Definition.cs" />
@@ -241,7 +218,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />
-    <Compile Include="TypeConverters\CleanEnumTypeConverter.cs" />
+    <Compile Include="TypeConverters\SplitEnumTypeConverter.cs" />
     <EmbeddedResource Include="DevTools\FormMizToINI.resx">
       <DependentUpon>FormMizToINI.cs</DependentUpon>
     </EmbeddedResource>
@@ -255,23 +232,11 @@
       <DependentUpon>FormMain.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormLocationEditor.resx">
-      <DependentUpon>FormLocationEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\PanelMainFormMap.resx">
       <DependentUpon>PanelMainFormMap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PanelMainFormSidePanel.resx">
       <DependentUpon>PanelMainFormSidePanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PanelLocationPlayerFlightGroups.resx">
-      <DependentUpon>PanelLocationPlayerFlightGroups.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PanelLocationEditorFeatures.resx">
-      <DependentUpon>PanelLocationEditorFeatures.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PanelLocationPropertyGrid.resx">
-      <DependentUpon>PanelLocationPropertyGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -342,32 +307,34 @@
     <EmbeddedResource Include="Resources\Icons\switchSides.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase.png" />
+    <EmbeddedResource Include="Resources\MapIcons\Airbase.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase_red.png" />
+    <EmbeddedResource Include="Resources\MapIcons\AirbaseRed.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\airbase_blue.png" />
+    <EmbeddedResource Include="Resources\MapIcons\AirbaseBlue.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\selected.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\location.png" />
+    <EmbeddedResource Include="Resources\MapIcons\Location.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\expandAll.png" />
     <EmbeddedResource Include="Resources\Icons\collapseAll.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\playerFlightGroup2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\featureObjective.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MapIcons\playerFlightGroup.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\FeatureEnemyTroops.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\FeatureFriendlyTroops.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\FeatureSupport.png" />
+    <EmbeddedResource Include="Resources\MapIcons\Selected.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\Remove.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\playerFlightGroup.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\location.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\featureObjective.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\airbase_red.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\airbase_blue.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\airbase.png" />
+    <EmbeddedResource Include="Resources\LocationsIcons\Add.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
