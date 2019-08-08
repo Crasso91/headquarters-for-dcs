@@ -142,11 +142,22 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             string value = FindString(section, key);
             if (string.IsNullOrEmpty(value)) return MakeDefaultValue(section, key);
-
-            for (int i = 0; i < replacements.Length - 1; i++)
-                value = value.Replace($"${replacements[i].ToUpperInvariant()}$", replacements[i + 1]);
-
+            value = DoReplacements(value, replacements);
             return value;
+        }
+
+        /// <summary>
+        /// Searches for special keys (uppercase words encased in dollar signes, e.g. "$NAME$") to replace with various values in a string.
+        /// </summary>
+        /// <param name="baseString">Base string in which to perform replacements</param>
+        /// <param name="replacements">A even-numbered list of replacements to make in the string. #0 is the dollar-enclosed uppercase key (without the $ signs), #1 is the value to replace the key with, #2 is the next key, etc.</param>
+        /// <returns>A string with all replacements done</returns>
+        private string DoReplacements(string baseString, string[] replacements)
+        {
+            for (int i = 0; i < replacements.Length - 1; i++)
+                baseString = baseString.Replace($"${replacements[i].ToUpperInvariant()}$", replacements[i + 1]);
+
+            return baseString;
         }
 
         /// <summary>
@@ -169,12 +180,15 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         /// <param name="section">The ini file section.</param>
         /// <param name="key">The ini file key.</param>
+        /// <param name="replacements">A even-numbered list of replacements to make in the string. #0 is the dollar-enclosed uppercase key (without the $ signs), #1 is the value to replace the key with, #2 is the next key, etc.</param>
         /// <returns></returns>
-        public string GetStringRandom(string section, string key)
+        public string GetStringRandom(string section, string key, params string[] replacements)
         {
             string value = FindString(section, key);
             if (string.IsNullOrEmpty(value)) return MakeDefaultValue(section, key);
-            return ParseRandomString(value);
+            value = ParseRandomString(value);
+            value = DoReplacements(value, replacements);
+            return value;
         }
 
         ///// <summary>
@@ -257,6 +271,11 @@ namespace Headquarters4DCS.DefinitionLibrary
                 template = GetString("OrdinalAdjectives", "Default");
 
             return template.Replace("$N$", numberStr);
+        }
+
+        public string GetEnum<T>(T enumValue) where T : struct, IConvertible
+        {
+            return GetString("Enumerations", $"{typeof(T).Name}.{enumValue}");
         }
     }
 }
