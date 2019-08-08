@@ -253,7 +253,7 @@ namespace Headquarters4DCS.Generator
             return AircraftPayloadType.Default;
         }
 
-        public int AddNodeFeatureGroup(
+        public MissionUnitGroup AddNodeFeatureGroup(
             Mission mission, MissionTemplate template,
             DefinitionFeatureUnitGroup unitGroupDefinition, Coordinates location)
         {
@@ -263,26 +263,36 @@ namespace Headquarters4DCS.Generator
 
             MissionUnitGroup unitGroup = null;
 
-            List<UnitFamily> availableFamilies = new List<UnitFamily>(unitGroupDefinition.Families);
-            while (availableFamilies.Count > 0)
-            {
-                UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
+            UnitFamily selectedFamily = HQTools.RandomFrom(unitGroupDefinition.Families);
 
-                unitGroup =
-                    MissionUnitGroup.FromCoalitionArmyAndUnitFamily(
-                        unitGroupDefinition.LuaGroup, unitGroupDefinition.LuaUnit,
-                        Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.Settings.ContextCoalitionRed : template.Settings.ContextCoalitionBlue),
-                        template.Settings.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
-                        GroupID, groupCoalition, location);
+            unitGroup =
+                MissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                    unitGroupDefinition.LuaGroup, unitGroupDefinition.LuaUnit,
+                    Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.Settings.ContextCoalitionRed : template.Settings.ContextCoalitionBlue),
+                    template.Settings.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
+                    GroupID, groupCoalition, location);
 
-                if (unitGroup == null) continue;
-                if (unitGroup.UnitCount > 0) break;
-
-                availableFamilies.Remove(selectedFamily);
-            }
 
             if ((unitGroup == null) || (unitGroup.UnitCount == 0)) // TODO: is group critical or not? If not, simply output a warning
                 throw new Exception($"Found no valid units to generate mission critical group of {unitGroup.Coalition} {unitGroup.Category}.");
+
+            if (unitGroup.IsAircraft)
+            {
+                CallsignFamily csFamily = CallsignFamily.Aircraft;
+
+                switch (selectedFamily)
+                {
+                    case UnitFamily.PlaneAWACS:
+                        csFamily = CallsignFamily.AWACS;
+                        break;
+                    case UnitFamily.PlaneTankerBasket:
+                    case UnitFamily.PlaneTankerBoom:
+                        csFamily = CallsignFamily.Tanker;
+                        break;
+                }
+
+                SetupAircraftGroup(unitGroup, mission, csFamily, unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly));
+            }
 
             // TODO: embedded air defense
             //if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
@@ -293,7 +303,7 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log();
 
             GroupID++;
-            return GroupID - 1;
+            return unitGroup; // GroupID - 1;
         }
 
         //public void GeneratePlayerFlightGroups(HQMission mission, MissionTemplate template, DefinitionMissionObjective missionObjective)
