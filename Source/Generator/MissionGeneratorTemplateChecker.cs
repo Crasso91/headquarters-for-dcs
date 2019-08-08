@@ -63,8 +63,8 @@ namespace Headquarters4DCS.Generator
                 }
 
                 DefinitionFeature[] features = node.GetFeaturesDefinitions();
-                objectiveCount += (from DefinitionFeature f in features where f.FeatureCategory == FeatureCategory.Objective select f).Count();
-                if ((from DefinitionFeature f in features where f.FeatureCategory == FeatureCategory.Objective select f).Count() > 0)
+                objectiveCount += (from DefinitionFeature f in features where f.Category == FeatureCategory.Objective select f).Count();
+                if ((from DefinitionFeature f in features where f.Category == FeatureCategory.Objective select f).Count() > 0)
                     supportCount++;
 
                 DefinitionFeature[] uniqueFeatures = (from DefinitionFeature f in features where f.FeatureFlags.Contains(FeatureFlag.UniqueInLocation) select f).ToArray();

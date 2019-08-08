@@ -31,12 +31,12 @@ namespace Headquarters4DCS.Forms
 
             foreach (DefinitionFeature feature in validNodes)
             {
-                string categoryKey = feature.FeatureCategory.ToString();
+                string categoryKey = feature.Category.ToString();
 
                 if (!AvailableFeaturesTreeView.Nodes.ContainsKey(categoryKey))
                     AvailableFeaturesTreeView.Nodes.Add(categoryKey, categoryKey);
 
-                TreeNode node = new TreeNode(feature.FeatureCategory.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
+                TreeNode node = new TreeNode(feature.Category.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
                 AvailableFeaturesTreeView.Nodes[categoryKey].Nodes.Add(node);
             }
             AvailableFeaturesTreeView.Sort();
@@ -48,7 +48,7 @@ namespace Headquarters4DCS.Forms
                 if (feature == null) continue;
                 if (!feature.FeatureLocationTypes.Contains(EditedNode.Definition.LocationType)) continue;
 
-                TreeNode node = new TreeNode(feature.FeatureCategory.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
+                TreeNode node = new TreeNode(feature.Category.ToString() + " - " + feature.DisplayName) { Tag = feature.ID, ToolTipText = feature.DisplayDescription };
                 SelectedFeaturesTreeView.Nodes.Add(node);
             }
             SelectedFeaturesTreeView.Sort();

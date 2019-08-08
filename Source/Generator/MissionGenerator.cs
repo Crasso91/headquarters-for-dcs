@@ -263,7 +263,7 @@ namespace Headquarters4DCS.Generator
                             {
                                 // No valid spawn points found. Throw an exception and abort mission generation if feature is an objective or required,
                                 // else print a warning to the log and proceed the next feature.
-                                if ((feature.FeatureCategory == FeatureCategory.Objective) || (feature.FeatureFlags.Contains(FeatureFlag.Required)))
+                                if ((feature.Category == FeatureCategory.Objective) || (feature.FeatureFlags.Contains(FeatureFlag.Required)))
                                     throw new HQ4DCSException(
                                         $"Failed to find a spawn point of type {string.Join("/", feature.UnitGroups[i].SpawnPointTypes)} for feature {feature.DisplayName.ToUpperInvariant()} at {node.Definition.DisplayName.ToUpperInvariant()}.");
 
@@ -281,7 +281,7 @@ namespace Headquarters4DCS.Generator
                             usedNodesSpawnPoints.Add(spawnPoint.UniqueID);
 
                             // Feature is an objective and requires a waypoint
-                            if ((feature.FeatureCategory == FeatureCategory.Objective) && feature.WaypointEnabled)
+                            if ((feature.Category == FeatureCategory.Objective) && feature.WaypointEnabled)
                             {
                                 string wpName = HQTools.RandomFrom(waypointNames);
                                 if (string.IsNullOrEmpty(wpName))

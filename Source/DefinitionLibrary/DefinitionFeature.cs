@@ -51,7 +51,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// Category this feature belongs to.
         /// </summary>
-        public FeatureCategory FeatureCategory { get; private set; }
+        public FeatureCategory Category { get; private set; }
 
         /// <summary>
         /// Valid theater node types for this feature.
@@ -104,7 +104,7 @@ namespace Headquarters4DCS.DefinitionLibrary
                 BriefingRemark = ini.GetValue<string>("Briefing", "Remark");
 
                 // [Feature] section
-                FeatureCategory = ini.GetValue<FeatureCategory>("Feature", "Category");
+                Category = ini.GetValue<FeatureCategory>("Feature", "Category");
                 FeatureFlags = ini.GetValueArray<FeatureFlag>("Feature", "Flags").Distinct().ToArray();
                 FeatureLocationTypes = ini.GetValueArray<TheaterLocationType>("Feature", "LocationTypes").Distinct().ToArray();
                 if (FeatureLocationTypes.Length == 0) FeatureLocationTypes = (TheaterLocationType[])Enum.GetValues(typeof(TheaterLocationType));
@@ -125,11 +125,11 @@ namespace Headquarters4DCS.DefinitionLibrary
                 // [UnitGroups] section
                 List<DefinitionFeatureUnitGroup> unitGroupsList = new List<DefinitionFeatureUnitGroup>();
                 foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
-                    unitGroupsList.Add(new DefinitionFeatureUnitGroup(ini, "UnitGroups", k, FeatureCategory == FeatureCategory.Objective));
+                    unitGroupsList.Add(new DefinitionFeatureUnitGroup(ini, "UnitGroups", k, Category == FeatureCategory.Objective));
                 UnitGroups = unitGroupsList.ToArray();
 
                 // Features of category "objective" can only include one unit group.
-                if ((FeatureCategory == FeatureCategory.Objective) && (UnitGroups.Length > 0))
+                if ((Category == FeatureCategory.Objective) && (UnitGroups.Length > 0))
                     UnitGroups = UnitGroups.Take(1).ToArray();
 
                 // [Waypoint] section
@@ -147,7 +147,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <returns>The display name of the feature, with the name of the category.</returns>
         public string GetDisplayNameWithCategory()
         {
-            return $"{FeatureCategory} - {DisplayName}";
+            return $"{Category} - {DisplayName}";
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         public int CompareTo(object other)
         {
             if (other is DefinitionFeature otherFeature)
-                return (int)FeatureCategory - (int)otherFeature.FeatureCategory;
+                return (int)Category - (int)otherFeature.Category;
 
             return 0;
         }
