@@ -22,10 +22,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Headquarters4DCS.Forms
@@ -179,5 +181,27 @@ namespace Headquarters4DCS.Forms
                 node = node.Parent;
             } while (true);
         }
+
+        // TODO: description
+        public static string SplitEnumCamelCase<T>(T enumValue) where T : struct, IConvertible
+        {
+            string enumString = enumValue.ToString();
+            if (typeof(T) == typeof(TimePeriod)) enumString = enumString.Substring("Decade".Length) + "s";
+
+            string[] words = Regex.Split(enumString, "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+            for (int i = 1; i < words.Length; i++) words[i] = words[i].ToLowerInvariant();
+            return string.Join(" ", words);
+        }
+
+        // TODO: description
+        public static T JoinEnumCamelCase<T>(string enumString) where T : struct, IConvertible
+        {
+            if (string.IsNullOrEmpty(enumString)) return default(T);
+            enumString = enumString.Replace(" ", "");
+            if (typeof(T) == typeof(TimePeriod)) enumString = "Decade" + enumString.Substring(0, enumString.Length - 1);
+            if (Enum.TryParse(enumString, true, out T parsedEnum)) return parsedEnum;
+            return default(T);
+        }
+
     }
 }

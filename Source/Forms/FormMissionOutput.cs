@@ -49,10 +49,7 @@ namespace Headquarters4DCS.Forms
                 if (!string.IsNullOrEmpty(mizFilePath))
                 {
                     using (MizExporter mizExporters = new MizExporter())
-                    {
-                        if (!mizExporters.CreateMizFile(Mission, mizFilePath))
-                            MessageBox.Show("ERROR"); // TODO: proper message
-                    }
+                    { mizExporters.CreateMizFile(Mission, mizFilePath); }
                 }
             }
             else if (sender == ExportBriefingToHTMLToolStripMenuItem)
@@ -78,7 +75,7 @@ namespace Headquarters4DCS.Forms
 
             bool result;
 
-            using (GUIBriefingExporter briefingExporter = new GUIBriefingExporter())
+            using (HTMLExporter briefingExporter = new HTMLExporter())
             {
                 switch (fileFormat)
                 {
@@ -124,6 +121,11 @@ namespace Headquarters4DCS.Forms
 
             Mission.Dispose();
             Mission = null;
+        }
+
+        private void FormMissionOutput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape) Close();
         }
     }
 }

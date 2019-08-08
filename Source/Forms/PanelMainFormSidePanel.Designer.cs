@@ -39,7 +39,6 @@
             this.LocationsToolStrip = new System.Windows.Forms.ToolStrip();
             this.CollapseAllLocationsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ExpandAllLocationsToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.LocationContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainTabControl.SuspendLayout();
             this.MissionTabPage.SuspendLayout();
             this.LocationsTabPage.SuspendLayout();
@@ -145,11 +144,6 @@
             this.ExpandAllLocationsToolStripButton.Text = "Expand all";
             this.ExpandAllLocationsToolStripButton.Click += new System.EventHandler(this.Event_LocationsToolStripButtons_Click);
             // 
-            // LocationContextMenuStrip
-            // 
-            this.LocationContextMenuStrip.Name = "LoctationContextMenuStrip";
-            this.LocationContextMenuStrip.Size = new System.Drawing.Size(61, 4);
-            // 
             // PanelMainFormSidePanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -176,7 +170,6 @@
         private System.Windows.Forms.TabPage LocationsTabPage;
         private System.Windows.Forms.PropertyGrid TemplateSettingsPropertyGrid;
         private System.Windows.Forms.ImageList SidePanelImageList;
-        private System.Windows.Forms.ContextMenuStrip LocationContextMenuStrip;
         private System.Windows.Forms.TreeView LocationsTreeView;
         private System.Windows.Forms.ToolStrip LocationsToolStrip;
         private System.Windows.Forms.ToolStripButton ExpandAllLocationsToolStripButton;

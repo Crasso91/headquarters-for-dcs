@@ -28,11 +28,9 @@ namespace Headquarters4DCS.Forms
         private void PanelMainFormMap_Load(object sender, EventArgs e)
         {
             MapIconsImageList.Images.Clear();
-            MapIconsImageList.Images.Add("airbase", GUITools.GetImageFromResource("MapIcons.airbase.png"));
-            MapIconsImageList.Images.Add("airbase_blue", GUITools.GetImageFromResource("MapIcons.airbase_blue.png"));
-            MapIconsImageList.Images.Add("airbase_red", GUITools.GetImageFromResource("MapIcons.airbase_red.png"));
-            MapIconsImageList.Images.Add("location", GUITools.GetImageFromResource("MapIcons.location.png"));
-            MapIconsImageList.Images.Add("selected", GUITools.GetImageFromResource("MapIcons.selected.png"));
+
+            foreach (string s in GUITools.GetAllResourceKeys("MapIcons."))
+                MapIconsImageList.Images.Add(s.Substring("MapIcons.".Length).Replace(".png", ""), GUITools.GetImageFromResource(s));
         }
 
         public void UpdateTheater(TheaterUpdateType updateType)
@@ -46,8 +44,8 @@ namespace Headquarters4DCS.Forms
 
                 MapImageBox.IconsLocation.Clear();
                 foreach (DefinitionTheaterLocation n in theater.Locations.Values)
-                    MapImageBox.IconsLocation.Add(n.ID, new ImageBoxOverlayIcon("airbase", (int)n.MapPosition.X, (int)n.MapPosition.Y));
-                MapImageBox.IconsLocation.Add("", new ImageBoxOverlayIcon("selected", -512, -512));
+                    MapImageBox.IconsLocation.Add(n.ID, new ImageBoxOverlayIcon("Airbase", (int)n.MapPosition.X, (int)n.MapPosition.Y));
+                MapImageBox.IconsLocation.Add("", new ImageBoxOverlayIcon("Selected", -512, -512));
             }
 
             if ((SelectedNodeID != null) && Template.Locations.ContainsKey(SelectedNodeID))
@@ -63,14 +61,14 @@ namespace Headquarters4DCS.Forms
                 if (Template.Locations[n].Definition.LocationType == TheaterLocationType.Airbase)
                 {
                     if (Template.Locations[n].Coalition == CoalitionNeutral.Blue)
-                        MapImageBox.IconsLocation[n].IconKey = "airbase_blue";
+                        MapImageBox.IconsLocation[n].IconKey = "AirbaseBlue";
                     else if (Template.Locations[n].Coalition == CoalitionNeutral.Red)
-                        MapImageBox.IconsLocation[n].IconKey = "airbase_red";
+                        MapImageBox.IconsLocation[n].IconKey = "AirbaseRed";
                     else
-                        MapImageBox.IconsLocation[n].IconKey = "airbase";
+                        MapImageBox.IconsLocation[n].IconKey = "Airbase";
                 }
                 else
-                        MapImageBox.IconsLocation[n].IconKey = "location";
+                        MapImageBox.IconsLocation[n].IconKey = "Location";
             }
 
             MapImageBox.Refresh();

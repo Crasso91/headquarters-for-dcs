@@ -63,8 +63,8 @@
             this.GenerateToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("GenerateToolStripButton.Image")));
             this.GenerateToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.GenerateToolStripButton.Name = "GenerateToolStripButton";
-            this.GenerateToolStripButton.Size = new System.Drawing.Size(127, 22);
-            this.GenerateToolStripButton.Text = "Export briefing to...";
+            this.GenerateToolStripButton.Size = new System.Drawing.Size(162, 22);
+            this.GenerateToolStripButton.Text = "Generate another mission";
             this.GenerateToolStripButton.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
             // ToolStripSeparator1
@@ -97,27 +97,27 @@
             this.ExportBriefingToolStripDropDownButton.Image = ((System.Drawing.Image)(resources.GetObject("ExportBriefingToolStripDropDownButton.Image")));
             this.ExportBriefingToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ExportBriefingToolStripDropDownButton.Name = "ExportBriefingToolStripDropDownButton";
-            this.ExportBriefingToolStripDropDownButton.Size = new System.Drawing.Size(171, 22);
-            this.ExportBriefingToolStripDropDownButton.Text = "Generate another mission";
+            this.ExportBriefingToolStripDropDownButton.Size = new System.Drawing.Size(136, 22);
+            this.ExportBriefingToolStripDropDownButton.Text = "Export briefing to...";
             // 
             // ExportBriefingToHTMLToolStripMenuItem
             // 
             this.ExportBriefingToHTMLToolStripMenuItem.Name = "ExportBriefingToHTMLToolStripMenuItem";
-            this.ExportBriefingToHTMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExportBriefingToHTMLToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.ExportBriefingToHTMLToolStripMenuItem.Text = "HTML";
             this.ExportBriefingToHTMLToolStripMenuItem.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
             // ExportBriefingToJPGToolStripMenuItem
             // 
             this.ExportBriefingToJPGToolStripMenuItem.Name = "ExportBriefingToJPGToolStripMenuItem";
-            this.ExportBriefingToJPGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExportBriefingToJPGToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.ExportBriefingToJPGToolStripMenuItem.Text = "JPG";
             this.ExportBriefingToJPGToolStripMenuItem.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
             // ExportBriefingToPNGToolStripMenuItem
             // 
             this.ExportBriefingToPNGToolStripMenuItem.Name = "ExportBriefingToPNGToolStripMenuItem";
-            this.ExportBriefingToPNGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExportBriefingToPNGToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.ExportBriefingToPNGToolStripMenuItem.Text = "PNG";
             this.ExportBriefingToPNGToolStripMenuItem.Click += new System.EventHandler(this.ToolStripButtonClick);
             // 
@@ -159,12 +159,14 @@
             this.Controls.Add(this.BriefingLayoutPanel);
             this.Controls.Add(this.MissionOutputToolStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "FormMissionOutput";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Mission briefing";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMissionOutput_FormClosed);
             this.Load += new System.EventHandler(this.FormMissionOutput_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMissionOutput_KeyDown);
             this.MissionOutputToolStrip.ResumeLayout(false);
             this.MissionOutputToolStrip.PerformLayout();
             this.BriefingLayoutPanel.ResumeLayout(false);
