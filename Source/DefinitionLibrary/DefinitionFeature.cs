@@ -142,6 +142,15 @@ namespace Headquarters4DCS.DefinitionLibrary
         }
 
         /// <summary>
+        /// Returns the display name of the feature with the feature category.
+        /// </summary>
+        /// <returns>The display name of the feature, with the name of the category.</returns>
+        public string GetDisplayNameWithCategory()
+        {
+            return $"{FeatureCategory} - {DisplayName}";
+        }
+
+        /// <summary>
         /// IComparable implementation. A feature's category decides its priority in the case all features can't be spawned on a given theater node.
         /// </summary>
         /// <param name="other">The other DefinitionFeature this one should be compared to.</param>
