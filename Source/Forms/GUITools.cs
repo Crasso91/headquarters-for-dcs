@@ -23,6 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -139,6 +140,16 @@ namespace Headquarters4DCS.Forms
             form.Parent = parentControl;
             form.Dock = DockStyle.Fill;
             form.Show();
+        }
+
+        public static TreeNode GetTopLevelNode(TreeNode node)
+        {
+            if (node == null) return null;
+            do
+            {
+                if (node.Level == 0) return node;
+                node = node.Parent;
+            } while (true);
         }
     }
 }
