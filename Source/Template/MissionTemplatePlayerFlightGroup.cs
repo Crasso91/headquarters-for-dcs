@@ -23,43 +23,62 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
+using Headquarters4DCS.Forms;
+using System;
 
 namespace Headquarters4DCS.Template
 {
     /// <summary>
     /// A player flight group template.
     /// </summary>
-    public struct MissionTemplatePlayerFlightGroup
+    public sealed class MissionTemplatePlayerFlightGroup : IDisposable
     {
         /// <summary>
         /// Maximum number of aircraft in a player flight group.
         /// </summary>
-        private const int MAX_AIRCRAFT_COUNT = 4;
+        public const int MAX_AIRCRAFT_COUNT = 4;
 
         /// <summary>
         /// ID of the aircraft type.
         /// </summary>
-        public readonly string AircraftType;
+        public string AircraftType { get; set; }
 
         /// <summary>
         /// Number of aircraft in the flight group.
         /// </summary>
-        public readonly int Count;
+        public int Count { get; set; }
 
         /// <summary>
         /// Task assigned to the flight group.
         /// </summary>
-        public readonly PlayerFlightGroupTask Task;
+        public PlayerFlightGroupTask Task { get; set; }
 
         /// <summary>
         /// If true, all aircraft but the first will be AI-controlled. If false, all aircraft will be client-controlled.
         /// </summary>
-        public readonly bool AIWingmen;
+        public bool AIWingmen { get; set; }
 
         /// <summary>
         /// Where should the flight group start from?
         /// </summary>
-        public readonly PlayerFlightGroupStartLocation StartLocation;
+        public PlayerFlightGroupStartLocation StartLocation { get; set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MissionTemplatePlayerFlightGroup()
+        {
+            AircraftType = Library.Instance.Common.DefaultPlayerAircraft;
+            Count = 1;
+            Task = Library.Instance.Common.DefaultPlayerFlightGroupTask;
+            AIWingmen = false;
+            StartLocation = Library.Instance.Common.DefaultPlayerFlightGroupStartLocation;
+        }
+
+        /// <summary>
+        /// IDispose implementation.
+        /// </summary>
+        public void Dispose() { }
 
         /// <summary>
         /// Constructor.
@@ -114,7 +133,10 @@ namespace Headquarters4DCS.Template
 
         public override string ToString()
         {
-            return $"{HQTools.ValToString(Count)}x {AircraftType} ({Task.ToString()})";
+            string acName = Library.Instance.DefinitionExists<DefinitionUnit>(AircraftType) ? Library.Instance.GetDefinition<DefinitionUnit>(AircraftType).DisplayName : AircraftType;
+
+            return $"{HQTools.ValToString(Count)}x {acName}, {GUITools.SplitEnumCamelCase(Task)} " +
+                $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}{(AIWingmen ? ", AI wingmen" : "")})";
         }
 
         /// <summary>
@@ -125,14 +147,6 @@ namespace Headquarters4DCS.Template
         private static string GetINIKey(int groupIndex) // Has to be static because it's used in the struct constructor
         {
             return $"PlayerFlightGroup{HQTools.ValToString(groupIndex + 1, "00")}";
-        }
-
-        public static MissionTemplatePlayerFlightGroup CreateDefault()
-        {
-            return new MissionTemplatePlayerFlightGroup(
-                Library.Instance.Common.DefaultPlayerAircraft, 1,
-                Library.Instance.Common.DefaultPlayerFlightGroupTask, false,
-                Library.Instance.Common.DefaultPlayerFlightGroupStartLocation);
         }
     }
 }
