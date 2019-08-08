@@ -138,15 +138,8 @@ namespace Headquarters4DCS.MizExport
                 string localizedString = "";
 
                 string value = m.Value.Trim('£', ' ', '\t');
-                string[] iniSectionAndKey = value.Split('/', '\\');
-
-                if (iniSectionAndKey.Length < 2)
-                    localizedString = value;
-                else
-                {
-                    localizedString = Language.GetStringRandom(iniSectionAndKey[0], iniSectionAndKey[1]);
-                    if (string.IsNullOrEmpty(localizedString)) localizedString = value;
-                }
+                localizedString = Language.GetStringRandom("InGame", value);
+                if (string.IsNullOrEmpty(localizedString)) localizedString = value;
 
                 // Remove all pound signs from replacements to make sure we don't get into an endless regex match loop
                 localizedString = localizedString.Replace("£", "");

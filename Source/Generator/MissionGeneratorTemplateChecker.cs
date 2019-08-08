@@ -55,10 +55,10 @@ namespace Headquarters4DCS.Generator
             {
                 if (node.Definition.LocationType == TheaterLocationType.Airbase)
                 {
-                    if ((node.Coalition == CoalitionNeutral.Neutral) && (node.PlayerFlightGroups.Length > 0))
+                    if ((node.Coalition == CoalitionNeutral.Neutral) && (node.PlayerFlightGroups.Count > 0))
                         throw new HQ4DCSException($"Neutral airbase {node.Definition.DisplayName.ToUpperInvariant()} has player flight groups. Player flight groups cannot take off from neutral airbases.");
 
-                    if ((node.Coalition != (CoalitionNeutral)template.Settings.ContextPlayerCoalition) && (node.PlayerFlightGroups.Length > 0))
+                    if ((node.Coalition != (CoalitionNeutral)template.Settings.ContextPlayerCoalition) && (node.PlayerFlightGroups.Count > 0))
                         throw new HQ4DCSException($"Enemy airbase {node.Definition.DisplayName.ToUpperInvariant()} has player flight groups. Player flight groups cannot take off from enemy airbases.");
                 }
 

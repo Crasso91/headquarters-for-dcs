@@ -24,6 +24,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 
 using Headquarters4DCS.DefinitionLibrary;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Headquarters4DCS.Template
@@ -51,17 +52,17 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Is this location in use (are there mission features or flight groups located here)?
         /// </summary>
-        public bool InUse { get { return (Features.Length > 0) || (PlayerFlightGroups.Length > 0); } }
+        public bool InUse { get { return (Features.Count > 0) || (PlayerFlightGroups.Count > 0); } }
 
         /// <summary>
         /// Mission features assigned to this location.
         /// </summary>
-        public string[] Features { get; set; } = new string[0];
+        public List<string> Features { get; set; } = new List<string>();
 
         /// <summary>
         /// Player flight groups starting on this location.
         /// </summary>
-        public MissionTemplatePlayerFlightGroup[] PlayerFlightGroups { get; set; } = new MissionTemplatePlayerFlightGroup[0];
+        public List<MissionTemplatePlayerFlightGroup> PlayerFlightGroups { get; set; } = new List<MissionTemplatePlayerFlightGroup>();
 
         /// <summary>
         /// Constructor.
@@ -79,8 +80,8 @@ namespace Headquarters4DCS.Template
         private void Clear()
         {
             Coalition = Definition.Coalition;
-            Features = new string[0];
-            PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[0];
+            Features.Clear();
+            PlayerFlightGroups.Clear();
         }
 
         /// <summary>
@@ -91,11 +92,11 @@ namespace Headquarters4DCS.Template
         {
             Clear();
 
-            Features = ini.GetValueArray<string>(INISection, "Features");
+            Features.AddRange(ini.GetValueArray<string>(INISection, "Features"));
 
-            PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[Math.Max(0, ini.GetValue<int>(INISection, "FlightGroupsCount"))];
-            for (int i = 0; i < PlayerFlightGroups.Length; i++)
-                PlayerFlightGroups[i] = new MissionTemplatePlayerFlightGroup(ini, INISection, i);
+            int pfgCount = Math.Max(0, ini.GetValue<int>(INISection, "PlayerFlightGroupsCount"));
+            for (int i = 0; i < pfgCount; i++)
+                PlayerFlightGroups.Add(new MissionTemplatePlayerFlightGroup(ini, INISection, i));
         }
 
         /// <summary>
@@ -104,14 +105,14 @@ namespace Headquarters4DCS.Template
         /// <param name="ini">Ini file to save to.</param>
         public void SaveToFile(INIFile ini)
         {
-            if (Features.Length > 0)
-                ini.SetValueArray(INISection, "Features", Features);
+            if (Features.Count > 0)
+                ini.SetValueArray(INISection, "Features", Features.ToArray());
 
-            if (PlayerFlightGroups.Length > 0)
+            if (PlayerFlightGroups.Count > 0)
             {
-                ini.SetValue(INISection, "FlightGroupsCount", PlayerFlightGroups.Length);
+                ini.SetValue(INISection, "PlayerFlightGroupsCount", PlayerFlightGroups.Count);
 
-                for (int i = 0; i < PlayerFlightGroups.Length; i++)
+                for (int i = 0; i < PlayerFlightGroups.Count; i++)
                     PlayerFlightGroups[i].SaveToFile(ini, INISection, i);
             }
         }

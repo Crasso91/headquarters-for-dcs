@@ -269,9 +269,6 @@ namespace Headquarters4DCS.MizExport
                 flightPlanLua += wpLua + "\n";
             }
 
-            System.Windows.Forms.MessageBox.Show(waypoints.Length.ToString());
-            System.Windows.Forms.MessageBox.Show(flightPlanLua);
-
             return flightPlanLua;
         }
 
