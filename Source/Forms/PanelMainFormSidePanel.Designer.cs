@@ -35,7 +35,7 @@
             this.TemplateSettingsPropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.LocationsTabPage = new System.Windows.Forms.TabPage();
             this.LocationsTreeView = new System.Windows.Forms.TreeView();
-            this.SidePanelimageList = new System.Windows.Forms.ImageList(this.components);
+            this.SidePanelImageList = new System.Windows.Forms.ImageList(this.components);
             this.LocationsToolStrip = new System.Windows.Forms.ToolStrip();
             this.CollapseAllLocationsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ExpandAllLocationsToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -96,20 +96,21 @@
             this.LocationsTreeView.FullRowSelect = true;
             this.LocationsTreeView.HideSelection = false;
             this.LocationsTreeView.ImageIndex = 0;
-            this.LocationsTreeView.ImageList = this.SidePanelimageList;
+            this.LocationsTreeView.ImageList = this.SidePanelImageList;
             this.LocationsTreeView.Location = new System.Drawing.Point(3, 28);
             this.LocationsTreeView.Name = "LocationsTreeView";
             this.LocationsTreeView.SelectedImageIndex = 0;
+            this.LocationsTreeView.ShowNodeToolTips = true;
             this.LocationsTreeView.Size = new System.Drawing.Size(370, 504);
             this.LocationsTreeView.TabIndex = 2;
             this.LocationsTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Event_LocationsTreeView_AfterSelect);
             this.LocationsTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Event_LocationsTreeView_NodeMouseClick);
             // 
-            // SidePanelimageList
+            // SidePanelImageList
             // 
-            this.SidePanelimageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.SidePanelimageList.ImageSize = new System.Drawing.Size(16, 16);
-            this.SidePanelimageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.SidePanelImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.SidePanelImageList.ImageSize = new System.Drawing.Size(16, 16);
+            this.SidePanelImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // LocationsToolStrip
             // 
@@ -174,7 +175,7 @@
         private System.Windows.Forms.TabPage MissionTabPage;
         private System.Windows.Forms.TabPage LocationsTabPage;
         private System.Windows.Forms.PropertyGrid TemplateSettingsPropertyGrid;
-        private System.Windows.Forms.ImageList SidePanelimageList;
+        private System.Windows.Forms.ImageList SidePanelImageList;
         private System.Windows.Forms.ContextMenuStrip LocationContextMenuStrip;
         private System.Windows.Forms.TreeView LocationsTreeView;
         private System.Windows.Forms.ToolStrip LocationsToolStrip;

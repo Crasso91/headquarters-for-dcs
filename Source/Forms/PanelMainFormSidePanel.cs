@@ -1,6 +1,7 @@
 ﻿using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.Template;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -34,10 +35,11 @@ namespace Headquarters4DCS.Forms
         {
             TemplateSettingsPropertyGrid.SelectedObject = Template.Settings;
 
-            SidePanelimageList.Images.Add("airbase", GUITools.GetImageFromResource("MapIcons.airbase.png"));
-            SidePanelimageList.Images.Add("airbase_blue", GUITools.GetImageFromResource("MapIcons.airbase_blue.png"));
-            SidePanelimageList.Images.Add("airbase_red", GUITools.GetImageFromResource("MapIcons.airbase_red.png"));
-            SidePanelimageList.Images.Add("location", GUITools.GetImageFromResource("MapIcons.location.png"));
+            foreach (string s in GUITools.GetAllResourceKeys("MapIcons."))
+                SidePanelImageList.Images.Add(s.Substring("MapIcons.".Length).Replace(".png", ""), GUITools.GetImageFromResource(s));
+
+            CollapseAllLocationsToolStripButton.Image = GUITools.GetImageFromResource("Icons.collapseAll.png");
+            ExpandAllLocationsToolStripButton.Image = GUITools.GetImageFromResource("Icons.expandAll.png");
         }
 
         public void UpdateTheater(TheaterUpdateType updateType)
@@ -78,11 +80,23 @@ namespace Headquarters4DCS.Forms
                 }
 
                 foreach (DefinitionFeature feature in Template.Locations[n.Name].GetFeaturesDefinitions())
-                    n.Nodes.Add(feature.GetDisplayNameWithCategory()).Tag = feature.ID;
+                {
+                    TreeNode featureNode = n.Nodes.Add(feature.GetDisplayNameWithCategory());
+                    featureNode.Tag = feature.ID;
+                    featureNode.ImageKey = $"feature{feature.Category}";
+                    featureNode.SelectedImageKey = $"feature{feature.Category}";
+                    featureNode.ToolTipText = "Mission feature - Right-click for options";
+                }
                 // TODO: sort
 
                 for (int i = 0; i < Template.Locations[n.Name].PlayerFlightGroups.Count; i++)
-                    n.Nodes.Add(Template.Locations[n.Name].PlayerFlightGroups[i].ToString()).Tag = i;
+                {
+                    TreeNode playerFlightGroupsNode = n.Nodes.Add(Template.Locations[n.Name].PlayerFlightGroups[i].ToString());
+                    playerFlightGroupsNode.Tag = i;
+                    playerFlightGroupsNode.ImageKey = $"playerFlightGroup";
+                    playerFlightGroupsNode.SelectedImageKey = $"playerFlightGroup";
+                    playerFlightGroupsNode.ToolTipText = "Player flight group - Right-click for options";
+                }
 
                 n.SelectedImageKey = n.ImageKey;
             }
@@ -103,7 +117,11 @@ namespace Headquarters4DCS.Forms
         {
             if ((e.Button != MouseButtons.Right) || (e.Node == null)) return;
             LocationsTreeView.SelectedNode = e.Node;
+            ShowLocationContextMenu(e.Location);
+        }
 
+        private void ShowLocationContextMenu(Point menuLocation)
+        {
             LocationContextMenuStrip.Items.Clear();
 
             MissionTemplateLocation location = GetTemplateLocationFromTreeNode(LocationsTreeView.SelectedNode);
@@ -116,14 +134,15 @@ namespace Headquarters4DCS.Forms
                      where f.FeatureLocationTypes.Contains(location.Definition.LocationType)
                      select f).ToArray();
 
+                ToolStripDropDownItem featureParentMenuItem = AddItemToLocationContextMenuStrip(null, "Add feature");
                 foreach (DefinitionFeature feature in availableFeatures)
                 {
-                    //if (!
-                    ToolStripMenuItem featureParentMenuItem = AddItemToLocationContextMenuStrip(null, "Add feature");
+                    if (!featureParentMenuItem.DropDownItems.ContainsKey(feature.Category.ToString()))
+                        AddItemToLocationContextMenuStrip(featureParentMenuItem, feature.Category.ToString()).Name = feature.Category.ToString();
 
                     AddItemToLocationContextMenuStrip(
-                        featureParentMenuItem,
-                        feature.GetDisplayNameWithCategory(), feature.ID);
+                        (ToolStripDropDownItem)featureParentMenuItem.DropDownItems[feature.Category.ToString()],
+                        feature.DisplayName, feature.ID, $"feature{feature.Category}");
 
                     // TODO: sort items
                 }
@@ -134,7 +153,7 @@ namespace Headquarters4DCS.Forms
 
                     ToolStripMenuItem coalitionParentMenuItem = AddItemToLocationContextMenuStrip(null, "Coalition");
                     foreach (CoalitionNeutral coalitionID in (CoalitionNeutral[])Enum.GetValues(typeof(CoalitionNeutral)))
-                        AddItemToLocationContextMenuStrip(coalitionParentMenuItem, coalitionID.ToString(), coalitionID, location.Coalition == coalitionID);
+                        AddItemToLocationContextMenuStrip(coalitionParentMenuItem, coalitionID.ToString(), coalitionID, null, location.Coalition == coalitionID);
                 }
 
             }
@@ -146,13 +165,15 @@ namespace Headquarters4DCS.Forms
                     AddItemToLocationContextMenuStrip(null, "Remove feature", "*REMOVE*");
             }
 
-            LocationContextMenuStrip.Show(LocationsTreeView, e.Location);
+            LocationContextMenuStrip.Show(LocationsTreeView, menuLocation);
         }
 
-        private ToolStripMenuItem AddItemToLocationContextMenuStrip(ToolStripDropDownItem parent, string text, object tag = null, bool isChecked = false)
+        private ToolStripMenuItem AddItemToLocationContextMenuStrip(ToolStripDropDownItem parent, string text, object tag = null, string icon = null, bool isChecked = false)
         {
             ToolStripMenuItem menuItem = new ToolStripMenuItem(text) { Checked = isChecked, Tag = tag };
             menuItem.Click += Event_ContextMenuItem_Click;
+            if (!string.IsNullOrEmpty(icon))
+                menuItem.Image = SidePanelImageList.Images[icon];
 
             if (parent == null)
                 LocationContextMenuStrip.Items.Add(menuItem);
