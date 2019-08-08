@@ -112,6 +112,11 @@ namespace Headquarters4DCS.GeneratedMission
         public float RadioFrequency { get; set; } = 0.0f;
 
         /// <summary>
+        /// Returns true if the group is made of planes or helicopters.
+        /// </summary>
+        public bool IsAircraft { get { return Category == UnitCategory.Helicopter || Category == UnitCategory.Plane; } }
+
+        /// <summary>
         /// Custom values for this unit group, to
         /// </summary>
         public Dictionary<MissionUnitGroupCustomValueKey, string> CustomValues = new Dictionary<MissionUnitGroupCustomValueKey, string>();

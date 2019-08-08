@@ -56,6 +56,11 @@ namespace Headquarters4DCS.GeneratedMission
         public string BriefingDescription { get; set; }
 
         /// <summary>
+        /// Should imperial units be used in this mission briefing instead of metric units?
+        /// </summary>
+        public bool BriefingImperialUnits { get; set; }
+
+        /// <summary>
         /// The flight package to display in the briefing. A list of HQMissionBriefingFlightGroups.
         /// </summary>
         public List<MissionBriefingFlightGroup> BriefingFlightPackage { get; set; } = new List<MissionBriefingFlightGroup>();
@@ -172,16 +177,9 @@ namespace Headquarters4DCS.GeneratedMission
         public DCSOption RealismRandomFailures { get; set; }
 
         /// <summary>
-        /// A list of Lua scripts to include ONCE.
+        /// A Lua scripts to include in the mission.
         /// </summary>
-        //public List<string> ScriptsMission { get; set; }
-
-        /// <summary>
-        /// A list of Lua scripts to include ONCE FOR EACH OBJECTIVE, where "$ID$" is replaced with the objective index.
-        /// </summary>
-        //public List<string> ScriptsObjective { get; set; }
-
-        public MissionScript[] Scripts { get; set; }
+        public string[] Scripts { get; set; } = new string[HQTools.EnumCount<MissionScriptScope>()];
 
         /// <summary>
         /// The DCS World theater for this mission.
