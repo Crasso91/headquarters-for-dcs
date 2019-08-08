@@ -147,40 +147,42 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log("");
         //}
 
-        //public void GenerateRawTextBriefing(HQMission mission, MissionTemplate template, DefinitionMissionObjective missionTask)
-        //{
-        //    HQDebugLog.Instance.Log("Generating raw text MIZ briefing...");
+        public void GenerateRawTextBriefing(Mission mission, MissionTemplate template)
+        {
+            DebugLog.Instance.Log("Generating raw text MIZ briefing...");
 
-        //    string text = "";
+            string text = "";
 
-        //    if (template.GetPlayerCount() == 1)
-        //        text += $"{Language.GetString("BriefingCommon", "MissionPlayer1")}\n\n";
-        //    else
-        //        text += $"{Language.GetString("BriefingCommon", "MissionPlayerCooperative").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}\n\n";
+            if (template.GetPlayerCount() == 1)
+                text += $"{GetString("Subtitle.SinglePlayer")}\n\n";
+            else
+                text += $"{GetString("Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}\n\n";
 
-        //    text += mission.BriefingDescription + "\n\n";
+            text += mission.BriefingDescription + "\n\n";
 
-        //    // Tasks
-        //    text += $"{Language.GetString("BriefingCommon", "Tasks").ToUpperInvariant()}{Language.Semicolon}\n";
-        //    foreach (string t in mission.BriefingTasks) text += $"- {t}\n";
-        //    text += "\n";
+            // Tasks
+            text += $"{GetString("Section.Tasks").ToUpperInvariant()}{Language.Semicolon}\n";
+            foreach (string t in mission.BriefingTasks) text += $"- {t}\n";
+            if (mission.BriefingTasks.Count == 0) text += $"- {GetString("Misc.None")}\n";
+            text += "\n";
 
-        //    // Remarks
-        //    text += $"{Language.GetString("BriefingCommon", "Remarks").ToUpperInvariant()}{Language.Semicolon}\n";
-        //    foreach (string t in mission.BriefingRemarks) text += $"- {t}\n";
-        //    text += "\n";
+            // Remarks
+            text += $"{GetString("Section.Remarks").ToUpperInvariant()}{Language.Semicolon}\n";
+            foreach (string t in mission.BriefingRemarks) text += $"- {t}\n";
+            if (mission.BriefingRemarks.Count == 0) text += $"- {GetString("Misc.None")}\n";
+            text += "\n";
 
-        //    // Flight package
-        //    text += $"{Language.GetString("BriefingCommon", "Package").ToUpperInvariant()}{Language.Semicolon}\n";
-        //    foreach (HQMissionBriefingFlightGroup fg in (from HQMissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
-        //        text += $"- {fg.Callsign} ({fg.UnitCount}x {GetUnitName(fg.UnitType)}), {HQTools.ValToString(fg.Frequency, "F1")} Mhz\n";
+            // Flight package
+            //text += $"{GetString("Section.Package").ToUpperInvariant()}{Language.Semicolon}\n";
+            //foreach (HQMissionBriefingFlightGroup fg in (from HQMissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
+            //    text += $"- {fg.Callsign} ({fg.UnitCount}x {GetUnitName(fg.UnitType)}), {HQTools.ValToString(fg.Frequency, "F1")} Mhz\n";
 
-        //    // Make sure endlines are in the proper format (escaped LF) or it can cause bugs.
-        //    text = text.Replace("\r\n", "\n").Trim(' ', '\n', '\t').Replace("\n", "\\\n");
-        //    mission.BriefingRawText = text;
+            // Make sure endlines are in the proper format (escaped LF) or it can cause bugs.
+            text = text.Replace("\r\n", "\n").Trim(' ', '\n', '\t').Replace("\n", "\\\n");
+            mission.BriefingRawText = text;
 
-        //    HQDebugLog.Instance.Log("");
-        //}
+            DebugLog.Instance.Log("");
+        }
 
         public void GenerateHTMLBriefing(Mission mission, MissionTemplate template/*, DefinitionMissionObjective missionTask*/)
         {
@@ -195,45 +197,41 @@ namespace Headquarters4DCS.Generator
             html += $"<h1>{mission.BriefingName}</h1>";
 
             if (template.GetPlayerCount() == 1)
-                html += $"<h3>{Language.GetString("BriefingCommon", "MissionPlayer1")}</h3>";
+                html += $"<h3>{GetString("Subtitle.SinglePlayer")}</h3>";
             else
-                html += $"<h3>{Language.GetString("BriefingCommon", "MissionPlayerCooperative").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}</h3>";
+                html += $"<h3>{GetString("Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}</h3>";
 
             // Header (objective/task, date, time...)
             html += "<p>";
-            html += $"<strong>{Language.GetString("BriefingCommon", "MissionDate")}{semiColon}</strong> {FormatDate(mission, true)}<br />";
-            html += $"<strong>{Language.GetString("BriefingCommon", "MissionTime")}{semiColon}</strong> {FormatTime(mission, true)}<br />";
-            html += $"<strong>{Language.GetString("BriefingCommon", "Weather")}{semiColon}</strong> " +
-            $"{Language.GetString("BriefingCommon", $"Weather.{mission.WeatherLevel}")}, " +
-            $"{Language.GetString("BriefingCommon", $"Wind.{mission.WindLevel}")}" +
-            $" ({mission.WeatherWindSpeedAverage.ToString("F0")} m/s)";
-            html += "</p>";
-            html += "<p>";
-            //html += $"<strong>{Language.GetString("BriefingCommon", "Task")}{semiColon}</strong> " +
-            //    $"{Language.GetString("BriefingMission", $"Name.{missionTask.BriefingName}")}";
+            html += $"<strong>{GetString("Section.Date")}{semiColon}</strong> {FormatDate(mission, true)}<br />";
+            html += $"<strong>{GetString("Section.Time")}{semiColon}</strong> {FormatTime(mission, true)}<br />";
+            html += $"<strong>{GetString("Section.Weather")}{semiColon}</strong> {Language.GetEnum(mission.WeatherLevel)}<br />";
+            html += $"<strong>{GetString("Section.Wind")}{semiColon}</strong> {Language.GetEnum(mission.WindLevel)}";
+            html += $" ({mission.WeatherWindSpeedAverage.ToString("F0")} m/s)";
             html += "</p>";
 
             // Description
-            html += $"<h2>{Language.GetString("BriefingCommon", "Description")}</h2>";
+            html += $"<h2>{GetString("Section.Description")}</h2>";
             html += $"<p>{mission.BriefingDescription}</p>";
 
             // Tasks
-            html += $"<h2>{Language.GetString("BriefingCommon", "Tasks")}</h2>";
+            html += $"<h2>{GetString("Section.Tasks")}</h2>";
             html += "<ul>";
-            foreach (string t in mission.BriefingTasks) html += $"<li>{t}</li>";
+            foreach (string task in mission.BriefingTasks) html += $"<li>{task}</li>";
+            if (mission.BriefingTasks.Count == 0) html += $"<li>{GetString("Misc.None")}</li>";
             html += "</ul>";
 
             // Remarks
-            html += $"<h2>{Language.GetString("BriefingCommon", "Remarks")}</h2>";
+            html += $"<h2>{GetString("Section.Remarks")}</h2>";
             html += "<ul>";
-            foreach (string t in mission.BriefingRemarks) html += $"<li>{t}</li>";
+            foreach (string remark in mission.BriefingRemarks) html += $"<li>{remark}</li>";
+            if (mission.BriefingRemarks.Count == 0) html += $"<li>{GetString("Misc.None")}</li>";
             html += "</ul>";
 
             // Airbases
             //html += $"<h2>{Language.GetString("BriefingCommon", "Airbases")}</h2>";
             //html += "<table>";
             //html += "<tr><th></th><th>Airbase</th><th>TCN</th><th>ATC</th><th>RWY</th><th>ILS</th></tr>"; // FIXME: Localize
-            //for (int i = 0; i < mission.Airbases.Count; i++)
             //{
             //    string header; // FIXME: Localize
             //    if (i == 0) header = "DEP";
@@ -247,9 +245,9 @@ namespace Headquarters4DCS.Generator
             //html += "</table>";
 
             // Flight package
-            html += $"<h2>{Language.GetString("BriefingCommon", "Package")}</h2>";
+            html += $"<h2>{GetString("Section.FlightPackage")}</h2>";
             html += "<table>";
-            html += "<tr><th>Callsign</th><th>Aircraft</th><th>Task</th><th>AIRBASE</th><th>VHF/UHF</th></tr>"; // FIXME: Localize
+            html += $"<tr><th>{GetString("Table.Header.Callsign")}</th><th>{GetString("Table.Header.Aircraft")}</th><th>{GetString("Table.Header.Task")}</th><th>{GetString("Table.Header.Airbase")}</th><th>{GetString("Table.Header.Radio")}</th></tr>";
             foreach (MissionBriefingFlightGroup fg in (from MissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
                 html += // TODO: localize fg.Task
                     $"<tr><td>{fg.Callsign}</td><td>{fg.UnitCount}x {GetUnitName(fg.UnitType)}</td>" +
@@ -287,23 +285,28 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log("");
         }
 
+        private string GetString(string key, bool randomizeString = false)
+        {
+            if (randomizeString)
+                return Language.GetStringRandom("Briefing", key);
+            else
+                return Language.GetString("Briefing", key);
+        }
+
         private string FormatDate(Mission mission, bool longFormat)
         {
-            string formattedString = Language.GetString("BriefingCommon", longFormat ? "DateFormatLong" : "DateFormatShort");
+            string formattedString = GetString(longFormat ? "Format.Date.Long" : "Format.Date.Short");
 
             DateTime dt = new DateTime(2003, 5, 1);
-            Console.WriteLine("Is Thursday the day of the week for {0:d}?: {1}",
-                               dt, dt.DayOfWeek == DayOfWeek.Thursday);
-            Console.WriteLine("The day of the week for {0:d} is {1}.", dt, dt.DayOfWeek);
 
             formattedString = formattedString
-                .Replace("$W$", Language.GetString("Enums", $"DayOfWeek.{new DateTime(mission.DateYear, (int)mission.DateMonth + 1, mission.DateDay).DayOfWeek.ToString()}"))
+                .Replace("$W$", Language.GetEnum(new DateTime(mission.DateYear, (int)mission.DateMonth + 1, mission.DateDay).DayOfWeek))
                 .Replace("$D$", HQTools.ValToString(mission.DateDay, "0"))
                 .Replace("$DD$", HQTools.ValToString(mission.DateDay, "00"))
                 .Replace("$DDD$", Language.GetOrdinalAdjective(mission.DateDay))
                 .Replace("$M$", HQTools.ValToString((int)mission.DateMonth + 1, "0"))
                 .Replace("$MM$", HQTools.ValToString((int)mission.DateMonth + 1, "00"))
-                .Replace("$MMM$", Language.GetString("Enums", $"Month.{mission.DateMonth.ToString()}"))
+                .Replace("$MMM$", Language.GetEnum(mission.DateMonth))
                 .Replace("$YY$", HQTools.ValToString(mission.DateYear).Substring(2))
                 .Replace("$YYYY$", HQTools.ValToString(mission.DateYear));
 
@@ -312,7 +315,7 @@ namespace Headquarters4DCS.Generator
 
         private string FormatTime(Mission mission, bool longFormat)
         {
-            string formattedString = Language.GetString("BriefingCommon", longFormat ? "TimeFormatLong" : "TimeFormatShort");
+            string formattedString = GetString(longFormat ? "Format.Time.Long" : "Format.Time.Short");
 
             formattedString = formattedString
                 .Replace("$H$", HQTools.ValToString(mission.TimeHour, "0"))
