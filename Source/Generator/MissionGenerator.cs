@@ -303,8 +303,6 @@ namespace Headquarters4DCS.Generator
             mission.Scripts = scriptsList.ToArray();
             mission.Waypoints = waypointsList.ToArray();
 
-            System.Windows.Forms.MessageBox.Show(mission.Waypoints.Length.ToString());
-
             usedNodesCoordinates = usedNodesCoordinatesList.ToArray();
         }
 

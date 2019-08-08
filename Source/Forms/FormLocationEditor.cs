@@ -47,10 +47,10 @@ namespace Headquarters4DCS.Forms
         {
             if (sender == OkButton)
             {
-                EditedLocation.Features = PanelFeatures.SelectedFeatures;
-                if (PanelPlayerFlightGroups != null)
-                    EditedLocation.PlayerFlightGroups = PanelPlayerFlightGroups.GetFlightGroups();
-                DialogResult = DialogResult.OK;
+                //EditedLocation.Features = PanelFeatures.SelectedFeatures;
+                //if (PanelPlayerFlightGroups != null)
+                //    EditedLocation.PlayerFlightGroups = PanelPlayerFlightGroups.GetFlightGroups();
+                //DialogResult = DialogResult.OK;
             }
             else
                 DialogResult = DialogResult.Cancel;
