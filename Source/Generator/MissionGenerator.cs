@@ -88,10 +88,17 @@ namespace Headquarters4DCS.Generator
                 mission.CoalitionPlayer = template.Settings.ContextPlayerCoalition;
                 mission.SinglePlayer = (template.GetPlayerCount() < 2);
                 mission.UseNATOCallsigns = coalitions[(int)template.Settings.ContextPlayerCoalition].NATOCallsigns;
-                //mission.UsedPlayerAircraftTypes = (from MissionTemplatePlayerFlightGroup fg in template.FlightGroupsPlayers select fg.Aircraft).Distinct().OrderBy(x => x).ToArray();
 
                 mission.Countries[(int)Coalition.Blue] = coalitions[(int)Coalition.Blue].Countries.ToArray();
                 mission.Countries[(int)Coalition.Red] = coalitions[(int)Coalition.Red].Countries.Except(coalitions[(int)Coalition.Blue].Countries).ToArray();
+
+                switch (template.Settings.BriefingUnits)
+                {
+                    case UnitSystem.ByCoalition:
+                        mission.BriefingImperialUnits = (coalitions[(int)mission.CoalitionPlayer].UnitSystem == UnitSystem.Imperial); break;
+                    case UnitSystem.Imperial: mission.BriefingImperialUnits = true; break;
+                    case UnitSystem.Metric: mission.BriefingImperialUnits = false; break;
+                }
 
                 // Generate mission environment parameters (weather, time of day, date...)
                 using (MissionGeneratorEnvironment environment = new MissionGeneratorEnvironment())
@@ -103,7 +110,9 @@ namespace Headquarters4DCS.Generator
                 }
 
                 CreateFeatures(mission, template, unitGroupsGenerator, language, waypointNames, out Coordinates[] usedNodesCoordinates);
-                CreatePlayerFlightGroups(mission, template, unitGroupsGenerator);
+                List<string> usedPlayerAircraftTypeList = new List<string>();
+                CreatePlayerFlightGroups(mission, template, unitGroupsGenerator, usedPlayerAircraftTypeList);
+                mission.UsedPlayerAircraftTypes = (from string aircraftID in usedPlayerAircraftTypeList select aircraftID).Distinct().OrderBy(x => x).ToArray();
 
                 mission.Bullseye = new Coordinates[2];
                 for (i = 0; i < 2; i++)
@@ -112,6 +121,7 @@ namespace Headquarters4DCS.Generator
                         Coordinates.CreateRandomInaccuracy(10000, 20000);
 
                 mission.MapCenter = Coordinates.GetCenter(usedNodesCoordinates);
+
 
                 /*
                 // Copy scripts
@@ -176,8 +186,8 @@ namespace Headquarters4DCS.Generator
                         briefing.GenerateMissionDescription(mission, template.BriefingDescription, missionObjective);
                         briefing.GenerateMissionTasks(mission, template, missionObjective);
                         briefing.GenerateMissionRemarks(mission, template, missionObjective);
-                        briefing.GenerateRawTextBriefing(mission, template, missionObjective);
                         */
+                    briefing.GenerateRawTextBriefing(mission, template/*, missionObjective*/);
                     briefing.GenerateHTMLBriefing(mission, template/*, missionObjective*/);
                 }
 
@@ -221,7 +231,7 @@ namespace Headquarters4DCS.Generator
 
             List<string> oggFilesList = new List<string>();
             List<MissionObjectiveLocation> objectivesList = new List<MissionObjectiveLocation>();
-            List<MissionScript> scriptsList = new List<MissionScript>();
+            //List<MissionScript>[] scriptsList = new List<MissionScript>[] { new List<MissionScript>(), new List<MissionScript>(), new List<MissionScript>() };
             List<MissionWaypoint> waypointsList = new List<MissionWaypoint>();
 
             List<Coordinates> usedNodesCoordinatesList = new List<Coordinates>();
@@ -238,11 +248,9 @@ namespace Headquarters4DCS.Generator
 
                     oggFilesList.AddRange(feature.MediaOgg);
 
-                    if (!string.IsNullOrEmpty(feature.BriefingRemark))
-                        mission.BriefingRemarks.Add(language.GetString("BriefingRemarks", feature.BriefingRemark)); // TODO: replacements
+                    string featureWPName = "";
 
-                    if (!string.IsNullOrEmpty(feature.BriefingTask))
-                        mission.BriefingTasks.Add(language.GetString("BriefingTasks", feature.BriefingTask)); // TODO: replacements
+                    List<string> briefingMessagesReplacements = new List<string>();
 
                     for (i = 0; i < feature.UnitGroups.Length; i++)
                     {
@@ -250,8 +258,6 @@ namespace Headquarters4DCS.Generator
 
                         for (j = 0; j < groupCount; j++)
                         {
-                            int groupID = 0;
-
                             DefinitionTheaterLocationSpawnPoint[] validSpawnPoints =
                                 (from DefinitionTheaterLocationSpawnPoint s in
                                      node.Definition.SpawnPoints
@@ -275,38 +281,60 @@ namespace Headquarters4DCS.Generator
 
                             DefinitionTheaterLocationSpawnPoint spawnPoint = HQTools.RandomFrom(validSpawnPoints);
 
-                            groupID = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
-                            if (groupID == 0) continue; // TODO: throw error if objective or required
+                            MissionUnitGroup newGroup = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
+                            if (newGroup == null)
+                                continue; // TODO: throw error if objective or required
+
+                            if (!briefingMessagesReplacements.Contains("CALLSIGN"))
+                                briefingMessagesReplacements.AddRange(new string[] { "CALLSIGN", newGroup.Name });
+                            if (!briefingMessagesReplacements.Contains("FREQUENCY"))
+                                briefingMessagesReplacements.AddRange(new string[] { "FREQUENCY", HQTools.ValToString(newGroup.RadioFrequency, "F1") });
 
                             usedNodesSpawnPoints.Add(spawnPoint.UniqueID);
 
                             // Feature is an objective and requires a waypoint
                             if ((feature.Category == FeatureCategory.Objective) && feature.WaypointEnabled)
                             {
-                                string wpName = HQTools.RandomFrom(waypointNames);
-                                if (string.IsNullOrEmpty(wpName))
-                                    wpName = $"WP{(waypointsList.Count + 1).ToString("00")}";
+                                featureWPName = HQTools.RandomFrom(waypointNames);
+                                if (string.IsNullOrEmpty(featureWPName))
+                                    featureWPName = $"WP{(waypointsList.Count + 1).ToString("00")}";
                                 else
-                                { waypointNames.Remove(wpName); wpName.ToUpperInvariant(); }
+                                {
+                                    waypointNames.Remove(featureWPName);
+                                    featureWPName = featureWPName.ToUpperInvariant();
+                                }
 
                                 Coordinates wpPosition = spawnPoint.Position + Coordinates.CreateRandomInaccuracy(feature.WaypointInaccuracy);
-                                objectivesList.Add(new MissionObjectiveLocation(spawnPoint.Position, wpName, feature.WaypointOnGround ? 0 : 1, 0));
-                                waypointsList.Add(new MissionWaypoint(wpPosition, wpName));
+                                objectivesList.Add(new MissionObjectiveLocation(spawnPoint.Position, featureWPName, feature.WaypointOnGround ? 0 : 1, 0));
+                                waypointsList.Add(new MissionWaypoint(wpPosition, featureWPName));
                             }
+
+                            for (int i = 0; i < E)
                         }
                     }
+
+                    briefingMessagesReplacements.AddRange(new string[] { "OBJECTIVE", featureWPName });
+
+                    if (!string.IsNullOrEmpty(feature.BriefingRemark))
+                        mission.BriefingRemarks.Add(language.GetStringRandom("Briefing", $"Remark.{feature.BriefingRemark}", briefingMessagesReplacements.ToArray()));
+
+                    if (!string.IsNullOrEmpty(feature.BriefingTask))
+                        mission.BriefingTasks.Add(language.GetStringRandom("Briefing", $"Task.{feature.BriefingTask}", briefingMessagesReplacements.ToArray()));
                 }
             }
 
             mission.Objectives = objectivesList.ToArray();
             mission.OggFiles = oggFilesList.Distinct().ToArray();
-            mission.Scripts = scriptsList.ToArray();
+            //for (int i = 0; i < )
+            //mission.Scripts = scriptsList.ToArray();
             mission.Waypoints = waypointsList.ToArray();
 
             usedNodesCoordinates = usedNodesCoordinatesList.ToArray();
         }
 
-        private void CreatePlayerFlightGroups(Mission mission, MissionTemplate template, MissionGeneratorUnitGroups unitGroupsGenerator)
+        private void CreatePlayerFlightGroups(
+            Mission mission, MissionTemplate template,
+            MissionGeneratorUnitGroups unitGroupsGenerator, List<string> usedPlayerAircraftTypeList)
         {
             foreach (MissionTemplateLocation node in template.Locations.Values)
             {
@@ -314,7 +342,10 @@ namespace Headquarters4DCS.Generator
                 if (node.Definition.LocationType != TheaterLocationType.Airbase) continue;
 
                 foreach (MissionTemplatePlayerFlightGroup pfg in node.PlayerFlightGroups)
+                {
                     unitGroupsGenerator.AddPlayerFlightGroup(mission, template, pfg, node);
+                    usedPlayerAircraftTypeList.Add(pfg.AircraftType);
+                }
             }
         }
     }
