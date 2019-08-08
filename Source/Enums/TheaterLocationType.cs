@@ -30,7 +30,7 @@ namespace Headquarters4DCS
     public enum TheaterLocationType
     {
         Airbase,
-        CarrierGroup,
+        // CarrierGroup,
         Land,
         Sea
     }
