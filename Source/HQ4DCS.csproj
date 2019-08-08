@@ -356,5 +356,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\MapIcons\location.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\expandAll.png" />
+    <EmbeddedResource Include="Resources\Icons\collapseAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\playerFlightGroup2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\featureObjective.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MapIcons\playerFlightGroup.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
