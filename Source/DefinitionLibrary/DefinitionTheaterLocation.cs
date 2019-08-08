@@ -40,7 +40,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         public static string GetLocationIDFromINIFileName(string filePath)
         {
             if (string.IsNullOrEmpty(filePath)) return "";
-            return Path.GetFileNameWithoutExtension(filePath).Substring(5).ToLowerInvariant();
+            return Path.GetFileNameWithoutExtension(filePath).Substring("location_".Length).ToLowerInvariant();
         }
 
         /// <summary>
