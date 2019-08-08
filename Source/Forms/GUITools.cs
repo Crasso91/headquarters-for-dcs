@@ -22,10 +22,9 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.DefinitionLibrary;
-using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -36,6 +35,11 @@ namespace Headquarters4DCS.Forms
     /// </summary>
     public static class GUITools
     {
+        /// <summary>
+        /// Path to the assembly namespace where embedded resources are stored.
+        /// </summary>
+        private const string EMBEDDED_RESOURCES_PATH = "Headquarters4DCS.Resources.";
+
         /// <summary>
         /// "Shortcut" method to set all parameters of an OpenFileDialog and display it.
         /// </summary>
@@ -109,13 +113,26 @@ namespace Headquarters4DCS.Forms
         {
             Image image = null;
 
-            using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream($"Headquarters4DCS.Resources.{resourcePath}"))
+            using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream($"{EMBEDDED_RESOURCES_PATH}{resourcePath}"))
             {
                 if (stream == null) return null;
                 image = Image.FromStream(stream);
             }
 
             return image;
+        }
+
+        /// <summary>
+        /// Returns an array of paths to all embedded resources whose path starts with EMBEDDED_RESOURCES_PATH + pathToResources
+        /// </summary>
+        /// <param name="pathToResources">Relative path to the resources.</param>
+        /// <returns>An array of strings.</returns>
+        public static string[] GetAllResourceKeys(string pathToResources)
+        {
+            return
+                (from string res in Assembly.GetEntryAssembly().GetManifestResourceNames()
+                 where res.StartsWith($"{EMBEDDED_RESOURCES_PATH}{pathToResources}")
+                 select res.Substring(EMBEDDED_RESOURCES_PATH.Length)).ToArray();
         }
 
         /// <summary>
@@ -129,6 +146,12 @@ namespace Headquarters4DCS.Forms
             return Image.FromFile(filePath);
         }
 
+        /// <summary>
+        /// Sets up a form so it can be displayed as a non-top level form in another panel.
+        /// Removes form borders, title...
+        /// </summary>
+        /// <param name="form">Form to set up.</param>
+        /// <param name="parentControl">Parent control to use as a parent for the form.</param>
         public static void SetupFormForPanel(Form form, Control parentControl)
         {
             form.TopLevel = false;
@@ -142,6 +165,11 @@ namespace Headquarters4DCS.Forms
             form.Show();
         }
 
+        /// <summary>
+        /// Returns the top parent of a TreeView node.
+        /// </summary>
+        /// <param name="node">A TreeView node.</param>
+        /// <returns>The top (level 0) parent node or null if node was null.</returns>
         public static TreeNode GetTopLevelNode(TreeNode node)
         {
             if (node == null) return null;
