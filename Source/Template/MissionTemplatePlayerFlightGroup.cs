@@ -22,6 +22,8 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using Headquarters4DCS.DefinitionLibrary;
+
 namespace Headquarters4DCS.Template
 {
     /// <summary>
@@ -110,11 +112,10 @@ namespace Headquarters4DCS.Template
             ini.SetValue(section, $"{key}.StartLocation", StartLocation);
         }
 
-        // TODO: remove?
-        //public override string ToString()
-        //{
-        //    return $"{HQTools.ValToString(Count)}x {AircraftType} ({Task.ToString()})";
-        //}
+        public override string ToString()
+        {
+            return $"{HQTools.ValToString(Count)}x {AircraftType} ({Task.ToString()})";
+        }
 
         /// <summary>
         /// Returns an unique .ini key from the group index.
@@ -124,6 +125,14 @@ namespace Headquarters4DCS.Template
         private static string GetINIKey(int groupIndex) // Has to be static because it's used in the struct constructor
         {
             return $"PlayerFlightGroup{HQTools.ValToString(groupIndex + 1, "00")}";
+        }
+
+        public static MissionTemplatePlayerFlightGroup CreateDefault()
+        {
+            return new MissionTemplatePlayerFlightGroup(
+                Library.Instance.Common.DefaultPlayerAircraft, 1,
+                Library.Instance.Common.DefaultPlayerFlightGroupTask, false,
+                Library.Instance.Common.DefaultPlayerFlightGroupStartLocation);
         }
     }
 }
