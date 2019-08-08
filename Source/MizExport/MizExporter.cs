@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Headquarters4DCS.MizExport
 {
@@ -110,10 +111,8 @@ namespace Headquarters4DCS.MizExport
             DebugLog.Instance.Log();
 
             // Add entries to the .miz file
-#if !DEBUG
             try
             {
-#endif
                 // HQ4DCS stuff, not required by DCS World
                 AddMIZEntry("Credits.txt", $"Generated with HQ4DCS version {HQ4DCS.HQ4DCS_VERSION_STRING} ({HQTools.WEBSITE_URL})");
                 AddMIZEntry("hq4dcs/Briefing.html", missHQ.BriefingHTML); // HTML briefing
@@ -164,12 +163,12 @@ namespace Headquarters4DCS.MizExport
                 }
 
                 // Add kneeboard briefing pages
-                //using (MIZMediaKneeboardMaker mediaKneeboardImages = new MIZMediaKneeboardMaker())
-                //{
-                //    Dictionary<string, byte[]> imageFiles = mediaKneeboardImages.MakeKneeboardImages(missHQ);
-                //    foreach (string k in imageFiles.Keys)
-                //        AddMIZEntry(k, imageFiles[k]);
-                //}
+                using (MizExporterMediaKneeboard mediaKneeboardImages = new MizExporterMediaKneeboard())
+                {
+                    Dictionary<string, byte[]> imageFiles = mediaKneeboardImages.MakeKneeboardImages(missHQ);
+                    foreach (string k in imageFiles.Keys)
+                        AddMIZEntry(k, imageFiles[k]);
+                }
 
                 // Save everything to a .miz file (just a .zip file with a different extension)
                 using (FileStream fS = new FileStream(filePath, FileMode.Create))
@@ -190,23 +189,25 @@ namespace Headquarters4DCS.MizExport
                 stopwatch.Stop();
                 DebugLog.Instance.Log();
                 DebugLog.Instance.Log($"Completed .miz export at {DateTime.Now.ToLongTimeString()} (took {stopwatch.Elapsed.TotalMilliseconds.ToString("F0")} milliseconds).");
-#if !DEBUG
             }
+#if DEBUG
             catch (Exception e)
+#else
+            catch (HQ4DCSException e)
+#endif
             {
                 stopwatch.Stop();
-                HQDebugLog.Instance.Log($"ERROR: {e}");
-                HQDebugLog.Instance.Log();
-                HQDebugLog.Instance.Log($"Export to .miz FAILED.");
+                DebugLog.Instance.Log($"ERROR: {e}");
+                DebugLog.Instance.Log();
+                DebugLog.Instance.Log($"Export to .miz FAILED.");
 
                 MessageBox.Show(e.Message, "Export to .miz failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 exportedSucessfully = false;
             }
-#endif
 
-    // Save log to the Logs directory
-    DebugLog.Instance.SaveToFileAndClear("ExportToMIZ");
+            // Save log to the Logs directory
+            DebugLog.Instance.SaveToFileAndClear("ExportToMIZ");
 
             return exportedSucessfully;
         }

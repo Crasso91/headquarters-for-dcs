@@ -49,26 +49,26 @@ namespace Headquarters4DCS.MizExport
         /// <summary>
         /// Creates all custom kneeboard images and returns them as a dictionary of byte arrays.
         /// </summary>
-        /// <param name="missHQ">An HQ4DCS mission.</param>
+        /// <param name="mission">An HQ4DCS mission.</param>
         /// <returns>A dictionary of entries to include the .miz file. Key is the entry name, value is an array holding the bytes of the entry.</returns>
-        //public Dictionary<string, byte[]> MakeKneeboardImages(HQMission missHQ)
-        //{
-        //    Dictionary<string, byte[]> kneeboardImages = new Dictionary<string, byte[]>();
+        public Dictionary<string, byte[]> MakeKneeboardImages(Mission mission)
+        {
+            Dictionary<string, byte[]> kneeboardImages = new Dictionary<string, byte[]>();
 
-        //    HQDebugLog.Instance.Log($"Adding kneeboard images...");
+            DebugLog.Instance.Log($"Adding kneeboard images...");
 
-        //    Image kneeboardImage = null;
+            Image kneeboardImage = null;
 
-        //    using (BriefingExporter briefingExporter = new BriefingExporter())
-        //    { kneeboardImage = briefingExporter.ExportToImage(missHQ.BriefingHTML); }
-        //    if (kneeboardImage == null) return kneeboardImages; // Failed to generate an image, abort
+            using (HTMLExporter htmlExporter = new HTMLExporter())
+            { kneeboardImage = htmlExporter.ExportToImage(mission.BriefingHTML); }
+            if (kneeboardImage == null) return kneeboardImages; // Failed to generate an image, abort
 
-        //    // TODO: format is wrong - should be 768x1024
-        //    // TODO: briefing should be split in multiple pages to make sure even long briefings are readable
-        //    foreach (string acType in missHQ.UsedPlayerAircraftTypes)
-        //        kneeboardImages.Add($"KNEEBOARD/{acType}/IMAGES/01.png", HQTools.ImageToBytes(kneeboardImage, ImageFormat.Png));
+            // TODO: format is wrong - should be 768x1024
+            // TODO: briefing should be split in multiple pages to make sure even long briefings are readable
+            foreach (string acType in mission.UsedPlayerAircraftTypes)
+                kneeboardImages.Add($"KNEEBOARD/{acType}/IMAGES/01.png", HQTools.ImageToBytes(kneeboardImage, ImageFormat.Png));
 
-        //    return kneeboardImages;
-        //}
+            return kneeboardImages;
+        }
     }
 }

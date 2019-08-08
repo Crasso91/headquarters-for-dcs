@@ -52,12 +52,10 @@ namespace Headquarters4DCS.MizExport
         /// <summary>
         /// Generates the content of the Lua file.
         /// </summary>
-        /// <param name="missHQ">An HQ4DCS mission.</param>
+        /// <param name="mission">An HQ4DCS mission.</param>
         /// <returns>The contents of the Lua file.</returns>
-        public string MakeLua(Mission missHQ)
+        public string MakeLua(Mission mission)
         {
-            //int i, j;
-
             string lua = HQTools.ReadIncludeLuaFile("Script.lua");
 
             // Add the debug script to scripts generated with the debug build.
@@ -65,22 +63,13 @@ namespace Headquarters4DCS.MizExport
             lua += HQTools.ReadIncludeLuaFile("Script\\DebugMenu.lua") + "\n\n";
 #endif
 
-            //for (i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
-            //{
-            //    string scriptReplacement = "";
+            CopyMissionLuaScripts(ref lua, mission);
 
-            //    scriptReplacement += missHQ.ScriptsMission[i] + "\n";
-            //    for (j = 0; j < missHQ.Objectives.Count; j++)
-            //        scriptReplacement += missHQ.ScriptsObjective[i].Replace("$ID$", HQTools.ValToString(j + 1)) + "\n";
-
-            //    HQTools.ReplaceKey(ref lua, $"Script{((MissionScriptScope)i).ToString()}", scriptReplacement);
-            //}
-
-            HQTools.ReplaceKey(ref lua, "UnitNames", CreateUnitNamesTable(missHQ.UseNATOCallsigns));
-            HQTools.ReplaceKey(ref lua, "ObjectiveNames", CreateObjectiveNamesTable(missHQ));
-            HQTools.ReplaceKey(ref lua, "PlayerCoalition", missHQ.CoalitionPlayer.ToString().ToUpperInvariant());
-            HQTools.ReplaceKey(ref lua, "EnemyCoalition", missHQ.CoalitionEnemy.ToString().ToUpperInvariant());
-            HQTools.ReplaceKey(ref lua, "ObjectiveCount", missHQ.Objectives.Length);
+            HQTools.ReplaceKey(ref lua, "UnitNames", CreateUnitNamesTable(mission.UseNATOCallsigns));
+            HQTools.ReplaceKey(ref lua, "ObjectiveNames", CreateObjectiveNamesTable(mission));
+            HQTools.ReplaceKey(ref lua, "PlayerCoalition", mission.CoalitionPlayer.ToString().ToUpperInvariant());
+            HQTools.ReplaceKey(ref lua, "EnemyCoalition", mission.CoalitionEnemy.ToString().ToUpperInvariant());
+            HQTools.ReplaceKey(ref lua, "ObjectiveCount", mission.Objectives.Length);
 
             DoLocalizationReplacements(ref lua);
 
@@ -106,23 +95,11 @@ namespace Headquarters4DCS.MizExport
         /// Copy all included scripts into the mission Lua script.
         /// </summary>
         /// <param name="lua">The mission Lua script.</param>
-        /// <param name="missHQ">A HQ4DCS mission.</param>
-        private void CopyMissionLuaScripts(ref string lua, Mission missHQ)
+        /// <param name="mission">A HQ4DCS mission.</param>
+        private void CopyMissionLuaScripts(ref string lua, Mission mission)
         {
-            string[] fullScriptCode = new string[HQTools.EnumCount<MissionScriptScope>()];
-            for (int i = 0; i < fullScriptCode.Length; i++) fullScriptCode[i] = "";
-
-            foreach (MissionScript script in missHQ.Scripts)
-            {
-                string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{script.LuaFile}");
-
-                fullScriptCode[(int)script.ScriptScope] += scriptLua + "\n\n";
-            }
-
-            // Copy scripts in the mission Lua script.
-            HQTools.ReplaceKey(ref lua, "ScriptGlobal", fullScriptCode[(int)MissionScriptScope.Global]);
-            HQTools.ReplaceKey(ref lua, "ScriptEvent", fullScriptCode[(int)MissionScriptScope.Event]);
-            HQTools.ReplaceKey(ref lua, "ScriptTimer", fullScriptCode[(int)MissionScriptScope.Timer]);
+            for (int i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
+                HQTools.ReplaceKey(ref lua, $"Script{((MissionScriptScope)i).ToString()}", mission.Scripts[i]);
         }
 
         /// <summary>
