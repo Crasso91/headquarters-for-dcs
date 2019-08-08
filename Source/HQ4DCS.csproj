@@ -164,6 +164,7 @@
     <Compile Include="Forms\PanelMainFormSidePanel.Designer.cs">
       <DependentUpon>PanelMainFormSidePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TheaterUpdateType.cs" />
     <Compile Include="Imported\Cyotek.Windows.Forms\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>

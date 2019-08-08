@@ -35,9 +35,9 @@ namespace Headquarters4DCS.Forms
             MapIconsImageList.Images.Add("selected", GUITools.GetImageFromResource("MapIcons.selected.png"));
         }
 
-        public void UpdateTheater(bool fullUpdate)
+        public void UpdateTheater(TheaterUpdateType updateType)
         {
-            if (fullUpdate)
+            if (updateType == TheaterUpdateType.Full)
             {
                 DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(Template.Theater);
 
@@ -58,6 +58,7 @@ namespace Headquarters4DCS.Forms
             foreach (string n in MapImageBox.IconsLocation.Keys)
             {
                 if (!Template.Locations.ContainsKey(n)) continue;
+                if ((updateType == TheaterUpdateType.SelectedLocation) && (n != SelectedNodeID)) continue;
 
                 if (Template.Locations[n].Definition.LocationType == TheaterLocationType.Airbase)
                 {
@@ -75,7 +76,7 @@ namespace Headquarters4DCS.Forms
             MapImageBox.Refresh();
         }
 
-        private string GetNodeIDOnMapPosition(int x, int y, bool proceedToNext)
+        private string GetLocationIDFromMapPosition(int x, int y, bool proceedToNext)
         {
             DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(Template.Theater); // TODO: what if theater doesn't exist?
             Coordinates position = new Coordinates(x - MapImageBox.AutoScrollPosition.X, y - MapImageBox.AutoScrollPosition.Y) / (MapImageBox.Zoom / 100.0);
@@ -108,40 +109,30 @@ namespace Headquarters4DCS.Forms
 
         private void MapImageBoxMouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Clicks == 2)
-                MessageBox.Show(e.Location.ToString());
-
-
             if ((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right)) return;
             if (e.Location != MapMouseDownLocation) return;
 
-            string newSelectedNode = GetNodeIDOnMapPosition(e.X, e.Y, (e.Button == MouseButtons.Left));
-            MainForm.UpdateSelectedLocation(newSelectedNode);
+            MainForm.SelectedLocationID = GetLocationIDFromMapPosition(e.X, e.Y, (e.Button == MouseButtons.Left));
+            //MainForm.SidePanel.SelectNode(newSelectedNode);
+            MainForm.UpdateTheater(TheaterUpdateType.SelectedLocation);
+            
 
-            if ((e.Button == MouseButtons.Right) && (newSelectedNode != null))
-            {
-                using (FormLocationEditor locationEditorForm = new FormLocationEditor(Template.Locations[newSelectedNode]))
-                {
-                    if (locationEditorForm.ShowDialog() == DialogResult.OK)
-                    {
-                        Template.Locations[newSelectedNode] = locationEditorForm.EditedLocation;
-                        MainForm.UpdateSelectedLocation(newSelectedNode);
-                    }
-                }
-            }
-        }
-
-        private void MapImageBoxMouseEnter(object sender, EventArgs e)
-        {
-            MainForm.SetStatusBarMessage("Drag the map to move it, use the mouse wheel to zoom. Left-click a location to select, right-click a location to edit.");
+            //if ((e.Button == MouseButtons.Right) && (newSelectedNode != null))
+            //{
+            //    using (FormLocationEditor locationEditorForm = new FormLocationEditor(Template.Locations[newSelectedNode]))
+            //    {
+            //        if (locationEditorForm.ShowDialog() == DialogResult.OK)
+            //        {
+            //            Template.Locations[newSelectedNode] = locationEditorForm.EditedLocation;
+            //            MainForm.UpdateSelectedLocation(newSelectedNode);
+            //        }
+            //    }
+            //}
         }
 
         private void MapImageBoxMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            // TODO: fix this: double-clicking should open the location editor
-            MapMouseDownLocation = e.Location;
-            if (e.Button != MouseButtons.Left) return;
-            MapImageBoxMouseUp(sender, new MouseEventArgs(MouseButtons.Right, 1, e.X, e.Y, e.Delta));
+            // TODO: double-clicking = right-clicking
         }
     }
 }

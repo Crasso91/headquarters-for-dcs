@@ -49,7 +49,7 @@ namespace Headquarters4DCS.Forms
         /// <summary>
         /// Selected theater location. Null if none.
         /// </summary>
-        public string SelectedLocationID { get; private set; } = null;
+        public string SelectedLocationID { get; set; } = null;
 
         /// <summary>
         /// Child form, right panel (map).
@@ -112,11 +112,8 @@ namespace Headquarters4DCS.Forms
                 ToolStripButtonFileNew.DropDownItems.Add(theaterButton);
             }
 
-            MapPanel.UpdateTheater(true);
-            SidePanel.UpdateTheater(true);
-
             UpdateFormTitle();
-            UpdateTheater(true);
+            UpdateTheater(TheaterUpdateType.Full);
         }
 
         /// <summary>
@@ -131,7 +128,7 @@ namespace Headquarters4DCS.Forms
                 case Keys.Escape: // Escape: unselect selected location if any
                     if (SelectedLocationID == null) return;
                     SelectedLocationID = null;
-                    UpdateTheater(false);
+                    UpdateTheater(TheaterUpdateType.SelectedLocation);
                     return;
             }
         }
@@ -172,20 +169,8 @@ namespace Headquarters4DCS.Forms
 
             LastSaveFilePath = null;
             Template.Clear(e.ClickedItem.Name);
-            UpdateTheater(true);
+            UpdateTheater(TheaterUpdateType.Full);
             UpdateFormTitle();
-        }
-
-        /// <summary>
-        /// Event raised when the mouse enters the left panel of MainSplitContainer.
-        /// Manually raises the SidePanel.MouseEnter events, because it won't be raised properly if the mission setting tab is selected
-        /// (seems to be a bug with PropertyGrid).
-        /// </summary>
-        /// <param name="sender">The left panel of MainSplitContainer.</param>
-        /// <param name="e">Event arguments.</param>
-        private void Event_MainSplitContainerPanel1MouseEnter(object sender, EventArgs e)
-        {
-            SidePanel.SidePanelMouseEnter(sender, e);
         }
 
         /// <summary>
@@ -207,7 +192,7 @@ namespace Headquarters4DCS.Forms
                     Template.LoadFromFile(fileToLoad);
                     LastSaveFilePath = fileToLoad;
                     SelectedLocationID = null;
-                    UpdateTheater(true);
+                    UpdateTheater(TheaterUpdateType.Full);
                     UpdateFormTitle();
                     return;
                 case "MenuFileSave":
@@ -235,7 +220,7 @@ namespace Headquarters4DCS.Forms
                     return;
                 case "MenuMissionInvertAirbasesCoalition":
                     Template.InvertCoalitions();
-                    UpdateTheater(false);
+                    UpdateTheater(TheaterUpdateType.AllLocations);
                     return;
                 case "MenuDevelopmentMizToIni":
                     ShowDevToolWarningMessage();
@@ -290,19 +275,6 @@ namespace Headquarters4DCS.Forms
         }
 
         /// <summary>
-        /// Updates the selected location in the map and side panel.
-        /// </summary>
-        /// <param name="newSelectedID"></param>
-        public void UpdateSelectedLocation(string newSelectedID)
-        {
-            SelectedLocationID = newSelectedID;
-            UpdateTheater(false);
-
-            MapPanel.UpdateSelectedLocation();
-            SidePanel.UpdateSelectedLocation();
-        }
-
-        /// <summary>
         /// Updates the title of the form. Called when a mission is created, loaded or saved, to change the displayed file name.
         /// </summary>
         private void UpdateFormTitle()
@@ -315,11 +287,11 @@ namespace Headquarters4DCS.Forms
         /// <summary>
         /// Updates the theater display (icons, etc.) on both the map and the side panel sub forms.
         /// </summary>
-        /// <param name="fullUpdate">Should a full update (reload the background image on the map, etc.) be performed? Only when changing mission theater.</param>
-        private void UpdateTheater(bool fullUpdate)
+        /// <param name="updateType">Should the whole theater, all theater locations or only the selected location be updated?</param>
+        public void UpdateTheater(TheaterUpdateType updateType)
         {
-            MapPanel.UpdateTheater(fullUpdate);
-            SidePanel.UpdateTheater(fullUpdate);
+            MapPanel.UpdateTheater(updateType);
+            SidePanel.UpdateTheater(updateType);
         }
     }
 }

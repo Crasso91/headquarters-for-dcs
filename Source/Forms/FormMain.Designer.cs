@@ -336,7 +336,6 @@
             // MainSplitContainer.Panel1
             // 
             this.MainSplitContainer.Panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.MainSplitContainer.Panel1.MouseEnter += new System.EventHandler(this.Event_MainSplitContainerPanel1MouseEnter);
             this.MainSplitContainer.Panel1MinSize = 128;
             this.MainSplitContainer.Panel2MinSize = 256;
             this.MainSplitContainer.Size = new System.Drawing.Size(1008, 658);
