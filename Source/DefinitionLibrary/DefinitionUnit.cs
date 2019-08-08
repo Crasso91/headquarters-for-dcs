@@ -181,6 +181,8 @@ namespace Headquarters4DCS.DefinitionLibrary
                 DCSID = ini.GetValue<string>("Unit", "DCSID");
                 if (string.IsNullOrEmpty(DCSID)) DCSID = ID;
 
+                DisplayName = ini.GetValue<string>("Unit", "DisplayName");
+
                 Families = ini.GetValueArray<UnitFamily>("Unit", "Families"); if (Families.Length == 0) return false;
 
                 Category = HQTools.GetUnitCategoryFromUnitFamily(Families[0]);
