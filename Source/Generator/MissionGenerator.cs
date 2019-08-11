@@ -240,10 +240,14 @@ namespace Headquarters4DCS.Generator
             {
                 if (node.InUse) usedNodesCoordinatesList.Add(node.Definition.Position);
 
-                DefinitionFeature[] features = node.GetFeaturesDefinitions();
+                //DefinitionFeature[] features = node.GetFeaturesDefinitions();
 
-                foreach (DefinitionFeature feature in features)
+                //foreach (DefinitionFeature feature in features)
+                foreach (string featureID in node.Features)
                 {
+                    DefinitionFeature feature = Library.Instance.GetDefinition<DefinitionFeature>(featureID);
+                    if (feature == null) continue;
+
                     List<string> usedNodesSpawnPoints = new List<string>();
 
                     oggFilesList.AddRange(feature.MediaOgg);
@@ -251,6 +255,8 @@ namespace Headquarters4DCS.Generator
                     string featureWPName = "";
 
                     List<string> briefingMessagesReplacements = new List<string>();
+
+                    MissionUnitGroup unitGroup = null;
 
                     for (i = 0; i < feature.UnitGroups.Length; i++)
                     {
@@ -281,14 +287,14 @@ namespace Headquarters4DCS.Generator
 
                             DefinitionTheaterLocationSpawnPoint spawnPoint = HQTools.RandomFrom(validSpawnPoints);
 
-                            MissionUnitGroup newGroup = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
-                            if (newGroup == null)
+                            unitGroup = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
+                            if (unitGroup == null)
                                 continue; // TODO: throw error if objective or required
 
                             if (!briefingMessagesReplacements.Contains("CALLSIGN"))
-                                briefingMessagesReplacements.AddRange(new string[] { "CALLSIGN", newGroup.Name });
+                                briefingMessagesReplacements.AddRange(new string[] { "CALLSIGN", unitGroup.Name });
                             if (!briefingMessagesReplacements.Contains("FREQUENCY"))
-                                briefingMessagesReplacements.AddRange(new string[] { "FREQUENCY", HQTools.ValToString(newGroup.RadioFrequency, "F1") });
+                                briefingMessagesReplacements.AddRange(new string[] { "FREQUENCY", HQTools.ValToString(unitGroup.RadioFrequency, "F1") });
 
                             usedNodesSpawnPoints.Add(spawnPoint.UniqueID);
 
@@ -311,22 +317,34 @@ namespace Headquarters4DCS.Generator
                         }
 
                         mission.Scripts = new string[HQTools.EnumCount<FeatureScriptScope>()];
-                        for (j = 0; j < HQTools.EnumCount<FeatureScriptScope>(); j++)
+                        for (int scriptScope = 0; scriptScope < HQTools.EnumCount<FeatureScriptScope>(); scriptScope++)
                         {
-                            mission.Scripts[j] = "";
+                            mission.Scripts[scriptScope] = "";
 
-                            for (k = 0; k < HQTools.EnumCount<FeatureScriptRepetition>(); k++)
+                            for (int scriptRep = 0; scriptRep < HQTools.EnumCount<FeatureScriptRepetition>(); scriptRep++)
                             {
-                                foreach (string s in feature.Scripts[j][k])
+                                foreach (string s in feature.Scripts[scriptRep][scriptScope])
                                 {
-                                    if (k == (int)FeatureScriptRepetition.Once)
+                                    string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{s}");
+
+                                    if (scriptRep == (int)FeatureScriptRepetition.Once)
                                     {
+                                        // Some scripts must be included only once per mission,
+                                        // no matter in how many features they appear.
                                         if (onceScriptAlreadyUsed.Contains(s.ToLowerInvariant())) continue;
                                         onceScriptAlreadyUsed.Add(s.ToLowerInvariant());
                                     }
+                                    else
+                                    {
+                                        // Do replacements
+                                        HQTools.ReplaceKey(ref scriptLua, "GroupID", unitGroup.GroupID);
+                                        // TODO: other replacements?
+                                    }
 
-                                    string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{s}");
-                                    mission.Scripts[k] += scriptLua + "\n";
+                                    mission.Scripts[scriptRep] +=
+                                        $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA ----\n" +
+                                        scriptLua + "\n" +
+                                        $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA END ----\n";
                                 }
                             }
                         }
