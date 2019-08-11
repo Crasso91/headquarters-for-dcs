@@ -109,6 +109,8 @@
     <Compile Include="Enums\Coalition.cs" />
     <Compile Include="Enums\Country.cs" />
     <Compile Include="Enums\FeatureFlag.cs" />
+    <Compile Include="Enums\FeatureScriptRepetition.cs" />
+    <Compile Include="Enums\FeatureScriptScope.cs" />
     <Compile Include="Enums\PlayerFlightGroupTask.cs" />
     <Compile Include="Enums\DCSAircraftTask.cs" />
     <Compile Include="Enums\DCSOption.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="Enums\HQSkillLevel.cs" />
     <Compile Include="Enums\FeatureCategory.cs" />
     <Compile Include="Enums\MissionObjectiveUnitGroupFlags.cs" />
-    <Compile Include="Enums\MissionScriptScope.cs" />
     <Compile Include="Enums\Month.cs" />
     <Compile Include="Enums\PlayerFlightGroupStartLocation.cs" />
     <Compile Include="Enums\Precipitation.cs" />
