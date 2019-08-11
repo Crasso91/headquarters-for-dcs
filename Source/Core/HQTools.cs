@@ -41,7 +41,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// The total count of mission script scopes.
         /// </summary>
-        public static readonly int MISSION_SCRIPT_SCOPE_COUNT = Enum.GetValues(typeof(MissionScriptScope)).Length;
+        public static readonly int MISSION_SCRIPT_SCOPE_COUNT = Enum.GetValues(typeof(FeatureScriptScope)).Length;
 
         /// <summary>
         /// Flags required to center text properly.

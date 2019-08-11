@@ -6,10 +6,10 @@ namespace Headquarters4DCS.GeneratedMission
     public struct MissionScript
     {
         public readonly string LuaFile;
-        public readonly MissionScriptScope ScriptScope;
+        public readonly FeatureScriptScope ScriptScope;
         public readonly Dictionary<string, string> Replacements;
 
-        public MissionScript(string luaFile, MissionScriptScope scriptScope, params string[] replacements)
+        public MissionScript(string luaFile, FeatureScriptScope scriptScope, params string[] replacements)
         {
             LuaFile = luaFile;
             ScriptScope = scriptScope;

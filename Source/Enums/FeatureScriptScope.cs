@@ -27,7 +27,7 @@ namespace Headquarters4DCS
     /// <summary>
     /// Where should a script be included in the mission script Lua file?
     /// </summary>
-    public enum MissionScriptScope
+    public enum FeatureScriptScope
     {
         /// <summary>
         /// Include script at the end of the file so it is ran on mission start.

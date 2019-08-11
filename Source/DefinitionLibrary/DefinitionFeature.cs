@@ -69,14 +69,9 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string[] MediaOgg { get; private set; } = new string[0];
 
         /// <summary>
-        /// Scripts to include ONCE in the mission.
+        /// Scripts to include in the mission.
         /// </summary>
-        public string[] ScriptsOnce { get; private set; } = new string[HQTools.MISSION_SCRIPT_SCOPE_COUNT];
-
-        /// <summary>
-        /// Scripts to included once each type this feature is included.
-        /// </summary>
-        public string[] ScriptsEach { get; private set; } = new string[HQTools.MISSION_SCRIPT_SCOPE_COUNT];
+        public string[][][] Scripts { get; private set; }
 
         /// <summary>
         /// A list of unit groups
@@ -92,6 +87,8 @@ namespace Headquarters4DCS.DefinitionLibrary
 
         protected override bool OnLoad(string path)
         {
+            int i, j;
+
             using (INIFile ini = new INIFile(path))
             {
                 // [Info] section
@@ -113,13 +110,12 @@ namespace Headquarters4DCS.DefinitionLibrary
                 MediaOgg = ini.GetValueArray<string>("Media", "Ogg");
 
                 // [Scripts] section
-                ScriptsOnce = new string[HQTools.MISSION_SCRIPT_SCOPE_COUNT];
-                ScriptsEach = new string[HQTools.MISSION_SCRIPT_SCOPE_COUNT];
-
-                for (int i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
+                Scripts = new string[HQTools.EnumCount<FeatureScriptRepetition>()][][];
+                for (i = 0; i < Scripts.Length; i++)
                 {
-                    ScriptsOnce = ini.GetValueArray<string>("Scripts", $"Once.{((MissionScriptScope)i).ToString()}");
-                    ScriptsEach = ini.GetValueArray<string>("Scripts", $"Each.{((MissionScriptScope)i).ToString()}");
+                    Scripts[i] = new string[HQTools.EnumCount<FeatureScriptScope>()][];
+                    for (j = 0; j < Scripts[i].Length; j++)
+                        Scripts[i][j] = ini.GetValueArray<string>("Scripts", $"{((FeatureScriptRepetition)i)}.{((FeatureScriptScope)j)}");
                 }
 
                 // [UnitGroups] section

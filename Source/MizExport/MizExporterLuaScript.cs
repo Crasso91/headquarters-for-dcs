@@ -99,7 +99,7 @@ namespace Headquarters4DCS.MizExport
         private void CopyMissionLuaScripts(ref string lua, Mission mission)
         {
             for (int i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
-                HQTools.ReplaceKey(ref lua, $"Script{((MissionScriptScope)i).ToString()}", mission.Scripts[i]);
+                HQTools.ReplaceKey(ref lua, $"Script{((FeatureScriptScope)i).ToString()}", mission.Scripts[i]);
         }
 
         /// <summary>
