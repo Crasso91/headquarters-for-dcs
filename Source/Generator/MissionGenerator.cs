@@ -231,7 +231,7 @@ namespace Headquarters4DCS.Generator
 
             List<string> oggFilesList = new List<string>();
             List<MissionObjectiveLocation> objectivesList = new List<MissionObjectiveLocation>();
-            //List<MissionScript>[] scriptsList = new List<MissionScript>[] { new List<MissionScript>(), new List<MissionScript>(), new List<MissionScript>() };
+            List<string> onceScriptAlreadyUsed = new List<string>();
             List<MissionWaypoint> waypointsList = new List<MissionWaypoint>();
 
             List<Coordinates> usedNodesCoordinatesList = new List<Coordinates>();
@@ -308,8 +308,27 @@ namespace Headquarters4DCS.Generator
                                 objectivesList.Add(new MissionObjectiveLocation(spawnPoint.Position, featureWPName, feature.WaypointOnGround ? 0 : 1, 0));
                                 waypointsList.Add(new MissionWaypoint(wpPosition, featureWPName));
                             }
+                        }
 
-                            for (int i = 0; i < E)
+                        mission.Scripts = new string[HQTools.EnumCount<FeatureScriptScope>()];
+                        for (j = 0; j < HQTools.EnumCount<FeatureScriptScope>(); j++)
+                        {
+                            mission.Scripts[j] = "";
+
+                            for (k = 0; k < HQTools.EnumCount<FeatureScriptRepetition>(); k++)
+                            {
+                                foreach (string s in feature.Scripts[j][k])
+                                {
+                                    if (k == (int)FeatureScriptRepetition.Once)
+                                    {
+                                        if (onceScriptAlreadyUsed.Contains(s.ToLowerInvariant())) continue;
+                                        onceScriptAlreadyUsed.Add(s.ToLowerInvariant());
+                                    }
+
+                                    string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{s}");
+                                    mission.Scripts[k] += scriptLua + "\n";
+                                }
+                            }
                         }
                     }
 
