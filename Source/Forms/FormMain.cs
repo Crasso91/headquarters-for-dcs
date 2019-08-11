@@ -258,7 +258,7 @@ namespace Headquarters4DCS.Forms
             MenuFileNew.Image = GUITools.GetImageFromResource("Icons.new.png");
             MenuFileOpen.Image = GUITools.GetImageFromResource("Icons.load.png");
             MenuFileSave.Image = GUITools.GetImageFromResource("Icons.save.png");
-            MenuFileSaveAs.Image = GUITools.GetImageFromResource("Icons.save_as.png");
+            MenuFileSaveAs.Image = GUITools.GetImageFromResource("Icons.saveAs.png");
             MenuFileExit.Image = GUITools.GetImageFromResource("Icons.exit.png");
 
             MenuMissionInvertAirbasesCoalition.Image = GUITools.GetImageFromResource("Icons.switchSides.png");
@@ -269,9 +269,6 @@ namespace Headquarters4DCS.Forms
             ToolStripButtonFileSave.Image = MenuFileSave.Image;
             ToolStripButtonFileSaveAs.Image = MenuFileSaveAs.Image;
             ToolStripButtonMissionGenerate.Image = MenuMissionGenerate.Image;
-
-            ToolStripButtonZoomIn.Image = GUITools.GetImageFromResource("Icons.zoom_in.png");
-            ToolStripButtonZoomOut.Image = GUITools.GetImageFromResource("Icons.zoom_out.png");
         }
 
         /// <summary>

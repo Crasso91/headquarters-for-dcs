@@ -290,11 +290,7 @@
     <EmbeddedResource Include="Resources\Icons\website.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Icons\save_as.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Icons\zoom_in.png" />
-    <EmbeddedResource Include="Resources\Icons\zoom_out.png" />
+    <EmbeddedResource Include="Resources\Icons\saveAs.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\add.png" />

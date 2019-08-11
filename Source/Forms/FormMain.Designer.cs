@@ -43,6 +43,7 @@
             this.MenuMissionInvertAirbasesCoalition = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuDevelopment = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuDevelopmentMizToIni = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuDevelopmentRadioMessageGenerator = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuHelpWebsite = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuHelpS1 = new System.Windows.Forms.ToolStripSeparator();
@@ -54,13 +55,9 @@
             this.ToolStripButtonFileSaveAs = new System.Windows.Forms.ToolStripButton();
             this.ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolStripButtonMissionGenerate = new System.Windows.Forms.ToolStripButton();
-            this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolStripButtonZoomIn = new System.Windows.Forms.ToolStripButton();
-            this.ToolStripButtonZoomOut = new System.Windows.Forms.ToolStripButton();
             this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
             this.StatusStripLabelInfo = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.MenuDevelopmentRadioMessageGenerator = new System.Windows.Forms.ToolStripMenuItem();
             this.MainFormMenuStrip.SuspendLayout();
             this.MainFormToolStrip.SuspendLayout();
             this.MainStatusStrip.SuspendLayout();
@@ -185,6 +182,13 @@
             this.MenuDevelopmentMizToIni.Text = "&Miz to Ini";
             this.MenuDevelopmentMizToIni.Click += new System.EventHandler(this.Event_MenuClick);
             // 
+            // MenuDevelopmentRadioMessageGenerator
+            // 
+            this.MenuDevelopmentRadioMessageGenerator.Name = "MenuDevelopmentRadioMessageGenerator";
+            this.MenuDevelopmentRadioMessageGenerator.Size = new System.Drawing.Size(207, 22);
+            this.MenuDevelopmentRadioMessageGenerator.Text = "&Radio message generator";
+            this.MenuDevelopmentRadioMessageGenerator.Click += new System.EventHandler(this.Event_MenuClick);
+            // 
             // MenuHelp
             // 
             this.MenuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -220,10 +224,7 @@
             this.ToolStripButtonFileSave,
             this.ToolStripButtonFileSaveAs,
             this.ToolStripSeparator1,
-            this.ToolStripButtonMissionGenerate,
-            this.ToolStripSeparator2,
-            this.ToolStripButtonZoomIn,
-            this.ToolStripButtonZoomOut});
+            this.ToolStripButtonMissionGenerate});
             this.MainFormToolStrip.Location = new System.Drawing.Point(0, 24);
             this.MainFormToolStrip.Name = "MainFormToolStrip";
             this.MainFormToolStrip.Size = new System.Drawing.Size(1008, 25);
@@ -282,33 +283,8 @@
             this.ToolStripButtonMissionGenerate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripButtonMissionGenerate.Name = "ToolStripButtonMissionGenerate";
             this.ToolStripButtonMissionGenerate.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripButtonMissionGenerate.Text = "ToolStripButtonFileGenerate";
+            this.ToolStripButtonMissionGenerate.Text = "Generate mission";
             this.ToolStripButtonMissionGenerate.Click += new System.EventHandler(this.Event_MenuClick);
-            // 
-            // ToolStripSeparator2
-            // 
-            this.ToolStripSeparator2.Name = "ToolStripSeparator2";
-            this.ToolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // ToolStripButtonZoomIn
-            // 
-            this.ToolStripButtonZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ToolStripButtonZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("ToolStripButtonZoomIn.Image")));
-            this.ToolStripButtonZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ToolStripButtonZoomIn.Name = "ToolStripButtonZoomIn";
-            this.ToolStripButtonZoomIn.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripButtonZoomIn.Text = "ToolStripButtonZoomIn";
-            this.ToolStripButtonZoomIn.Click += new System.EventHandler(this.Event_MenuClick);
-            // 
-            // ToolStripButtonZoomOut
-            // 
-            this.ToolStripButtonZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ToolStripButtonZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ToolStripButtonZoomOut.Image")));
-            this.ToolStripButtonZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ToolStripButtonZoomOut.Name = "ToolStripButtonZoomOut";
-            this.ToolStripButtonZoomOut.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripButtonZoomOut.Text = "ToolStripButtonZoomOut";
-            this.ToolStripButtonZoomOut.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MainStatusStrip
             // 
@@ -341,13 +317,6 @@
             this.MainSplitContainer.Size = new System.Drawing.Size(1008, 658);
             this.MainSplitContainer.SplitterDistance = 256;
             this.MainSplitContainer.TabIndex = 3;
-            // 
-            // MenuDevelopmentRadioMessageGenerator
-            // 
-            this.MenuDevelopmentRadioMessageGenerator.Name = "MenuDevelopmentRadioMessageGenerator";
-            this.MenuDevelopmentRadioMessageGenerator.Size = new System.Drawing.Size(207, 22);
-            this.MenuDevelopmentRadioMessageGenerator.Text = "&Radio message generator";
-            this.MenuDevelopmentRadioMessageGenerator.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // FormMain
             // 
@@ -391,8 +360,6 @@
         private System.Windows.Forms.ToolStripMenuItem MenuFileSaveAs;
         private System.Windows.Forms.ToolStripMenuItem MenuFileExit;
         private System.Windows.Forms.ToolStripSeparator ToolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton ToolStripButtonZoomIn;
-        private System.Windows.Forms.ToolStripButton ToolStripButtonZoomOut;
         private System.Windows.Forms.ToolStripMenuItem MenuMission;
         private System.Windows.Forms.ToolStripMenuItem MenuMissionInvertAirbasesCoalition;
         private System.Windows.Forms.ToolStripMenuItem MenuFileSave;
@@ -406,7 +373,6 @@
         private System.Windows.Forms.ToolStripMenuItem MenuHelpAbout;
         private System.Windows.Forms.ToolStripSeparator MenuFileS1;
         private System.Windows.Forms.ToolStripButton ToolStripButtonMissionGenerate;
-        private System.Windows.Forms.ToolStripSeparator ToolStripSeparator2;
         private System.Windows.Forms.ToolStripDropDownButton ToolStripButtonFileNew;
         private System.Windows.Forms.ToolStripStatusLabel StatusStripLabelInfo;
         private System.Windows.Forms.SplitContainer MainSplitContainer;
