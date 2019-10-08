@@ -8,6 +8,12 @@
   <language>en-US</language>
 
   <item>
+   <title>8 October 2019</title>
+   <link>https://akaagar.github.io/headquarters-for-dcs/</link>
+   <description>Hi everyone! As many of you have noticed, development of HQ4DCS has stalled since late August. Due to some recent and unfortunate circumstances in my life, I had to stop working on my open source projects. Don't worry, everything is back to normal now, and development of both planned and new features will resume soon. As a matter of respect for my backers, I declined recurring Paypal donations for the months during which I did not update the project. My untold goal was to make sure open beta 2 would be available before the DCS: Viper early access, and I was pretty confident I could be faster than Eagle Dynamics, well... I was wrong :) Thanks again for your support, and sorry again about this delay.</description>
+  </item>
+
+  <item>
    <title>21 June 2019</title>
    <link>https://akaagar.github.io/headquarters-for-dcs/</link>
    <description>HQ4DCS Open Beta 2 will be open source! You read that right: the next version of HQ4DCS will be open source and hosted on GitHub...</description>
