@@ -22,16 +22,23 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-namespace Headquarters4DCS
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+
+namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
-    /// A type of location spawn point. Used to know what can be spawned at its location.
+    /// Definition of a mission objective.
     /// </summary>
-    public enum TheaterLocationSpawnPointType
+    public sealed class DefinitionObjective : Definition
     {
-        LandSmall,
-        LandMedium,
-        LandLarge,
-        Sea
+        // TODO
+
+        protected override bool OnLoad(string path)
+        {
+            return true;
+        }
     }
 }

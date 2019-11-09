@@ -23,11 +23,11 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates the "l10n/DEFAULT/script.lua" entry in the MIZ file.
@@ -54,7 +54,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="mission">An HQ4DCS mission.</param>
         /// <returns>The contents of the Lua file.</returns>
-        public string MakeLua(Mission mission)
+        public string MakeLua(DCSMission mission)
         {
             string lua = HQTools.ReadIncludeLuaFile("Script.lua");
 
@@ -96,7 +96,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="lua">The mission Lua script.</param>
         /// <param name="mission">A HQ4DCS mission.</param>
-        private void CopyMissionLuaScripts(ref string lua, Mission mission)
+        private void CopyMissionLuaScripts(ref string lua, DCSMission mission)
         {
             for (int i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
                 HQTools.ReplaceKey(ref lua, $"Script{((FeatureScriptScope)i).ToString()}", mission.Scripts[i]);
@@ -130,7 +130,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="missHQ">A HQ4DCS mission.</param>
         /// <returns>A Lua table in a string</returns>
-        private string CreateObjectiveNamesTable(Mission missHQ)
+        private string CreateObjectiveNamesTable(DCSMission missHQ)
         {
             string objectiveNames = "{ ";
 

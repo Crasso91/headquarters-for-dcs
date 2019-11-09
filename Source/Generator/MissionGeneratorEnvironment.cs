@@ -23,7 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 
 namespace Headquarters4DCS.Generator
@@ -67,7 +67,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="mission">The mission.</param>
         /// <param name="timePeriod">The time period (decade) during which the mission is supposed to take place.</param>
         /// <param name="season">The season during which the mission is supposed to take place.</param>
-        public void GenerateMissionDate(Mission mission, TimePeriod timePeriod, Season season)
+        public void GenerateMissionDate(DCSMission mission, TimePeriod timePeriod, Season season)
         {
             DebugLog.Instance.Log("Generating mission date...");
 
@@ -125,7 +125,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="mission">The mission.</param>
         /// <param name="timeOfDay">The preferred time of day (noon, dawn, twilight, night, random...)</param>
         /// <param name="theater">Theater definition from which to get sunrise/sunset time.</param>
-        public void GenerateMissionTime(Mission mission, TimeOfDay timeOfDay, DefinitionTheater theater)
+        public void GenerateMissionTime(DCSMission mission, TimeOfDay timeOfDay, DefinitionTheater theater)
         {
             DebugLog.Instance.Log("Generating mission starting time...");
 
@@ -177,7 +177,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="mission">The mission.</param>
         /// <param name="weather">The preferred type of weather (clear, cloudy, storm...).</param>
         /// <param name="theater">Theater definition from which to get weather info for this part of the world.</param>
-        public void GenerateWeather(Mission mission, Weather weather, DefinitionTheater theater)
+        public void GenerateWeather(DCSMission mission, Weather weather, DefinitionTheater theater)
         {
             DebugLog.Instance.Log("Generating weather conditions...");
 
@@ -233,7 +233,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="mission">The mission.</param>
         /// <param name="wind">The preferred wind speed.</param>
         /// <param name="theater">Theater definition from which to get wind info for this part of the world.</param>
-        public void GenerateWind(Mission mission, Wind wind, DefinitionTheater theater)
+        public void GenerateWind(DCSMission mission, Wind wind, DefinitionTheater theater)
         {
             DebugLog.Instance.Log("Generating wind...");
 

@@ -22,12 +22,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates the "Mission" entry in the MIZ file.
@@ -60,7 +60,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="mission">An HQ4DCS mission.</param>
         /// <returns>The contents of the Lua file.</returns>
-        public string MakeLua(Mission mission)
+        public string MakeLua(DCSMission mission)
         {
             UnitID = 1;
 
@@ -137,7 +137,7 @@ namespace Headquarters4DCS.MizExport
             return lua;
         }
 
-        private string GetCustomDCSOptionsLua(Mission missionHQ)
+        private string GetCustomDCSOptionsLua(DCSMission missionHQ)
         {
             string optionsLua = "";
 
@@ -160,7 +160,7 @@ namespace Headquarters4DCS.MizExport
             }
         }
 
-        private string MakeCountryList(Mission missionHQ, Coalition coalition)
+        private string MakeCountryList(DCSMission missionHQ, Coalition coalition)
         {
             string countryTableLua = "";
 
@@ -170,7 +170,7 @@ namespace Headquarters4DCS.MizExport
             return countryTableLua;
         }
 
-        private string MakeCoalitionTable(Mission missHQ, Coalition coalition)
+        private string MakeCoalitionTable(DCSMission missHQ, Coalition coalition)
         {
             string coalitionTableLua = "";
 
@@ -185,7 +185,7 @@ namespace Headquarters4DCS.MizExport
             return coalitionTableLua;
         }
 
-        private string MakeUnitsLua(Mission missHQ, Coalition coalition)
+        private string MakeUnitsLua(DCSMission missHQ, Coalition coalition)
         {
             string allUnitsLua = HQTools.ReadIncludeLuaFile("Mission\\CoalitionUnits.lua");
 
@@ -195,18 +195,18 @@ namespace Headquarters4DCS.MizExport
             return allUnitsLua;
         }
 
-        private string MakeUnitsCategoryLua(Mission missHQ, Coalition coalition, UnitCategory categ)
+        private string MakeUnitsCategoryLua(DCSMission missHQ, Coalition coalition, UnitCategory categ)
         {
             string categoryUnitsLua = "";
 
-            MissionUnitGroup[] groups =
+            DCSMissionUnitGroup[] groups =
                 (from g in missHQ.UnitGroups
                  where g.Coalition == coalition && g.Category == categ
                  select g).ToArray();
 
             int categIndex = 1;
 
-            foreach (MissionUnitGroup g in groups)
+            foreach (DCSMissionUnitGroup g in groups)
             {
                 string groupLua = HQTools.ReadIncludeLuaFile($"Mission\\{g.LuaGroup}.lua");
 
@@ -223,7 +223,7 @@ namespace Headquarters4DCS.MizExport
                 HQTools.ReplaceKey(ref groupLua, "ObjectiveCenterX", missHQ.ObjectivesCenterPoint.X + HQTools.RandomDouble(-UNIT_RANDOM_WAYPOINT_VARIATION, UNIT_RANDOM_WAYPOINT_VARIATION));
                 HQTools.ReplaceKey(ref groupLua, "ObjectiveCenterY", missHQ.ObjectivesCenterPoint.Y + HQTools.RandomDouble(-UNIT_RANDOM_WAYPOINT_VARIATION, UNIT_RANDOM_WAYPOINT_VARIATION));
                 HQTools.ReplaceKey(ref groupLua, "Hidden", g.Hidden);
-                foreach (MissionUnitGroupCustomValueKey k in g.CustomValues.Keys)
+                foreach (DCSMissionUnitGroupCustomValueKey k in g.CustomValues.Keys)
                 {
                     if (k.UnitIndex != -1) continue; // Replacement applies only to a single unit, don't apply it to the whole group
                     HQTools.ReplaceKey(ref groupLua, k.Key, g.CustomValues[k]);
@@ -237,7 +237,7 @@ namespace Headquarters4DCS.MizExport
             return categoryUnitsLua;
         }
 
-        private string CreatePlayerWaypointsLua(MissionWaypoint[] waypoints)
+        private string CreatePlayerWaypointsLua(DCSMissionWaypoint[] waypoints)
         {
             // FIXME: first and last WP
             // FIXME: EPLRS on first WP?
@@ -272,7 +272,7 @@ namespace Headquarters4DCS.MizExport
             return flightPlanLua;
         }
 
-        private string MakeUnitsUnitsLua(MissionUnitGroup group, bool singlePlayer)
+        private string MakeUnitsUnitsLua(DCSMissionUnitGroup group, bool singlePlayer)
         {
             string unitsLua = "";
 
@@ -291,7 +291,7 @@ namespace Headquarters4DCS.MizExport
                 HQTools.ReplaceKey(ref singleUnitLua, "Skill", skillLevel.ToString());
                 HQTools.ReplaceKey(ref singleUnitLua, "X", group.GetUnitCoordinates(i).X);
                 HQTools.ReplaceKey(ref singleUnitLua, "Y", group.GetUnitCoordinates(i).Y);
-                foreach (MissionUnitGroupCustomValueKey k in group.CustomValues.Keys)
+                foreach (DCSMissionUnitGroupCustomValueKey k in group.CustomValues.Keys)
                 {
                     if (k.UnitIndex != i) continue; // Replacement does not target this unit, continue
                     HQTools.ReplaceKey(ref singleUnitLua, k.Key, group.CustomValues[k]);

@@ -23,7 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using Headquarters4DCS.Template;
 using System;
 using System.IO;
@@ -62,7 +62,7 @@ namespace Headquarters4DCS.Generator
         /// </summary>
         /// <param name="mission">The mission.</param>
         /// <param name="template">The provided mission name in the template.</param>
-        public void GenerateMissionName(Mission mission, string templateMissionName)
+        public void GenerateMissionName(DCSMission mission, string templateMissionName)
         {
             DebugLog.Instance.Log("Generating mission name...");
 
@@ -147,7 +147,7 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log("");
         //}
 
-        public void GenerateRawTextBriefing(Mission mission, MissionTemplate template)
+        public void GenerateRawTextBriefing(DCSMission mission, MissionTemplate template)
         {
             DebugLog.Instance.Log("Generating raw text MIZ briefing...");
 
@@ -184,7 +184,7 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log("");
         }
 
-        public void GenerateHTMLBriefing(Mission mission, MissionTemplate template/*, DefinitionMissionObjective missionTask*/)
+        public void GenerateHTMLBriefing(DCSMission mission, MissionTemplate template/*, DefinitionMissionObjective missionTask*/)
         {
             DebugLog.Instance.Log("Generating HTML briefing...");
 
@@ -248,7 +248,7 @@ namespace Headquarters4DCS.Generator
             html += $"<h2>{GetString("Section.FlightPackage")}</h2>";
             html += "<table>";
             html += $"<tr><th>{GetString("Table.Header.Callsign")}</th><th>{GetString("Table.Header.Aircraft")}</th><th>{GetString("Table.Header.Task")}</th><th>{GetString("Table.Header.Airbase")}</th><th>{GetString("Table.Header.Radio")}</th></tr>";
-            foreach (MissionBriefingFlightGroup fg in (from MissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
+            foreach (DCSMissionBriefingFlightGroup fg in (from DCSMissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
                 html += // TODO: localize fg.Task
                     $"<tr><td>{fg.Callsign}</td><td>{fg.UnitCount}x {GetUnitName(fg.UnitType)}</td>" +
                     $"<td>{fg.Task}</td><td>{fg.AirbaseName}</td>" + 
@@ -293,7 +293,7 @@ namespace Headquarters4DCS.Generator
                 return Language.GetString("Briefing", key);
         }
 
-        private string FormatDate(Mission mission, bool longFormat)
+        private string FormatDate(DCSMission mission, bool longFormat)
         {
             string formattedString = GetString(longFormat ? "Format.Date.Long" : "Format.Date.Short");
 
@@ -313,7 +313,7 @@ namespace Headquarters4DCS.Generator
             return formattedString;
         }
 
-        private string FormatTime(Mission mission, bool longFormat)
+        private string FormatTime(DCSMission mission, bool longFormat)
         {
             string formattedString = GetString(longFormat ? "Format.Time.Long" : "Format.Time.Short");
 

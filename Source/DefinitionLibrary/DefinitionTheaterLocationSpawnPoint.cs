@@ -54,24 +54,23 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly TheaterLocationSpawnPointType PointType;
 
         /// <summary>
-        /// Extra parameters for this spawn point.
+        /// DCS World Country this spawn point is located in.
         /// </summary>
-        public readonly string[] Parameters;
+        public readonly DCSCountry Country;
 
-        public DefinitionTheaterLocationSpawnPoint(INIFile ini, string section, string key) : this()
+        public DefinitionTheaterLocationSpawnPoint(INIFile ini, string key) : this()
         {
-            string[] vals = ini.GetValueArray<string>(section, key);
+            string[] vals = ini.GetValueArray<string>("SpawnPoints", key, ',');
             IsValid = true;
             UniqueID = key;
 
-            if (vals.Length < 3) { IsValid = false; return; }
+            if (vals.Length < 4) { IsValid = false; return; }
 
             try
             {
                 Position = new Coordinates(HQTools.StringToDouble(vals[0]), HQTools.StringToDouble(vals[1]));
                 PointType = (TheaterLocationSpawnPointType)Enum.Parse(typeof(TheaterLocationSpawnPointType), vals[2], true);
-                if (vals.Length > 3) Parameters = vals.Skip(3).ToArray();
-                else Parameters = new string[0];
+                Country = (DCSCountry)Enum.Parse(typeof(DCSCountry), vals[3], true);
             }
             catch (Exception)
             {

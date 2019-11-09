@@ -298,7 +298,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         /// <param name="coalitionCountries">The countries in the coalition this aircraft belongs to.</param>
         /// <returns>The name of the livery</returns>
-        public string GetLiveryName(Country[] coalitionCountries)
+        public string GetLiveryName(DCSCountry[] coalitionCountries)
         {
             // TODO
 

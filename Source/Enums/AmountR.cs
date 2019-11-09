@@ -25,13 +25,16 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A type of location spawn point. Used to know what can be spawned at its location.
+    /// A "relative amount" value, from "Very low" to "Very high", with a "Random" options.
     /// </summary>
-    public enum TheaterLocationSpawnPointType
+    public enum AmountR
     {
-        LandSmall,
-        LandMedium,
-        LandLarge,
-        Sea
+        Random = -1, // "Random" must always be < 0 (so it's ignored when cast to/from int)
+
+        VeryLow = 1,
+        Low = 2,
+        Average = 3,
+        High = 4,
+        VeryHigh = 5
     }
 }

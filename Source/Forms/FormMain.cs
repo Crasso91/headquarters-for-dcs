@@ -22,8 +22,9 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.DevTools;
+using Headquarters4DCS.Mission;
+using Headquarters4DCS.Miz;
+using Headquarters4DCS.Tools;
 using Headquarters4DCS.Template;
 using System;
 using System.IO;
@@ -32,7 +33,7 @@ using System.Windows.Forms;
 namespace Headquarters4DCS.Forms
 {
     /// <summary>
-    /// Main form of the application.
+    /// The main form of the application
     /// </summary>
     public partial class FormMain : Form
     {
@@ -42,57 +43,50 @@ namespace Headquarters4DCS.Forms
         public MissionTemplate Template { get; private set; } = null;
 
         /// <summary>
+        /// Generated mission
+        /// </summary>
+        private DCSMission Mission = null;
+
+        /// <summary>
         /// File path to the last saved mission template. Null is mission wasn't saved yet.
         /// </summary>
         private string LastSaveFilePath = null;
 
         /// <summary>
-        /// Selected theater location. Null if none.
-        /// </summary>
-        public string SelectedLocationID { get; set; } = null;
-
-        /// <summary>
-        /// Child form, right panel (map).
-        /// </summary>
-        private readonly PanelMainFormMap MapPanel = null;
-
-        /// <summary>
-        /// Child form, left panel (mission settings and list of locations).
-        /// </summary>
-        private readonly PanelMainFormSidePanel SidePanel = null;
-
-#if !DEBUG
-        /// <summary>
-        /// Was the "this is a development tool" warning already displayed?
-        /// </summary>
-        private bool DevToolWarningAlreadyShown = false;
-#endif
-
-        /// <summary>
-        /// Constructor.
+        /// Constructor
         /// </summary>
         public FormMain()
         {
             InitializeComponent();
-            SetStatusBarMessage("");
-
             Template = new MissionTemplate();
-
-            MapPanel = new PanelMainFormMap(this);
-            SidePanel = new PanelMainFormSidePanel(this);
-            GUITools.SetupFormForPanel(MapPanel, MainSplitContainer.Panel2);
-            GUITools.SetupFormForPanel(SidePanel, MainSplitContainer.Panel1);
-
-            LoadIcons();
         }
 
         /// <summary>
-        /// Changes the tooltip message in the bottom status bar.
+        /// Load all icons from the embedded ressources. Called once when forms is created.
         /// </summary>
-        /// <param name="message">Message to display.</param>
-        public void SetStatusBarMessage(string message)
+        private void LoadIcons()
         {
-            StatusStripLabelInfo.Text = message;
+            Icon = GUITools.GetIconFromResource("Icon.ico");
+
+            MenuFileNew.Image = GUITools.GetImageFromResource("Icons.new.png");
+            MenuFileOpen.Image = GUITools.GetImageFromResource("Icons.load.png");
+            MenuFileSave.Image = GUITools.GetImageFromResource("Icons.save.png");
+            MenuFileSaveAs.Image = GUITools.GetImageFromResource("Icons.saveAs.png");
+            MenuFileExit.Image = GUITools.GetImageFromResource("Icons.exit.png");
+
+            MenuMissionGenerate.Image = GUITools.GetImageFromResource("Icons.generate.png");
+            //GenerateToolStripButton.Image = GUITools.GetImageFromResource("Icons.refresh.png");
+            MenuMissionExportMIZ.Image = GUITools.GetImageFromResource("Icons.exportMIZ.png");
+            MenuMissionExportBriefing.Image = GUITools.GetImageFromResource("Icons.exportBriefing.png");
+
+            ToolStripButtonFileNew.Image = MenuFileNew.Image;
+            ToolStripButtonFileOpen.Image = MenuFileOpen.Image;
+            ToolStripButtonFileSave.Image = MenuFileSave.Image;
+            ToolStripButtonFileSaveAs.Image = MenuFileSaveAs.Image;
+
+            ToolStripButtonMissionGenerate.Image = MenuMissionGenerate.Image;
+            ToolStripButtonMissionExportMIZ.Image = MenuMissionExportMIZ.Image;
+            ToolStripButtonMissionExportBriefing.Image = MenuMissionExportBriefing.Image;
         }
 
         /// <summary>
@@ -102,76 +96,17 @@ namespace Headquarters4DCS.Forms
         /// <param name="e">Event arguments.</param>
         private void Event_FormLoad(object sender, EventArgs e)
         {
-            // Adds all available theaters add sub items to the "new mission" button and menu item
-            foreach (DefinitionTheater theater in Library.Instance.GetAllDefinitions<DefinitionTheater>())
-            {
-                ToolStripMenuItem theaterMenuItem = new ToolStripMenuItem(theater.DisplayName) { Name = theater.ID };
-                MenuFileNew.DropDownItems.Add(theaterMenuItem);
-
-                ToolStripButton theaterButton = new ToolStripButton(theater.DisplayName) { Name = theater.ID };
-                ToolStripButtonFileNew.DropDownItems.Add(theaterButton);
-            }
-
-            UpdateFormTitle();
-            UpdateTheater(TheaterUpdateType.Full);
+            LoadIcons();
+            TemplatePropertyGrid.SelectedObject = Template;
+            GenerateMission();
         }
 
         /// <summary>
-        /// Event raised when a key is pressed.
+        /// Event raised when the form is closed.
         /// </summary>
-        /// <param name="sender">This form.</param>
-        /// <param name="e">Key event arguments.</param>
-        private void Event_FormKeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.Escape: // Escape: unselect selected location if any
-                    if (SelectedLocationID == null) return;
-                    SelectedLocationID = null;
-                    UpdateTheater(TheaterUpdateType.SelectedLocation);
-                    return;
-            }
-        }
-
-        /// <summary>
-        /// Event raised when the form is closing.
-        /// </summary>
-        /// <param name="sender">This form.</param>
-        /// <param name="e">Form closing arguments.</param>
-        private void Event_MainFormClosing(object sender, FormClosingEventArgs e)
-        {
-            // If not a debug build, show a confirmation message before closing.
-#if !DEBUG
-            e.Cancel =
-                (MessageBox.Show(
-                    "Are you sure you want to close HQ4DCS?\r\nUnsaved changes will be lost.",
-                    "Exit?",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes);
-#endif
-        }
-
-        /// <summary>
-        /// Event raised when a theater dropitem is selected from the "New mission" menu item or toolstripbutton.
-        /// </summary>
-        /// <param name="sender">The "New mission" menu item or toolstrip button.</param>
-        /// <param name="e">ToolStripItem clicked arguments.</param>
-        private void Event_MenuFileNewDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem == null) return;
-
-#if !DEBUG
-            if (MessageBox.Show(
-                "Are you sure you want to create a new mission?\r\nUnsaved changes will be lost.",
-                "New mission?",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
-                return;
-#endif
-
-            LastSaveFilePath = null;
-            Template.Clear(e.ClickedItem.Name);
-            UpdateTheater(TheaterUpdateType.Full);
-            UpdateFormTitle();
-        }
+        /// <param name="sender">The form.</param>
+        /// <param name="e">Event parameters</param>
+        private void Event_FormClosed(object sender, FormClosedEventArgs e) { DestroyMission(); }
 
         /// <summary>
         /// Event raised when any menu or toolbar item is clicked, apart from the "new mission" theater subitems.
@@ -191,8 +126,6 @@ namespace Headquarters4DCS.Forms
                     if (fileToLoad == null) return;
                     Template.LoadFromFile(fileToLoad);
                     LastSaveFilePath = fileToLoad;
-                    SelectedLocationID = null;
-                    UpdateTheater(TheaterUpdateType.Full);
                     UpdateFormTitle();
                     return;
                 case "MenuFileSave":
@@ -216,21 +149,79 @@ namespace Headquarters4DCS.Forms
                     return;
                 case "MenuMissionGenerate":
                 case "ToolStripButtonMissionGenerate":
-                    using (FormMissionOutput formOutput = new FormMissionOutput(Template)) { formOutput.ShowDialog(); }
+                    //using (FormMissionOutput formOutput = new FormMissionOutput(Template)) { formOutput.ShowDialog(); }
+                    GenerateMission();
                     return;
-                case "MenuMissionInvertAirbasesCoalition":
-                    Template.InvertCoalitions();
-                    UpdateTheater(TheaterUpdateType.AllLocations);
-                    return;
-                case "MenuDevelopmentMizToIni":
-                    ShowDevToolWarningMessage();
-                    using (FormMizToINI miz2IniForm = new FormMizToINI()) { miz2IniForm.ShowDialog(); }
-                    return;
-                case "MenuDevelopmentRadioMessageGenerator":
+                //case "MenuDevelopmentMizToIni":
+                //    ShowDevToolWarningMessage();
+                //    using (FormMizToINI miz2IniForm = new FormMizToINI()) { miz2IniForm.ShowDialog(); }
+                //    return;
+                case "MenuToolsRadioMessageGenerator":
                     ShowDevToolWarningMessage();
                     using (FormRadioMessageGenerator rmgForm = new FormRadioMessageGenerator()) { rmgForm.ShowDialog(); }
                     return;
+
+                case "MenuMissionExportMIZ":
+                case "ToolStripButtonMissionExportMIZ":
+                        if (Mission == null) return;
+
+                        string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
+                        if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "NewMission";
+
+                        string mizFilePath = GUITools.ShowSaveFileDialog(
+                            "miz", HQTools.GetDCSMissionPath(),
+                            defaultFileName, "DCS World mission files");
+
+                        if (!string.IsNullOrEmpty(mizFilePath))
+                        {
+                            using (MizExporter mizExporters = new MizExporter())
+                            { mizExporters.CreateMizFile(Mission, mizFilePath); }
+                        }
+                    return;
+
+                case "MenuMissionExportBriefingHTML":
+                case "ToolStripButtonMissionExportBriefingHTML":
+                        ExportBriefing(BriefingExportFileFormat.Html);
+                    return;
+
+                case "MenuMissionExportBriefingJPG":
+                case "ToolStripButtonMissionExportBriefingJPG":
+                    ExportBriefing(BriefingExportFileFormat.Jpg);
+                    return;
+
+                case "MenuMissionExportBriefingPNG":
+                case "ToolStripButtonMissionExportBriefingPNG":
+                    ExportBriefing(BriefingExportFileFormat.Png);
+                    return;
             }
+        }
+
+        /// <summary>
+        /// Event raised when the form is closing.
+        /// </summary>
+        /// <param name="sender">This form.</param>
+        /// <param name="e">Form closing arguments.</param>
+        private void Event_MainFormClosing(object sender, FormClosingEventArgs e)
+        {
+            // If not a debug build, show a confirmation message before closing.
+#if !DEBUG
+            e.Cancel =
+                (MessageBox.Show(
+                    "Are you sure you want to close HQ4DCS?\r\nUnsaved changes will be lost.",
+                    "Exit?",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes);
+#endif
+        }
+
+        /// <summary>
+        /// Destroys the generated mission, if a mission was generated.
+        /// </summary>
+        private void DestroyMission()
+        {
+            if (Mission == null) return;
+
+            Mission.Dispose();
+            Mission = null;
         }
 
         /// <summary>
@@ -249,29 +240,6 @@ namespace Headquarters4DCS.Forms
         }
 
         /// <summary>
-        /// Load all icons from the embedded ressources. Called once when forms is created.
-        /// </summary>
-        private void LoadIcons()
-        {
-            Icon = GUITools.GetIconFromResource("Icon.ico");
-
-            MenuFileNew.Image = GUITools.GetImageFromResource("Icons.new.png");
-            MenuFileOpen.Image = GUITools.GetImageFromResource("Icons.load.png");
-            MenuFileSave.Image = GUITools.GetImageFromResource("Icons.save.png");
-            MenuFileSaveAs.Image = GUITools.GetImageFromResource("Icons.saveAs.png");
-            MenuFileExit.Image = GUITools.GetImageFromResource("Icons.exit.png");
-
-            MenuMissionInvertAirbasesCoalition.Image = GUITools.GetImageFromResource("Icons.switchSides.png");
-            MenuMissionGenerate.Image = GUITools.GetImageFromResource("Icons.generate.png");
-
-            ToolStripButtonFileNew.Image = MenuFileNew.Image;
-            ToolStripButtonFileOpen.Image = MenuFileOpen.Image;
-            ToolStripButtonFileSave.Image = MenuFileSave.Image;
-            ToolStripButtonFileSaveAs.Image = MenuFileSaveAs.Image;
-            ToolStripButtonMissionGenerate.Image = MenuMissionGenerate.Image;
-        }
-
-        /// <summary>
         /// Updates the title of the form. Called when a mission is created, loaded or saved, to change the displayed file name.
         /// </summary>
         private void UpdateFormTitle()
@@ -282,13 +250,63 @@ namespace Headquarters4DCS.Forms
         }
 
         /// <summary>
-        /// Updates the theater display (icons, etc.) on both the map and the side panel sub forms.
+        /// Generates a new mission from the mission template.
         /// </summary>
-        /// <param name="updateType">Should the whole theater, all theater locations or only the selected location be updated?</param>
-        public void UpdateTheater(TheaterUpdateType updateType)
+        private void GenerateMission()
         {
-            MapPanel.UpdateTheater(updateType);
-            SidePanel.UpdateTheater(updateType);
+            MenuMissionExportMIZ.Enabled = false;
+            ToolStripButtonMissionExportMIZ.Enabled = false;
+
+            DestroyMission();
+            //Mission = HQ.MI.Generate(Template);
+
+            BriefingWebBrowser.Navigate("about:blank");
+            BriefingWebBrowser.Document.OpenNew(false);
+            if (Mission == null)
+            {
+                // TODO: proper message
+                BriefingWebBrowser.Document.Write("<html><head></head><body><h4>Failed to generate mission</h4></body>");
+                return; // No mission, no need to go further
+            }
+            BriefingWebBrowser.Document.Write(Mission.BriefingHTML);
+            BriefingWebBrowser.Refresh();
+
+            MenuMissionExportMIZ.Enabled = true;
+            ToolStripButtonMissionExportMIZ.Enabled = true;
+        }
+
+        /// <summary>
+        /// Exports the mission briefing to an HTML or image file.
+        /// </summary>
+        /// <param name="fileFormat">The file format to export to.</param>
+        private void ExportBriefing(BriefingExportFileFormat fileFormat)
+        {
+            if (Mission == null) return; // No mission has been generated, nothing to export.
+
+            string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
+            if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "NewMission";
+
+            string briefingFilePath = GUITools.ShowSaveFileDialog(
+                fileFormat.ToString().ToLowerInvariant(), HQTools.GetDCSMissionPath(),
+                defaultFileName, $"{fileFormat.ToString().ToUpperInvariant()} files");
+
+            if (briefingFilePath == null) return;
+
+            bool result;
+
+            using (HTMLExporter briefingExporter = new HTMLExporter())
+            {
+                switch (fileFormat)
+                {
+                    default: return;
+                    case BriefingExportFileFormat.Html: result = briefingExporter.ExportToHTML(briefingFilePath, Mission.BriefingHTML); break;
+                    case BriefingExportFileFormat.Jpg: result = briefingExporter.ExportToJPEG(briefingFilePath, Mission.BriefingHTML); break;
+                    case BriefingExportFileFormat.Png: result = briefingExporter.ExportToPNG(briefingFilePath, Mission.BriefingHTML); break;
+                }
+            }
+
+            if (!result)
+                MessageBox.Show("Failed to export briefing", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

@@ -22,10 +22,10 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates the "options" entry in the MIZ file.
@@ -47,7 +47,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="missHQ">An HQ4DCS mission.</param>
         /// <returns>The contents of the Lua file.</returns>
-        public string MakeLua(Mission missHQ)
+        public string MakeLua(DCSMission missHQ)
         {
             // TODO: Set options properly
             return HQTools.ReadIncludeLuaFile("Options.lua");

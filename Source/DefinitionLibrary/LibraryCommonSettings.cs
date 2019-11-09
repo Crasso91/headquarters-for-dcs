@@ -47,6 +47,11 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string DefaultLanguage { get; private set; }
 
         /// <summary>
+        /// Default objective.
+        /// </summary>
+        public string DefaultObjective { get; private set; }
+
+        /// <summary>
         /// Default player aircraft ID.
         /// </summary>
         public string DefaultPlayerAircraft { get; private set; }
@@ -81,10 +86,11 @@ namespace Headquarters4DCS.DefinitionLibrary
             {
                 DefaultCoalitionBlue = ini.GetValue("Defaults", "Coalition.Blue", "USA");
                 DefaultCoalitionRed = ini.GetValue("Defaults", "Coalition.Red", "Russia");
+                DefaultLanguage = ini.GetValue("Defaults", "Language", "English");
+                DefaultObjective = ini.GetValue("Defaults", "Objective", "CAP");
                 DefaultPlayerAircraft = ini.GetValue("Defaults", "Aircraft.Player", "Su-25T");
                 DefaultPlayerFlightGroupTask = ini.GetValue("Defaults", "PlayerFlightGroup.Task", PlayerFlightGroupTask.CAP);
                 DefaultPlayerFlightGroupStartLocation = ini.GetValue("Defaults", "PlayerFlightGroup.StartLocation", PlayerFlightGroupStartLocation.FromParking);
-                DefaultLanguage = ini.GetValue("Defaults", "Language", "English");
                 DefaultTheater = ini.GetValue("Defaults", "Theater", "Caucasus");
 
                 SharedOggFiles = ini.GetValueArray<string>("Shared", "OggFiles");

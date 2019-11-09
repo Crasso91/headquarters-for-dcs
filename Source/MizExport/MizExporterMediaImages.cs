@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,7 +30,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates all images file required for the mission except for Kneeboard makers, which are handled differently (see MIZMediaKneeboardMaker).
@@ -52,7 +52,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="missHQ">An HQ4DCS mission.</param>
         /// <returns>A dictionary of entries to include the .miz file. Key is the entry name, value is an array holding the bytes of the entry.</returns>
-        public Dictionary<string, byte[]> MakeImages(Mission missHQ)
+        public Dictionary<string, byte[]> MakeImages(DCSMission missHQ)
         {
             DebugLog.Instance.Log($"Adding images files...");
 

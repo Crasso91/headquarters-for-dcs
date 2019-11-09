@@ -23,7 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using Headquarters4DCS.Template;
 using System;
 using System.Collections.Generic;
@@ -150,77 +150,78 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log();
         //}
 
-        public int AddPlayerFlightGroup(Mission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup flightGroupTemplate, MissionTemplateLocation airbaseNode)
+        public int AddPlayerFlightGroup(DCSMission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup flightGroupTemplate/*, MissionTemplateLocation airbaseNode*/)
         {
-            if ((airbaseNode == null) || (airbaseNode.Definition.LocationType != TheaterLocationType.Airbase)) return -1; // No node, or not is not an airbase
-            DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
-            //DefinitionTheaterNodeAirbase airbaseDefinition = HQLibrary.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
-            if (aircraftDefinition == null) return -1; // Aircraft does not exist
+            return -1;
+            //if ((airbaseNode == null) || (airbaseNode.Definition.LocationType != TheaterLocationType.Airbase)) return -1; // No node, or not is not an airbase
+            //DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
+            ////DefinitionTheaterNodeAirbase airbaseDefinition = HQLibrary.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
+            //if (aircraftDefinition == null) return -1; // Aircraft does not exist
 
-            MissionUnitGroup unitGroup = new MissionUnitGroup(
-                "GroupAircraftPlayer", "UnitAircraft", aircraftDefinition.Category,
-                GroupID, (Coalition)airbaseNode.Coalition, airbaseNode.Definition.Position,
-                Enumerable.Repeat(aircraftDefinition.ID, flightGroupTemplate.Count).ToArray());
+            //DCSMissionUnitGroup unitGroup = new DCSMissionUnitGroup(
+            //    "GroupAircraftPlayer", "UnitAircraft", aircraftDefinition.Category,
+            //    GroupID, (Coalition)airbaseNode.Coalition, airbaseNode.Definition.Position,
+            //    Enumerable.Repeat(aircraftDefinition.ID, flightGroupTemplate.Count).ToArray());
 
-            SetupAircraftGroup(
-                unitGroup, mission, CallsignFamily.Aircraft, true,
-                aircraftDefinition, GetPayloadByPlayerGroupTask(flightGroupTemplate.Task), airbaseNode.Definition.Airbase.ID);
+            //SetupAircraftGroup(
+            //    unitGroup, mission, CallsignFamily.Aircraft, true,
+            //    aircraftDefinition, GetPayloadByPlayerGroupTask(flightGroupTemplate.Task), airbaseNode.Definition.Airbase.ID);
 
-            bool usePlayerInsteadOfClient = (template.GetPlayerCount() < 2) && !template.Settings.PreferencesForceClientInSP;
+            //bool usePlayerInsteadOfClient = (template.GetPlayerCount() < 2) && !template.PreferencesForceClientInSP;
 
-            if (flightGroupTemplate.AIWingmen)
-            {
-                // set group AI to default allied AI, and add a special flag so the first unit of the group will be a client
-                unitGroup.UnitsSkill = HQSkillToDCSSkill(template.Settings.SituationAllySkillAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
-                unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
-            }
-            else // No AI wingmen: make all units clients
-                unitGroup.UnitsSkill = usePlayerInsteadOfClient ? DCSSkillLevel.Player : DCSSkillLevel.Client;
+            //if (flightGroupTemplate.AIWingmen)
+            //{
+            //    // set group AI to default allied AI, and add a special flag so the first unit of the group will be a client
+            //    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.SituationAllySkillAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
+            //    unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
+            //}
+            //else // No AI wingmen: make all units clients
+            //    unitGroup.UnitsSkill = usePlayerInsteadOfClient ? DCSSkillLevel.Player : DCSSkillLevel.Client;
 
-            unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbaseNode.Definition.Airbase.ID));
-            //unitGroup.CustomValues.Add("FinalWPIndex", HQTools.ValToString(mission.Waypoints.Count + 2));
-            unitGroup.CustomValues.Add("FinalX", HQTools.ValToString(airbaseNode.Definition.Position.X));
-            unitGroup.CustomValues.Add("FinalY", HQTools.ValToString(airbaseNode.Definition.Position.Y));
-            unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbaseNode.Definition.Airbase.ID));
-            //unitGroup.CustomValues.Add("DCSTask", MGTools.GetDCSTaskNameString(missionObjective.DCSTask));
-            //unitGroup.CustomValues.Add("DCSTaskTasks", MGTools.GetDCSTaskAdditionalTasksString(missionObjective.DCSTask, 2));
+            //unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbaseNode.Definition.Airbase.ID));
+            ////unitGroup.CustomValues.Add("FinalWPIndex", HQTools.ValToString(mission.Waypoints.Count + 2));
+            //unitGroup.CustomValues.Add("FinalX", HQTools.ValToString(airbaseNode.Definition.Position.X));
+            //unitGroup.CustomValues.Add("FinalY", HQTools.ValToString(airbaseNode.Definition.Position.Y));
+            //unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbaseNode.Definition.Airbase.ID));
+            ////unitGroup.CustomValues.Add("DCSTask", MGTools.GetDCSTaskNameString(missionObjective.DCSTask));
+            ////unitGroup.CustomValues.Add("DCSTaskTasks", MGTools.GetDCSTaskAdditionalTasksString(missionObjective.DCSTask, 2));
 
-            unitGroup.CustomValues.Add("TakeoffAltitude", "13"); // FIXME: fixed value in the Lua file
-            unitGroup.CustomValues.Add("TakeOffAltitudeType", "BARO"); // FIXME: fixed value in the Lua file
-            unitGroup.CustomValues.Add("TakeOffSpeed", "130.0"); // FIXME: fixed value in the Lua file
+            //unitGroup.CustomValues.Add("TakeoffAltitude", "13"); // FIXME: fixed value in the Lua file
+            //unitGroup.CustomValues.Add("TakeOffAltitudeType", "BARO"); // FIXME: fixed value in the Lua file
+            //unitGroup.CustomValues.Add("TakeOffSpeed", "130.0"); // FIXME: fixed value in the Lua file
 
-            switch (flightGroupTemplate.StartLocation)
-            {
-                default: // PlayerFlightGroupStartLocation.InAir
-                    unitGroup.CustomValues.Add("TakeoffAltitude", HQTools.ValToString(20000 * HQTools.FEET_TO_METERS * HQTools.RandomDouble(0.9, 1.1))); // FIXME: altitude by aircraft
-                    unitGroup.CustomValues.Add("TakeOffSpeed", HQTools.ValToString(300.0 * HQTools.KNOTS_TO_METERSPERSECOND)); // FIXME: speed by aircraft
-                    unitGroup.CustomValues.Add("TakeOffType", "BARO");
-                    unitGroup.CustomValues.Add("TakeOffAction", "Turning Point");
-                    unitGroup.CustomValues.Add("TakeOffType", "Turning Point");
-                    break;
-                case PlayerFlightGroupStartLocation.FromRunway:
-                    unitGroup.CustomValues.Add("TakeOffAction", "From Runway");
-                    unitGroup.CustomValues.Add("TakeOffType", "TakeOff");
-                    break;
-                case PlayerFlightGroupStartLocation.FromParking:
-                    unitGroup.CustomValues.Add("TakeOffAction", "From Parking Area");
-                    unitGroup.CustomValues.Add("TakeOffType", "TakeOffParking");
-                    break;
-                case PlayerFlightGroupStartLocation.FromParkingHot:
-                    unitGroup.CustomValues.Add("TakeOffAction", "From Parking Area Hot");
-                    unitGroup.CustomValues.Add("TakeOffType", "TakeOffParkingHot");
-                    break;
-            }
+            //switch (flightGroupTemplate.StartLocation)
+            //{
+            //    default: // PlayerFlightGroupStartLocation.InAir
+            //        unitGroup.CustomValues.Add("TakeoffAltitude", HQTools.ValToString(20000 * HQTools.FEET_TO_METERS * HQTools.RandomDouble(0.9, 1.1))); // FIXME: altitude by aircraft
+            //        unitGroup.CustomValues.Add("TakeOffSpeed", HQTools.ValToString(300.0 * HQTools.KNOTS_TO_METERSPERSECOND)); // FIXME: speed by aircraft
+            //        unitGroup.CustomValues.Add("TakeOffType", "BARO");
+            //        unitGroup.CustomValues.Add("TakeOffAction", "Turning Point");
+            //        unitGroup.CustomValues.Add("TakeOffType", "Turning Point");
+            //        break;
+            //    case PlayerFlightGroupStartLocation.FromRunway:
+            //        unitGroup.CustomValues.Add("TakeOffAction", "From Runway");
+            //        unitGroup.CustomValues.Add("TakeOffType", "TakeOff");
+            //        break;
+            //    case PlayerFlightGroupStartLocation.FromParking:
+            //        unitGroup.CustomValues.Add("TakeOffAction", "From Parking Area");
+            //        unitGroup.CustomValues.Add("TakeOffType", "TakeOffParking");
+            //        break;
+            //    case PlayerFlightGroupStartLocation.FromParkingHot:
+            //        unitGroup.CustomValues.Add("TakeOffAction", "From Parking Area Hot");
+            //        unitGroup.CustomValues.Add("TakeOffType", "TakeOffParkingHot");
+            //        break;
+            //}
 
-            mission.BriefingFlightPackage.Add(
-            new MissionBriefingFlightGroup(
-                unitGroup.Name, unitGroup.Units[0], DCSAircraftTask.CAS, airbaseNode.Definition.DisplayName, // FIXME: tasking
-                unitGroup.UnitCount, unitGroup.RadioFrequency)); // FIXME: complete
+            //mission.BriefingFlightPackage.Add(
+            //new DCSMissionBriefingFlightGroup(
+            //    unitGroup.Name, unitGroup.Units[0], DCSAircraftTask.CAS, airbaseNode.Definition.DisplayName, // FIXME: tasking
+            //    unitGroup.UnitCount, unitGroup.RadioFrequency)); // FIXME: complete
 
-            mission.UnitGroups.Add(unitGroup);
-            GroupID++;
+            //mission.UnitGroups.Add(unitGroup);
+            //GroupID++;
 
-            return GroupID - 1;
+            //return GroupID - 1;
         }
 
         private AircraftPayloadType GetPayloadByPlayerGroupTask(PlayerFlightGroupTask task)
@@ -253,23 +254,23 @@ namespace Headquarters4DCS.Generator
             return AircraftPayloadType.Default;
         }
 
-        public MissionUnitGroup AddNodeFeatureGroup(
-            Mission mission, MissionTemplate template,
+        public DCSMissionUnitGroup AddNodeFeatureGroup(
+            DCSMission mission, MissionTemplate template,
             DefinitionFeatureUnitGroup unitGroupDefinition, Coordinates location)
         {
             DebugLog.Instance.Log("Adding unit group...");
 
             Coalition groupCoalition = unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
 
-            MissionUnitGroup unitGroup = null;
+            DCSMissionUnitGroup unitGroup = null;
 
             UnitFamily selectedFamily = HQTools.RandomFrom(unitGroupDefinition.Families);
 
             unitGroup =
-                MissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
                     unitGroupDefinition.LuaGroup, unitGroupDefinition.LuaUnit,
-                    Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.Settings.ContextCoalitionRed : template.Settings.ContextCoalitionBlue),
-                    template.Settings.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
+                    Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.ContextCoalitionRed : template.ContextCoalitionBlue),
+                    template.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
                     GroupID, groupCoalition, location);
 
 
@@ -617,7 +618,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="payload">The type of payload to use.</param>
         /// <param name="airdromeID">The airdrome this aircraft group is linked to.</param>
         /// <returns>True if everything went right, false is something went wrong.</returns>
-        private bool SetupAircraftGroup(MissionUnitGroup uGroup, Mission mission, CallsignFamily csFamily, bool isFriendly, DefinitionUnit aircraftDefinition = null, AircraftPayloadType payload = AircraftPayloadType.Default, int airdromeID = 0)
+        private bool SetupAircraftGroup(DCSMissionUnitGroup uGroup, DCSMission mission, CallsignFamily csFamily, bool isFriendly, DefinitionUnit aircraftDefinition = null, AircraftPayloadType payload = AircraftPayloadType.Default, int airdromeID = 0)
         {
             if (uGroup.UnitCount == 0) return false;
 
@@ -634,9 +635,9 @@ namespace Headquarters4DCS.Generator
 
             for (int i = 0; i < uGroup.UnitCount; i++)
             {
-                uGroup.CustomValues.Add(new MissionUnitGroupCustomValueKey("OnBoardNum", i), HQTools.ValToString(GetOnboardNumber()));
+                uGroup.CustomValues.Add(new DCSMissionUnitGroupCustomValueKey("OnBoardNum", i), HQTools.ValToString(GetOnboardNumber()));
                 if (airdromeID != -1)
-                    uGroup.CustomValues.Add(new MissionUnitGroupCustomValueKey("ParkingID", i), HQTools.ValToString(GetParkingNumber(airdromeID)));
+                    uGroup.CustomValues.Add(new DCSMissionUnitGroupCustomValueKey("ParkingID", i), HQTools.ValToString(GetParkingNumber(airdromeID)));
             }
 
             return true;

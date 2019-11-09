@@ -25,13 +25,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// A type of location spawn point. Used to know what can be spawned at its location.
+    /// A file format the mission briefing can be exported to.
     /// </summary>
-    public enum TheaterLocationSpawnPointType
+    public enum BriefingExportFileFormat
     {
-        LandSmall,
-        LandMedium,
-        LandLarge,
-        Sea
+        Html,
+        Jpg,
+        Png
     }
 }

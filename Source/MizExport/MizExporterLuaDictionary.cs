@@ -22,10 +22,10 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates the "l10n/DEFAULT/dictionary" entry in the MIZ file.

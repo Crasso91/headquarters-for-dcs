@@ -92,14 +92,15 @@ namespace Headquarters4DCS.DefinitionLibrary
                 LoadDefinitions<DefinitionCoalition>("Coalitions", false);
                 LoadDefinitions<DefinitionLanguage>("Languages", true);
                 LoadDefinitions<DefinitionFeature>("Features", false);
-                //LoadDefinitions<DefinitionObjective>("Objectives", false);
-                LoadDefinitions<DefinitionTheater>("Theaters", true);
+                LoadDefinitions<DefinitionObjective>("Objectives", false);
+                LoadDefinitions<DefinitionTheater>("Theaters", false);
                 LoadDefinitions<DefinitionUnit>("Units", false);
 
                 // Check default values are present
                 CheckDefaultValuesExist<DefinitionLanguage>(Common.DefaultLanguage);
                 CheckDefaultValuesExist<DefinitionCoalition>(Common.DefaultCoalitionBlue);
                 CheckDefaultValuesExist<DefinitionCoalition>(Common.DefaultCoalitionRed);
+                CheckDefaultValuesExist<DefinitionObjective>(Common.DefaultObjective);
                 CheckDefaultValuesExist<DefinitionUnit>(Common.DefaultPlayerAircraft);
                 if (!GetDefinition<DefinitionUnit>(Common.DefaultPlayerAircraft).AircraftPlayerControllable) throw new HQ4DCSException("Default player aircraft is not player-controllable.");
 

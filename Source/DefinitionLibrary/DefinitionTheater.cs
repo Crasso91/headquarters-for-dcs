@@ -80,14 +80,14 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionTheaterWind[] Wind { get; private set; }
 
         /// <summary>
-        /// The back color for the map in the HQ4DCS user interface
-        /// </summary>
-        public Color MapBackgroundColor { get; private set; }
-
-        /// <summary>
         /// All airdromes in this theater.
         /// </summary>
-        public Dictionary<string, DefinitionTheaterLocation> Locations { get; private set; }
+        public DefinitionTheaterLocationAirbase[] Airbases { get; private set; }
+
+        /// <summary>
+        /// All spawn points in this theater.
+        /// </summary>
+        public DefinitionTheaterLocationSpawnPoint[] SpawnPoints { get; private set; }
 
         /// <summary>
         /// Loads data required by this definition.
@@ -103,53 +103,56 @@ namespace Headquarters4DCS.DefinitionLibrary
                 return false;
 
             // Load common settings
-            // --------------------
             using (INIFile ini = new INIFile(path + "CommonSettings.ini"))
             {
                 // [Theater] section
-                // -----------------
                 DCSID = ini.GetValue<string>("Theater", "DCSID");
-                int[] mapColorRGB = ini.GetValueArray<int>("Theater", "MapBackgroundColor");
-                Array.Resize(ref mapColorRGB, 3);
-                MapBackgroundColor = Color.FromArgb(HQTools.Clamp(mapColorRGB[0], 0, 255), HQTools.Clamp(mapColorRGB[1], 0, 255), HQTools.Clamp(mapColorRGB[2], 0, 255));
                 DefaultMapCenter = ini.GetValue<Coordinates>("Theater", "DefaultMapCenter");
                 RequiredModules = ini.GetValueArray<string>("Theater", "RequiredModules");
                 MagneticDeclination = ini.GetValue<float>("Theater", "MagneticDeclination");
 
                 // [Daytime] section
-                // -----------------
                 DayTime = new MinMaxI[12];
                 for (i = 0; i < 12; i++)
                     DayTime[i] = ini.GetValue<MinMaxI>("Daytime", ((Month)i).ToString());
 
                 // [Temperature] section
-                // ---------------------
                 Temperature = new MinMaxI[12];
                 for (i = 0; i < 12; i++)
                     Temperature[i] = ini.GetValue<MinMaxI>("Temperature", ((Month)i).ToString());
 
                 // [Weather] section
-                // -----------------
                 Weather = new DefinitionTheaterWeather[HQTools.EnumCount<Weather>() - 1]; // -1 because we don't want "Random"
                 for (i = 0; i < Weather.Length; i++)
                     Weather[i] = new DefinitionTheaterWeather(ini, ((Weather)i).ToString());
 
                 // [Wind] section
-                // --------------
                 Wind = new DefinitionTheaterWind[HQTools.EnumCount<Wind>() - 1]; // -1 because we don't want "Auto"
                 for (i = 0; i < Wind.Length; i++)
                     Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
+
+                // [Airbases] section
+                Airbases = new DefinitionTheaterLocationAirbase[ini.GetKeysInSection("Airbases").Length];
+                i = 0;
+                foreach (string k in ini.GetKeysInSection("Airbases"))
+                { Airbases[i] = new DefinitionTheaterLocationAirbase(ini, k); i++; }
+
+                // [SpawnPoints] section
+                SpawnPoints = new DefinitionTheaterLocationSpawnPoint[ini.GetKeysInSection("SpawnPoints").Length];
+                i = 0;
+                foreach (string k in ini.GetKeysInSection("SpawnPoints"))
+                { SpawnPoints[i] = new DefinitionTheaterLocationSpawnPoint(ini, k); i++; }
             }
 
-            // Location files
-            // ------------------
-            Locations = new Dictionary<string, DefinitionTheaterLocation>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (string f in Directory.GetFiles(path, "Location_*.ini"))
-            {
-                string k = DefinitionTheaterLocation.GetLocationIDFromINIFileName(f);
-                if (string.IsNullOrEmpty(k) || Locations.ContainsKey(k)) continue;
-                Locations.Add(k, new DefinitionTheaterLocation(f));
-            }
+            //// Location files
+            //// ------------------
+            //Locations = new Dictionary<string, DefinitionTheaterLocation>(StringComparer.InvariantCultureIgnoreCase);
+            //foreach (string f in Directory.GetFiles(path, "Location_*.ini"))
+            //{
+            //    string k = DefinitionTheaterLocation.GetLocationIDFromINIFileName(f);
+            //    if (string.IsNullOrEmpty(k) || Locations.ContainsKey(k)) continue;
+            //    Locations.Add(k, new DefinitionTheaterLocation(f));
+            //}
 
             return true;
         }

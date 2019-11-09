@@ -22,7 +22,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using Headquarters4DCS.DefinitionLibrary;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
@@ -32,7 +32,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Exports HQ4DCS missions to DCS World .miz files.
@@ -94,7 +94,7 @@ namespace Headquarters4DCS.MizExport
         /// <param name="missHQ">The HQ4DCS mission to use.</param>
         /// <param name="filePath">The path to the .miz file to save to.</param>
         /// <returns>True if everything went well, false if an error happened.</returns>
-        public bool CreateMizFile(Mission missHQ, string filePath)
+        public bool CreateMizFile(DCSMission missHQ, string filePath)
         {
             if (missHQ == null) return false;
             if (string.IsNullOrEmpty(filePath)) return false;

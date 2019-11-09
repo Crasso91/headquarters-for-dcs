@@ -22,12 +22,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Handles the inclusion of all .ogg files into the .miz file.
@@ -49,7 +49,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="missHQ">An HQ4DCS mission.</param>
         /// <returns>A dictionary of entries to include the .miz file. Key is the entry name, value is an array holding the bytes of the entry.</returns>
-        public Dictionary<string, byte[]> GetMediaFiles(Mission missHQ)
+        public Dictionary<string, byte[]> GetMediaFiles(DCSMission missHQ)
         {
             DebugLog.Instance.Log($"Adding audio files...");
 

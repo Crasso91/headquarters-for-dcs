@@ -23,7 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.DefinitionLibrary;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using Headquarters4DCS.Template;
 using System;
 using System.Collections.Generic;
@@ -51,13 +51,13 @@ namespace Headquarters4DCS.Generator
         /// </summary>
         public void Dispose() { }
 
-        public Mission Generate(MissionTemplate template)
+        public DCSMission Generate(MissionTemplate template)
         {
             int i;
 
             // Clear log, begin timing then create an instance of the HQ mission class
             Stopwatch stopwatch = new Stopwatch(); stopwatch.Start();
-            Mission mission = new Mission();
+            DCSMission mission = new DCSMission();
             DebugLog.Instance.Clear();
             DebugLog.Instance.Log($"STARTING MISSION GENERATION AT {DateTime.Now.ToLongTimeString()}...");
             DebugLog.Instance.Log(new string('=', DebugLog.Instance.GetLastMessage().Length));
@@ -70,11 +70,11 @@ namespace Headquarters4DCS.Generator
 
                 // Pick definitions
                 DefinitionCoalition[] coalitions = new DefinitionCoalition[2];
-                coalitions[(int)Coalition.Blue] = Library.Instance.GetDefinition<DefinitionCoalition>(template.Settings.ContextCoalitionBlue);
-                coalitions[(int)Coalition.Red] = Library.Instance.GetDefinition<DefinitionCoalition>(template.Settings.ContextCoalitionRed);
+                coalitions[(int)Coalition.Blue] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionBlue);
+                coalitions[(int)Coalition.Red] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionRed);
 
-                DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.Settings.PreferencesLanguage.ToLowerInvariant());
-                DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(template.Theater);
+                DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
+                DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
 
                 // Create a list of all available objective names
                 List<string> waypointNames = language.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
@@ -83,16 +83,16 @@ namespace Headquarters4DCS.Generator
                 MissionGeneratorUnitGroups unitGroupsGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator);
 
                 // Copy values from the template to the mission
-                mission.Theater = template.Theater;
-                mission.Language = template.Settings.PreferencesLanguage;
-                mission.CoalitionPlayer = template.Settings.ContextPlayerCoalition;
+                mission.Theater = template.ContextTheater;
+                mission.Language = template.PreferencesLanguage;
+                mission.CoalitionPlayer = template.ContextPlayerCoalition;
                 mission.SinglePlayer = (template.GetPlayerCount() < 2);
-                mission.UseNATOCallsigns = coalitions[(int)template.Settings.ContextPlayerCoalition].NATOCallsigns;
+                mission.UseNATOCallsigns = coalitions[(int)template.ContextPlayerCoalition].NATOCallsigns;
 
                 mission.Countries[(int)Coalition.Blue] = coalitions[(int)Coalition.Blue].Countries.ToArray();
                 mission.Countries[(int)Coalition.Red] = coalitions[(int)Coalition.Red].Countries.Except(coalitions[(int)Coalition.Blue].Countries).ToArray();
 
-                switch (template.Settings.BriefingUnits)
+                switch (template.BriefingUnits)
                 {
                     case UnitSystem.ByCoalition:
                         mission.BriefingImperialUnits = (coalitions[(int)mission.CoalitionPlayer].UnitSystem == UnitSystem.Imperial); break;
@@ -103,10 +103,10 @@ namespace Headquarters4DCS.Generator
                 // Generate mission environment parameters (weather, time of day, date...)
                 using (MissionGeneratorEnvironment environment = new MissionGeneratorEnvironment())
                 {
-                    environment.GenerateMissionDate(mission, template.Settings.ContextTimePeriod, template.Settings.EnvironmentSeason);
-                    environment.GenerateMissionTime(mission, template.Settings.EnvironmentTimeOfDay, theater);
-                    environment.GenerateWeather(mission, template.Settings.EnvironmentWeather, theater);
-                    environment.GenerateWind(mission, template.Settings.EnvironmentWind, theater);
+                    environment.GenerateMissionDate(mission, template.ContextTimePeriod, template.EnvironmentSeason);
+                    environment.GenerateMissionTime(mission, template.EnvironmentTimeOfDay, theater);
+                    environment.GenerateWeather(mission, template.EnvironmentWeather, theater);
+                    environment.GenerateWind(mission, template.EnvironmentWind, theater);
                 }
 
                 CreateFeatures(mission, template, unitGroupsGenerator, language, waypointNames, out Coordinates[] usedNodesCoordinates);
@@ -181,7 +181,7 @@ namespace Headquarters4DCS.Generator
 
                 using (MissionGeneratorBriefing briefing = new MissionGeneratorBriefing(language))
                 {
-                    briefing.GenerateMissionName(mission, template.Settings.BriefingName);
+                    briefing.GenerateMissionName(mission, template.BriefingName);
                     /*
                         briefing.GenerateMissionDescription(mission, template.BriefingDescription, missionObjective);
                         briefing.GenerateMissionTasks(mission, template, missionObjective);
@@ -222,143 +222,143 @@ namespace Headquarters4DCS.Generator
         }
 
         private void CreateFeatures(
-            Mission mission, MissionTemplate template,
+            DCSMission mission, MissionTemplate template,
             MissionGeneratorUnitGroups unitGroupsGenerator, DefinitionLanguage language,
             List<string> waypointNames,
             out Coordinates[] usedNodesCoordinates)
         {
-            int i, j;
+            //int i, j;
 
             List<string> oggFilesList = new List<string>();
-            List<MissionObjectiveLocation> objectivesList = new List<MissionObjectiveLocation>();
+            List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
             List<string> onceScriptAlreadyUsed = new List<string>();
-            List<MissionWaypoint> waypointsList = new List<MissionWaypoint>();
+            List<DCSMissionWaypoint> waypointsList = new List<DCSMissionWaypoint>();
 
             List<Coordinates> usedNodesCoordinatesList = new List<Coordinates>();
 
-            foreach (MissionTemplateLocation node in template.Locations.Values)
-            {
-                if (node.InUse) usedNodesCoordinatesList.Add(node.Definition.Position);
+            //foreach (MissionTemplateLocation node in template.Locations.Values)
+            //{
+            //    if (node.InUse) usedNodesCoordinatesList.Add(node.Definition.Position);
 
-                //DefinitionFeature[] features = node.GetFeaturesDefinitions();
+            //    //DefinitionFeature[] features = node.GetFeaturesDefinitions();
 
-                //foreach (DefinitionFeature feature in features)
-                foreach (string featureID in node.Features)
-                {
-                    DefinitionFeature feature = Library.Instance.GetDefinition<DefinitionFeature>(featureID);
-                    if (feature == null) continue;
+            //    //foreach (DefinitionFeature feature in features)
+            //    foreach (string featureID in node.Features)
+            //    {
+            //        DefinitionFeature feature = Library.Instance.GetDefinition<DefinitionFeature>(featureID);
+            //        if (feature == null) continue;
 
-                    List<string> usedNodesSpawnPoints = new List<string>();
+            //        List<string> usedNodesSpawnPoints = new List<string>();
 
-                    oggFilesList.AddRange(feature.MediaOgg);
+            //        oggFilesList.AddRange(feature.MediaOgg);
 
-                    string featureWPName = "";
+            //        string featureWPName = "";
 
-                    List<string> briefingMessagesReplacements = new List<string>();
+            //        List<string> briefingMessagesReplacements = new List<string>();
 
-                    MissionUnitGroup unitGroup = null;
+            //        DCSMissionUnitGroup unitGroup = null;
 
-                    for (i = 0; i < feature.UnitGroups.Length; i++)
-                    {
-                        int groupCount = feature.UnitGroups[i].GroupCount.GetValue();
+            //        for (i = 0; i < feature.UnitGroups.Length; i++)
+            //        {
+            //            int groupCount = feature.UnitGroups[i].GroupCount.GetValue();
 
-                        for (j = 0; j < groupCount; j++)
-                        {
-                            DefinitionTheaterLocationSpawnPoint[] validSpawnPoints =
-                                (from DefinitionTheaterLocationSpawnPoint s in
-                                     node.Definition.SpawnPoints
-                                 where feature.UnitGroups[i].SpawnPointTypes.Contains(s.PointType) &&
-                                 !usedNodesSpawnPoints.Contains(s.UniqueID)
-                                 select s).ToArray();
+            //            for (j = 0; j < groupCount; j++)
+            //            {
+            //                DefinitionTheaterLocationSpawnPoint[] validSpawnPoints =
+            //                    (from DefinitionTheaterLocationSpawnPoint s in
+            //                         node.Definition.SpawnPoints
+            //                     where feature.UnitGroups[i].SpawnPointTypes.Contains(s.PointType) &&
+            //                     !usedNodesSpawnPoints.Contains(s.UniqueID)
+            //                     select s).ToArray();
 
-                            if (validSpawnPoints.Length == 0)
-                            {
-                                // No valid spawn points found. Throw an exception and abort mission generation if feature is an objective or required,
-                                // else print a warning to the log and proceed the next feature.
-                                if ((feature.Category == FeatureCategory.Objective) || (feature.FeatureFlags.Contains(FeatureFlag.Required)))
-                                    throw new HQ4DCSException(
-                                        $"Failed to find a spawn point of type {string.Join("/", feature.UnitGroups[i].SpawnPointTypes)} for feature {feature.DisplayName.ToUpperInvariant()} at {node.Definition.DisplayName.ToUpperInvariant()}.");
+            //                if (validSpawnPoints.Length == 0)
+            //                {
+            //                    // No valid spawn points found. Throw an exception and abort mission generation if feature is an objective or required,
+            //                    // else print a warning to the log and proceed the next feature.
+            //                    if ((feature.Category == FeatureCategory.Objective) || (feature.FeatureFlags.Contains(FeatureFlag.Required)))
+            //                        throw new HQ4DCSException(
+            //                            $"Failed to find a spawn point of type {string.Join("/", feature.UnitGroups[i].SpawnPointTypes)} for feature {feature.DisplayName.ToUpperInvariant()} at {node.Definition.DisplayName.ToUpperInvariant()}.");
 
-                                DebugLog.Instance.Log(
-                                    $"Failed to find a spawn point of type {string.Join("/", feature.UnitGroups[i].SpawnPointTypes)} for feature {feature.DisplayName.ToUpperInvariant()} at {node.Definition.DisplayName.ToUpperInvariant()}.");
+            //                    DebugLog.Instance.Log(
+            //                        $"Failed to find a spawn point of type {string.Join("/", feature.UnitGroups[i].SpawnPointTypes)} for feature {feature.DisplayName.ToUpperInvariant()} at {node.Definition.DisplayName.ToUpperInvariant()}.");
 
-                                continue;
-                            }
+            //                    continue;
+            //                }
 
-                            DefinitionTheaterLocationSpawnPoint spawnPoint = HQTools.RandomFrom(validSpawnPoints);
+            //                DefinitionTheaterLocationSpawnPoint spawnPoint = HQTools.RandomFrom(validSpawnPoints);
 
-                            unitGroup = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
-                            if (unitGroup == null)
-                                continue; // TODO: throw error if objective or required
+            //                unitGroup = unitGroupsGenerator.AddNodeFeatureGroup(mission, template, feature.UnitGroups[i], spawnPoint.Position);
+            //                if (unitGroup == null)
+            //                    continue; // TODO: throw error if objective or required
 
-                            if (!briefingMessagesReplacements.Contains("CALLSIGN"))
-                                briefingMessagesReplacements.AddRange(new string[] { "CALLSIGN", unitGroup.Name });
-                            if (!briefingMessagesReplacements.Contains("FREQUENCY"))
-                                briefingMessagesReplacements.AddRange(new string[] { "FREQUENCY", HQTools.ValToString(unitGroup.RadioFrequency, "F1") });
+            //                if (!briefingMessagesReplacements.Contains("CALLSIGN"))
+            //                    briefingMessagesReplacements.AddRange(new string[] { "CALLSIGN", unitGroup.Name });
+            //                if (!briefingMessagesReplacements.Contains("FREQUENCY"))
+            //                    briefingMessagesReplacements.AddRange(new string[] { "FREQUENCY", HQTools.ValToString(unitGroup.RadioFrequency, "F1") });
 
-                            usedNodesSpawnPoints.Add(spawnPoint.UniqueID);
+            //                usedNodesSpawnPoints.Add(spawnPoint.UniqueID);
 
-                            // Feature is an objective and requires a waypoint
-                            if ((feature.Category == FeatureCategory.Objective) && feature.WaypointEnabled)
-                            {
-                                featureWPName = HQTools.RandomFrom(waypointNames);
-                                if (string.IsNullOrEmpty(featureWPName))
-                                    featureWPName = $"WP{(waypointsList.Count + 1).ToString("00")}";
-                                else
-                                {
-                                    waypointNames.Remove(featureWPName);
-                                    featureWPName = featureWPName.ToUpperInvariant();
-                                }
+            //                // Feature is an objective and requires a waypoint
+            //                if ((feature.Category == FeatureCategory.Objective) && feature.WaypointEnabled)
+            //                {
+            //                    featureWPName = HQTools.RandomFrom(waypointNames);
+            //                    if (string.IsNullOrEmpty(featureWPName))
+            //                        featureWPName = $"WP{(waypointsList.Count + 1).ToString("00")}";
+            //                    else
+            //                    {
+            //                        waypointNames.Remove(featureWPName);
+            //                        featureWPName = featureWPName.ToUpperInvariant();
+            //                    }
 
-                                Coordinates wpPosition = spawnPoint.Position + Coordinates.CreateRandomInaccuracy(feature.WaypointInaccuracy);
-                                objectivesList.Add(new MissionObjectiveLocation(spawnPoint.Position, featureWPName, feature.WaypointOnGround ? 0 : 1, 0));
-                                waypointsList.Add(new MissionWaypoint(wpPosition, featureWPName));
-                            }
-                        }
+            //                    Coordinates wpPosition = spawnPoint.Position + Coordinates.CreateRandomInaccuracy(feature.WaypointInaccuracy);
+            //                    objectivesList.Add(new DCSMissionObjectiveLocation(spawnPoint.Position, featureWPName, feature.WaypointOnGround ? 0 : 1, 0));
+            //                    waypointsList.Add(new DCSMissionWaypoint(wpPosition, featureWPName));
+            //                }
+            //            }
 
-                        mission.Scripts = new string[HQTools.EnumCount<FeatureScriptScope>()];
-                        for (int scriptScope = 0; scriptScope < HQTools.EnumCount<FeatureScriptScope>(); scriptScope++)
-                        {
-                            mission.Scripts[scriptScope] = "";
+            //            mission.Scripts = new string[HQTools.EnumCount<FeatureScriptScope>()];
+            //            for (int scriptScope = 0; scriptScope < HQTools.EnumCount<FeatureScriptScope>(); scriptScope++)
+            //            {
+            //                mission.Scripts[scriptScope] = "";
 
-                            for (int scriptRep = 0; scriptRep < HQTools.EnumCount<FeatureScriptRepetition>(); scriptRep++)
-                            {
-                                foreach (string s in feature.Scripts[scriptRep][scriptScope])
-                                {
-                                    string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{s}");
+            //                for (int scriptRep = 0; scriptRep < HQTools.EnumCount<FeatureScriptRepetition>(); scriptRep++)
+            //                {
+            //                    foreach (string s in feature.Scripts[scriptRep][scriptScope])
+            //                    {
+            //                        string scriptLua = HQTools.ReadIncludeLuaFile($"Script\\{s}");
 
-                                    if (scriptRep == (int)FeatureScriptRepetition.Once)
-                                    {
-                                        // Some scripts must be included only once per mission,
-                                        // no matter in how many features they appear.
-                                        if (onceScriptAlreadyUsed.Contains(s.ToLowerInvariant())) continue;
-                                        onceScriptAlreadyUsed.Add(s.ToLowerInvariant());
-                                    }
-                                    else
-                                    {
-                                        // Do replacements
-                                        HQTools.ReplaceKey(ref scriptLua, "GroupID", unitGroup.GroupID);
-                                        // TODO: other replacements?
-                                    }
+            //                        if (scriptRep == (int)FeatureScriptRepetition.Once)
+            //                        {
+            //                            // Some scripts must be included only once per mission,
+            //                            // no matter in how many features they appear.
+            //                            if (onceScriptAlreadyUsed.Contains(s.ToLowerInvariant())) continue;
+            //                            onceScriptAlreadyUsed.Add(s.ToLowerInvariant());
+            //                        }
+            //                        else
+            //                        {
+            //                            // Do replacements
+            //                            HQTools.ReplaceKey(ref scriptLua, "GroupID", unitGroup.GroupID);
+            //                            // TODO: other replacements?
+            //                        }
 
-                                    mission.Scripts[scriptRep] +=
-                                        $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA ----\n" +
-                                        scriptLua + "\n" +
-                                        $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA END ----\n";
-                                }
-                            }
-                        }
-                    }
+            //                        mission.Scripts[scriptRep] +=
+            //                            $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA ----\n" +
+            //                            scriptLua + "\n" +
+            //                            $"---- INCLUDED SCRIPT {s.ToUpperInvariant()}.LUA END ----\n";
+            //                    }
+            //                }
+            //            }
+            //        }
 
-                    briefingMessagesReplacements.AddRange(new string[] { "OBJECTIVE", featureWPName });
+            //        briefingMessagesReplacements.AddRange(new string[] { "OBJECTIVE", featureWPName });
 
-                    if (!string.IsNullOrEmpty(feature.BriefingRemark))
-                        mission.BriefingRemarks.Add(language.GetStringRandom("Briefing", $"Remark.{feature.BriefingRemark}", briefingMessagesReplacements.ToArray()));
+            //        if (!string.IsNullOrEmpty(feature.BriefingRemark))
+            //            mission.BriefingRemarks.Add(language.GetStringRandom("Briefing", $"Remark.{feature.BriefingRemark}", briefingMessagesReplacements.ToArray()));
 
-                    if (!string.IsNullOrEmpty(feature.BriefingTask))
-                        mission.BriefingTasks.Add(language.GetStringRandom("Briefing", $"Task.{feature.BriefingTask}", briefingMessagesReplacements.ToArray()));
-                }
-            }
+            //        if (!string.IsNullOrEmpty(feature.BriefingTask))
+            //            mission.BriefingTasks.Add(language.GetStringRandom("Briefing", $"Task.{feature.BriefingTask}", briefingMessagesReplacements.ToArray()));
+            //    }
+            //}
 
             mission.Objectives = objectivesList.ToArray();
             mission.OggFiles = oggFilesList.Distinct().ToArray();
@@ -370,20 +370,22 @@ namespace Headquarters4DCS.Generator
         }
 
         private void CreatePlayerFlightGroups(
-            Mission mission, MissionTemplate template,
+            DCSMission mission, MissionTemplate template,
             MissionGeneratorUnitGroups unitGroupsGenerator, List<string> usedPlayerAircraftTypeList)
         {
-            foreach (MissionTemplateLocation node in template.Locations.Values)
-            {
-                // Only airbases can host player flight groups
-                if (node.Definition.LocationType != TheaterLocationType.Airbase) continue;
+            // TODO: create from flight groups array
 
-                foreach (MissionTemplatePlayerFlightGroup pfg in node.PlayerFlightGroups)
-                {
-                    unitGroupsGenerator.AddPlayerFlightGroup(mission, template, pfg, node);
-                    usedPlayerAircraftTypeList.Add(pfg.AircraftType);
-                }
-            }
+            //foreach (MissionTemplateLocation node in template.Locations.Values)
+            //{
+            //    // Only airbases can host player flight groups
+            //    if (node.Definition.LocationType != TheaterLocationType.Airbase) continue;
+
+            //    foreach (MissionTemplatePlayerFlightGroup pfg in node.PlayerFlightGroups)
+            //    {
+            //        unitGroupsGenerator.AddPlayerFlightGroup(mission, template, pfg, node);
+            //        usedPlayerAircraftTypeList.Add(pfg.AircraftType);
+            //    }
+            //}
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// The name of the DCS countries belonging to this coalition. During the mission, all units will belong to the first country in the list (the "primary" country). Others are just for show in the briefing and to know which liveries should be used.
         /// </summary>
-        public Country[] Countries { get; private set; } = new Country[0];
+        public DCSCountry[] Countries { get; private set; } = new DCSCountry[0];
 
         /// <summary>
         /// A list of units in use by this coalition.
@@ -92,7 +92,7 @@ namespace Headquarters4DCS.DefinitionLibrary
                 UnitSystem = ini.GetValue<UnitSystem>("Coalition", "UnitSystem");
                 if (UnitSystem == UnitSystem.ByCoalition) UnitSystem = UnitSystem.Metric;
                 RequiredModules = ini.GetValueArray<string>("Coalition", "RequiredModules");
-                Countries = ini.GetValueArray<Country>("Coalition", "Countries").Distinct().ToArray();
+                Countries = ini.GetValueArray<DCSCountry>("Coalition", "Countries").Distinct().ToArray();
                 if (Countries.Length == 0) return false; // No countries, bad coalition
 
                 // ---------------

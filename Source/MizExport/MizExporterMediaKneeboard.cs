@@ -23,13 +23,13 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using Headquarters4DCS.Forms;
-using Headquarters4DCS.GeneratedMission;
+using Headquarters4DCS.Mission;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Headquarters4DCS.MizExport
+namespace Headquarters4DCS.Miz
 {
     /// <summary>
     /// Creates the custom kneeboard images for the mission.
@@ -51,7 +51,7 @@ namespace Headquarters4DCS.MizExport
         /// </summary>
         /// <param name="mission">An HQ4DCS mission.</param>
         /// <returns>A dictionary of entries to include the .miz file. Key is the entry name, value is an array holding the bytes of the entry.</returns>
-        public Dictionary<string, byte[]> MakeKneeboardImages(Mission mission)
+        public Dictionary<string, byte[]> MakeKneeboardImages(DCSMission mission)
         {
             Dictionary<string, byte[]> kneeboardImages = new Dictionary<string, byte[]>();
 
