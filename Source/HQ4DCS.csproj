@@ -59,6 +59,8 @@
     <Compile Include="Enums\AmountR.cs" />
     <Compile Include="Enums\BriefingExportFileFormat.cs" />
     <Compile Include="Enums\CountriesCoalition.cs" />
+    <Compile Include="Enums\DCSFlightGroupTask.cs" />
+    <Compile Include="Enums\PlayerFlightGroupAI.cs" />
     <Compile Include="Forms\GUITools.cs" />
     <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
@@ -160,10 +162,10 @@
     <Compile Include="Mission\DCSMissionUnitGroupCustomValueKey.cs" />
     <Compile Include="Mission\DCSMissionWaypoint.cs" />
     <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
+    <Compile Include="TypeConverters\DefinitionsStringConverterPlayerAircraft.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />
     <Compile Include="TypeConverters\SplitEnumTypeConverter.cs" />
     <Compile Include="Template\MissionTemplate.cs" />
-    <Compile Include="Template\MissionTemplateLocation.cs" />
     <Compile Include="Template\MissionTemplatePlayerFlightGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\FormMain.resx">

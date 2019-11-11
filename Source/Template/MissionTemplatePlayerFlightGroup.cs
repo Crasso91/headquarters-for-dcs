@@ -24,7 +24,9 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 
 using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.Forms;
+using Headquarters4DCS.TypeConverters;
 using System;
+using System.ComponentModel;
 
 namespace Headquarters4DCS.Template
 {
@@ -41,6 +43,8 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// ID of the aircraft type.
         /// </summary>
+        [DisplayName("Aircraft type"), Description("Which unit system should be used in the mission briefing?")]
+        [TypeConverter(typeof(DefinitionsStringConverterPlayerAircraft))]
         public string AircraftType { get; set; }
 
         /// <summary>
@@ -51,17 +55,23 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Task assigned to the flight group.
         /// </summary>
+        [DisplayName("Task"), Description("The task assigned to this flight group. Can be the primary mission or escort.")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<PlayerFlightGroupTask>))]
         public PlayerFlightGroupTask Task { get; set; }
 
         /// <summary>
-        /// If true, all aircraft but the first will be AI-controlled. If false, all aircraft will be client-controlled.
+        /// Where should this flight group start from?
         /// </summary>
-        public bool AIWingmen { get; set; }
+        [DisplayName("Start location"), Description("Where should this flight group start from?")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<PlayerFlightGroupStartLocation>))]
+        public PlayerFlightGroupStartLocation StartLocation { get; set; }
 
         /// <summary>
-        /// Where should the flight group start from?
+        /// Which units in this flight group are controlled by players, which are controlled by the AI?
         /// </summary>
-        public PlayerFlightGroupStartLocation StartLocation { get; set; }
+        [DisplayName("Wigmen AI"), Description("Which units in this flight group are controlled by players, which are controlled by the AI?")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<PlayerFlightGroupAI>))]
+        public PlayerFlightGroupAI WingmenAI { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -70,8 +80,8 @@ namespace Headquarters4DCS.Template
         {
             AircraftType = Library.Instance.Common.DefaultPlayerAircraft;
             Count = 1;
-            Task = Library.Instance.Common.DefaultPlayerFlightGroupTask;
-            AIWingmen = false;
+            Task = PlayerFlightGroupTask.PrimaryMission;
+            WingmenAI = PlayerFlightGroupAI.AllPlayers;
             StartLocation = Library.Instance.Common.DefaultPlayerFlightGroupStartLocation;
         }
 
@@ -93,7 +103,7 @@ namespace Headquarters4DCS.Template
             AircraftType = ini.GetValue<string>(section, $"{key}.Type");
             Count = ini.GetValue<int>(section, $"{key}.Count");
             Task = ini.GetValue<PlayerFlightGroupTask>(section, $"{key}.Task");
-            AIWingmen = ini.GetValue<bool>(section, $"{key}.AIWingmen");
+            WingmenAI = ini.GetValue<PlayerFlightGroupAI>(section, $"{key}.AIWingmen");
             StartLocation = ini.GetValue<PlayerFlightGroupStartLocation>(section, $"{key}.StartLocation");
         }
 
@@ -105,12 +115,12 @@ namespace Headquarters4DCS.Template
         /// <param name="task">Task assigned to the flight group.</param>
         /// <param name="aiWingmen">If true, all aircraft but the first will be AI-controlled. If false, all aircraft will be client-controlled.</param>
         /// <param name="startLocation">Where should the flight group start from?</param>
-        public MissionTemplatePlayerFlightGroup(string aircraftType, int count, PlayerFlightGroupTask task, bool aiWingmen, PlayerFlightGroupStartLocation startLocation)
+        public MissionTemplatePlayerFlightGroup(string aircraftType, int count, PlayerFlightGroupTask task, PlayerFlightGroupAI aiWingmen, PlayerFlightGroupStartLocation startLocation)
         {
             AircraftType = aircraftType;
             Count = HQTools.Clamp(count, 1, MAX_AIRCRAFT_COUNT);
             Task = task;
-            AIWingmen = aiWingmen;
+            WingmenAI = aiWingmen;
             StartLocation = startLocation;
         }
 
@@ -127,7 +137,7 @@ namespace Headquarters4DCS.Template
             ini.SetValue(section, $"{key}.Type", AircraftType);
             ini.SetValue(section, $"{key}.Count", Count);
             ini.SetValue(section, $"{key}.Task", Task);
-            ini.SetValue(section, $"{key}.AIWingmen", AIWingmen);
+            ini.SetValue(section, $"{key}.AIWingmen", WingmenAI);
             ini.SetValue(section, $"{key}.StartLocation", StartLocation);
         }
 
@@ -136,7 +146,7 @@ namespace Headquarters4DCS.Template
             string acName = Library.Instance.DefinitionExists<DefinitionUnit>(AircraftType) ? Library.Instance.GetDefinition<DefinitionUnit>(AircraftType).DisplayName : AircraftType;
 
             return $"{HQTools.ValToString(Count)}x {acName}, {GUITools.SplitEnumCamelCase(Task)} " +
-                $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}{(AIWingmen ? ", AI wingmen" : "")})";
+                $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}, {GUITools.SplitEnumCamelCase(WingmenAI).ToLowerInvariant()})";
         }
 
         /// <summary>

@@ -57,11 +57,6 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string DefaultPlayerAircraft { get; private set; }
 
         /// <summary>
-        /// Default player flight group tasking.
-        /// </summary>
-        public PlayerFlightGroupTask DefaultPlayerFlightGroupTask { get; private set; }
-
-        /// <summary>
         /// Default player flight group start location.
         /// </summary>
         public PlayerFlightGroupStartLocation DefaultPlayerFlightGroupStartLocation { get; private set; }
@@ -89,7 +84,6 @@ namespace Headquarters4DCS.DefinitionLibrary
                 DefaultLanguage = ini.GetValue("Defaults", "Language", "English");
                 DefaultObjective = ini.GetValue("Defaults", "Objective", "CAP");
                 DefaultPlayerAircraft = ini.GetValue("Defaults", "Aircraft.Player", "Su-25T");
-                DefaultPlayerFlightGroupTask = ini.GetValue("Defaults", "PlayerFlightGroup.Task", PlayerFlightGroupTask.CAP);
                 DefaultPlayerFlightGroupStartLocation = ini.GetValue("Defaults", "PlayerFlightGroup.StartLocation", PlayerFlightGroupStartLocation.FromParking);
                 DefaultTheater = ini.GetValue("Defaults", "Theater", "Caucasus");
 

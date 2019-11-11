@@ -35,12 +35,6 @@ namespace Headquarters4DCS.Mission
     public sealed class DCSMission : IDisposable
     {
         /// <summary>
-        /// A list of airbases to use in the mission.
-        /// Airbase #0 is departure, airbase #1 is arrival, all others are carriers.
-        /// </summary>
-        //public List<DefinitionTheaterNodeAirbase> Airbases { get; set; } = new List<DefinitionTheaterNodeAirbase>();
-
-        /// <summary>
         /// The coalition each airbase belongs to. Key is the airbase ID in DCS World, Value is the coalition.
         /// </summary>
         public Dictionary<int, Coalition> AirbasesCoalition { get; set; } = new Dictionary<int, Coalition>();

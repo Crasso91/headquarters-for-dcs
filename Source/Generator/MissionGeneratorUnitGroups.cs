@@ -224,30 +224,30 @@ namespace Headquarters4DCS.Generator
             //return GroupID - 1;
         }
 
-        private AircraftPayloadType GetPayloadByPlayerGroupTask(PlayerFlightGroupTask task)
+        private AircraftPayloadType GetPayloadByPlayerGroupTask(DCSFlightGroupTask task)
         {
             switch (task)
             {
-                case PlayerFlightGroupTask.AntishipStrike:
+                case DCSFlightGroupTask.AntishipStrike:
                     return AircraftPayloadType.AntiShip;
 
-                case PlayerFlightGroupTask.CAP:
-                case PlayerFlightGroupTask.FighterSweep:
-                case PlayerFlightGroupTask.Intercept:
+                case DCSFlightGroupTask.CAP:
+                case DCSFlightGroupTask.FighterSweep:
+                case DCSFlightGroupTask.Intercept:
                     return AircraftPayloadType.A2A;
 
-                case PlayerFlightGroupTask.CAS:
-                case PlayerFlightGroupTask.GroundAttack:
-                case PlayerFlightGroupTask.PinpointStrike:
-                case PlayerFlightGroupTask.RunwayAttack:
+                case DCSFlightGroupTask.CAS:
+                case DCSFlightGroupTask.GroundAttack:
+                case DCSFlightGroupTask.PinpointStrike:
+                case DCSFlightGroupTask.RunwayAttack:
                     return AircraftPayloadType.A2G;
 
-                case PlayerFlightGroupTask.SEAD:
+                case DCSFlightGroupTask.SEAD:
                     return AircraftPayloadType.SEAD;
 
-                case PlayerFlightGroupTask.Escort:
-                case PlayerFlightGroupTask.Reconnaissance:
-                case PlayerFlightGroupTask.Transport:
+                case DCSFlightGroupTask.Escort:
+                case DCSFlightGroupTask.Reconnaissance:
+                case DCSFlightGroupTask.Transport:
                     return AircraftPayloadType.Default;
             }
 

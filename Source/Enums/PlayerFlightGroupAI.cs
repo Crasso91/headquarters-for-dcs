@@ -25,13 +25,12 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// The task assigned to a player flight group. Can be the primary mission or an escort mission.
+    /// Which units in a player flight group are player- or AI- controlled?
     /// </summary>
-    public enum PlayerFlightGroupTask
+    public enum PlayerFlightGroupAI
     {
-        PrimaryMission,
-
-        CAPEscort,
-        SEADEscort
+        AllPlayers,
+        OnePlayerThenAIWingmen,
+        AllAI
     }
 }

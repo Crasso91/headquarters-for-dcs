@@ -25,13 +25,21 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// The task assigned to a player flight group. Can be the primary mission or an escort mission.
+    /// The DCS World task assigned to a flight group. Must match names used by DCS World.
     /// </summary>
-    public enum PlayerFlightGroupTask
+    public enum DCSFlightGroupTask
     {
-        PrimaryMission,
-
-        CAPEscort,
-        SEADEscort
+        AntishipStrike,
+        CAS,
+        CAP,
+        Escort,
+        FighterSweep,
+        GroundAttack,
+        Intercept,
+        PinpointStrike,
+        Reconnaissance,
+        RunwayAttack,
+        SEAD,
+        Transport,
     }
 }
