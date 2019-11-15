@@ -99,11 +99,11 @@ namespace Headquarters4DCS.DefinitionLibrary
             int i;
 
             // No common settings? No map? No theater.
-            if (!File.Exists(path + "CommonSettings.ini") || !File.Exists(path + "GUIMap.jpg"))
-                return false;
+            //if (!File.Exists(path + "CommonSettings.ini") || !File.Exists(path + "GUIMap.jpg"))
+            //    return false;
 
             // Load common settings
-            using (INIFile ini = new INIFile(path + "CommonSettings.ini"))
+            using (INIFile ini = new INIFile(path))
             {
                 // [Theater] section
                 DCSID = ini.GetValue<string>("Theater", "DCSID");
