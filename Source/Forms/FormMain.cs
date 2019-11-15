@@ -52,12 +52,15 @@ namespace Headquarters4DCS.Forms
         /// </summary>
         private string LastSaveFilePath = null;
 
+        private readonly HQ4DCS HQ;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public FormMain()
+        public FormMain(HQ4DCS hq)
         {
             InitializeComponent();
+            HQ = hq;
             Template = new MissionTemplate();
         }
 
@@ -74,7 +77,7 @@ namespace Headquarters4DCS.Forms
             MenuFileSaveAs.Image = GUITools.GetImageFromResource("Icons.saveAs.png");
             MenuFileExit.Image = GUITools.GetImageFromResource("Icons.exit.png");
 
-            MenuMissionGenerate.Image = GUITools.GetImageFromResource("Icons.generate.png");
+            MenuMissionGenerate.Image = GUITools.GetImageFromResource("Icons.refresh.png");
             //GenerateToolStripButton.Image = GUITools.GetImageFromResource("Icons.refresh.png");
             MenuMissionExportMIZ.Image = GUITools.GetImageFromResource("Icons.exportMIZ.png");
             MenuMissionExportBriefing.Image = GUITools.GetImageFromResource("Icons.exportBriefing.png");
@@ -149,7 +152,6 @@ namespace Headquarters4DCS.Forms
                     return;
                 case "MenuMissionGenerate":
                 case "ToolStripButtonMissionGenerate":
-                    //using (FormMissionOutput formOutput = new FormMissionOutput(Template)) { formOutput.ShowDialog(); }
                     GenerateMission();
                     return;
                 //case "MenuDevelopmentMizToIni":
@@ -181,7 +183,7 @@ namespace Headquarters4DCS.Forms
 
                 case "MenuMissionExportBriefingHTML":
                 case "ToolStripButtonMissionExportBriefingHTML":
-                        ExportBriefing(BriefingExportFileFormat.Html);
+                    ExportBriefing(BriefingExportFileFormat.Html);
                     return;
 
                 case "MenuMissionExportBriefingJPG":
@@ -258,14 +260,14 @@ namespace Headquarters4DCS.Forms
             ToolStripButtonMissionExportMIZ.Enabled = false;
 
             DestroyMission();
-            //Mission = HQ.MI.Generate(Template);
+            Mission = HQ.Generator.Generate(Template, out string errorMessage);
 
             BriefingWebBrowser.Navigate("about:blank");
             BriefingWebBrowser.Document.OpenNew(false);
             if (Mission == null)
             {
                 // TODO: proper message
-                BriefingWebBrowser.Document.Write("<html><head></head><body><h4>Failed to generate mission</h4></body>");
+                BriefingWebBrowser.Document.Write($"<html><head></head><body><h4>Failed to generate mission</h4><p>{errorMessage}</p></body>");
                 return; // No mission, no need to go further
             }
             BriefingWebBrowser.Document.Write(Mission.BriefingHTML);

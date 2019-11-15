@@ -22,8 +22,9 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using Headquarters4DCS.Forms;
 using Headquarters4DCS.DefinitionLibrary;
+using Headquarters4DCS.Forms;
+using Headquarters4DCS.Generator;
 using System;
 using System.Reflection;
 using System.Windows.Forms;
@@ -65,13 +66,25 @@ namespace Headquarters4DCS
         /// </summary>
         private readonly FormMain Form;
 
+        public readonly MissionGenerator Generator;
+
         /// <summary>
         /// Constructor. Creates all required sub-classes and starts the application.
         /// </summary>
         public HQ4DCS()
         {
-            if (!Library.Instance.LoadAll()) return; // If failed to load the definitions library, abort and exit.
-            using (Form = new FormMain()) { Application.Run(Form); } // Show the main form
+            if (!Library.Instance.LoadAll())
+            {
+                // If failed to load the definitions library, abort and exit.
+                return;
+            }
+
+            Generator = new MissionGenerator();
+
+            using (Form = new FormMain(this))
+            {
+                Application.Run(Form); // Show the main form
+            }
         }
 
         /// <summary>

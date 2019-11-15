@@ -51,9 +51,10 @@ namespace Headquarters4DCS.Generator
         /// </summary>
         public void Dispose() { }
 
-        public DCSMission Generate(MissionTemplate template)
+        public DCSMission Generate(MissionTemplate template, out string errorMessage)
         {
             int i;
+            errorMessage = "";
 
             // Clear log, begin timing then create an instance of the HQ mission class
             Stopwatch stopwatch = new Stopwatch(); stopwatch.Start();
@@ -208,8 +209,9 @@ namespace Headquarters4DCS.Generator
                 DebugLog.Instance.Log();
                 DebugLog.Instance.Log($"MISSION GENERATION FAILED.");
                 DebugLog.Instance.Log();
+                errorMessage = e.Message;
 
-                MessageBox.Show(e.Message, "Mission generation failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show(e.Message, "Mission generation failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 mission.Dispose();
                 mission = null;
             }

@@ -279,6 +279,7 @@
             this.ToolStripButtonMissionGenerate.Name = "ToolStripButtonMissionGenerate";
             this.ToolStripButtonMissionGenerate.Size = new System.Drawing.Size(23, 22);
             this.ToolStripButtonMissionGenerate.Text = "Generate another mission";
+            this.ToolStripButtonMissionGenerate.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportMIZ
             // 
