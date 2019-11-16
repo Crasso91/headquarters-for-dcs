@@ -168,8 +168,8 @@ namespace Headquarters4DCS.Template
         /// </summary>
         [Category("Mission package")]
         [DisplayName("Flight groups"), Description("XXXXXXXXXXXXXXXXXXX")]
-        //[TypeConverter(typeof(SplitEnumTypeConverter<CountriesCoalition>))]
-        public MissionTemplatePlayerFlightGroup[] PackageFlightGroups { get; set; }
+        [TypeConverter(typeof(MissionTemplatePlayerFlightGroupConverter))]
+        public MissionTemplatePlayerFlightGroup[] PlayerFlightGroups { get; set; }
 
         /// <summary>
         /// Should enemy units be visible on the F10 map?
@@ -300,7 +300,7 @@ namespace Headquarters4DCS.Template
             ObjectiveDistance = AmountR.Random;
             ObjectiveType = Library.Instance.Common.DefaultObjective;
 
-            PackageFlightGroups = new MissionTemplatePlayerFlightGroup[0];
+            PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[0];
             // TODO: default flight group
 
 #if DEBUG
@@ -441,10 +441,14 @@ namespace Headquarters4DCS.Template
         {
             int playerCount = 0;
 
-            //foreach (MissionTemplateLocation node in Locations.Values)
-            //    foreach (MissionTemplatePlayerFlightGroup fg in node.PlayerFlightGroups)
-            //        playerCount += fg.AIWingmen ? 1 : fg.Count;
-            // TODO
+            foreach (MissionTemplatePlayerFlightGroup pfg in PlayerFlightGroups)
+            {
+                switch (pfg.WingmenAI)
+                {
+                    case PlayerFlightGroupAI.AllPlayers: playerCount += pfg.Count; break;
+                    case PlayerFlightGroupAI.OnePlayerThenAIWingmen: playerCount++; break;
+                }
+            }
 
             return playerCount;
         }
