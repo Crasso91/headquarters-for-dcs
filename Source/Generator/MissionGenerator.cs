@@ -80,6 +80,7 @@ namespace Headquarters4DCS.Generator
                 // Create a list of all available objective names
                 List<string> waypointNames = language.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
 
+                // Create unit generators
                 MissionGeneratorCallsign callsignGenerator = new MissionGeneratorCallsign(coalitions[(int)Coalition.Blue].NATOCallsigns, coalitions[(int)Coalition.Red].NATOCallsigns);
                 MissionGeneratorUnitGroups unitGroupsGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator);
 
@@ -110,6 +111,10 @@ namespace Headquarters4DCS.Generator
                     environment.GenerateWind(mission, template.EnvironmentWind, theater);
                 }
 
+                DefinitionTheaterAirbase missionAirbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theater.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
+                mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", missionAirbase.Name));
+                mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", missionAirbase.Name));
+
                 CreateFeatures(mission, template, unitGroupsGenerator, language, waypointNames, out Coordinates[] usedNodesCoordinates);
                 List<string> usedPlayerAircraftTypeList = new List<string>();
                 CreatePlayerFlightGroups(mission, template, unitGroupsGenerator, usedPlayerAircraftTypeList);
@@ -123,28 +128,27 @@ namespace Headquarters4DCS.Generator
 
                 mission.MapCenter = Coordinates.GetCenter(usedNodesCoordinates);
 
-
-                /*
                 // Copy scripts
-                mission.ScriptsMission = missionObjective.ScriptMission.ToList();
-                mission.ScriptsObjective = missionObjective.ScriptObjective.ToList();
+                //mission.ScriptsMission = missionObjective.ScriptMission.ToList();
+                //mission.ScriptsObjective = missionObjective.ScriptObjective.ToList();
 
                 mission.RealismAllowExternalViews = template.RealismAllowExternalViews;
                 mission.RealismBirdStrikes = template.RealismBirdStrikes;
                 mission.RealismRandomFailures = template.RealismRandomFailures;
 
                 // Create list of airports alignment from the theater definition
-                mission.AirbasesCoalition.Clear();
-                foreach (DefinitionTheaterAirbase ab in theater.Airbases)
-                {
-                    if (mission.AirbasesCoalition.ContainsKey(ab.DCSID)) continue;
-                    mission.AirbasesCoalition.Add(ab.DCSID, template.InvertTheaterCountries ? (Coalition)(1 - (int)ab.Coalition) : ab.Coalition);
-                }
+                //mission.AirbasesCoalition.Clear();
+                //foreach (DefinitionTheaterAirbase ab in theater.Airbases)
+                //{
+                //    if (mission.AirbasesCoalition.ContainsKey(ab.ID)) continue;
+                //    mission.AirbasesCoalition.Add(ab.DCSID, template.InvertTheaterCountries ? (Coalition)(1 - (int)ab.Coalition) : ab.Coalition);
+                //}
 
-                mission.OggFiles.Clear();
-                mission.OggFiles.Add("radio0"); // FIXME: remove?
-                mission.OggFiles.AddRange(missionObjective.MediaOgg);
+                //mission.OggFiles.Clear();
+                //mission.OggFiles.Add("radio0"); // FIXME: remove?
+                //mission.OggFiles.AddRange(missionObjective.MediaOgg);
 
+                /*
                 // Generate mission flight plan
                 using (GeneratorFlightPlan flightPlan = new GeneratorFlightPlan(Library, language, csGenerator))
                 {
@@ -154,31 +158,33 @@ namespace Headquarters4DCS.Generator
                     flightPlan.GenerateWaypoints(mission, template, theater, missionObjective);
                     flightPlan.GenerateBullseye(mission);
                 }
+                */
 
                 // Generate units
-                using (GeneratorUnitGroups unitGroups = new GeneratorUnitGroups(Library, language, csGenerator))
+                using (MissionGeneratorUnitGroups unitGroups = new MissionGeneratorUnitGroups(language, callsignGenerator))
                 {
-                    unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
+                    foreach (MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups)
+                        unitGroups.AddPlayerFlightGroup(mission, template, pfg);
 
-                    unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);
-                    unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAISEAD, UnitFamily.PlaneSEAD, "GroupPlaneEscortSEAD", AircraftPayloadType.SEAD, DCSAircraftTask.SEAD);
+                    //unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
+                    //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);
+                    //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAISEAD, UnitFamily.PlaneSEAD, "GroupPlaneEscortSEAD", AircraftPayloadType.SEAD, DCSAircraftTask.SEAD);
 
-                    if (template.FlightGroupsTanker)
-                    {
-                        unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBasket, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
-                        unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBoom, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
-                    }
+                    //if (template.FlightGroupsTanker)
+                    //{
+                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBasket, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
+                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBoom, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
+                    //}
 
-                    if (template.FlightGroupsAWACS)
-                        unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneAWACS, "GroupPlaneAWACS", CallsignFamily.AWACS, DCSAircraftTask.AWACS);
+                    //if (template.FlightGroupsAWACS)
+                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneAWACS, "GroupPlaneAWACS", CallsignFamily.AWACS, DCSAircraftTask.AWACS);
 
-                    unitGroups.GenerateObjectiveUnitGroupsAtEachObjective(mission, template, missionObjective, coalitions);
-                    //unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
+                    //unitGroups.GenerateObjectiveUnitGroupsAtEachObjective(mission, template, missionObjective, coalitions);
+                    ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
-                    unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
-                    unitGroups.GeneralEnemyCAP(mission, template.EnemyCombatAirPatrols, theater, coalitions[(int)mission.CoalitionEnemy]);
+                    //unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
+                    //unitGroups.GeneralEnemyCAP(mission, template.EnemyCombatAirPatrols, theater, coalitions[(int)mission.CoalitionEnemy]);
                 }
-                */
 
                 using (MissionGeneratorBriefing briefing = new MissionGeneratorBriefing(language))
                 {
