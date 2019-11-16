@@ -30,7 +30,7 @@ namespace Headquarters4DCS.DefinitionLibrary
     /// <summary>
     /// Theater location spawn point: a set of X,Y coordinates where a group of unit can be spawned.
     /// </summary>
-    public struct DefinitionTheaterLocationSpawnPoint
+    public struct DefinitionTheaterSpawnPoint
     {
         /// <summary>
         /// ID of this spawn point. Must be unique at each location.
@@ -58,7 +58,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         public readonly DCSCountry Country;
 
-        public DefinitionTheaterLocationSpawnPoint(INIFile ini, string key) : this()
+        public DefinitionTheaterSpawnPoint(INIFile ini, string key) : this()
         {
             string[] vals = ini.GetValueArray<string>("SpawnPoints", key, ',');
             IsValid = true;

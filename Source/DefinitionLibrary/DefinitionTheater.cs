@@ -82,12 +82,12 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// All airdromes in this theater.
         /// </summary>
-        public DefinitionTheaterLocationAirbase[] Airbases { get; private set; }
+        public DefinitionTheaterAirbase[] Airbases { get; private set; }
 
         /// <summary>
         /// All spawn points in this theater.
         /// </summary>
-        public DefinitionTheaterLocationSpawnPoint[] SpawnPoints { get; private set; }
+        public DefinitionTheaterSpawnPoint[] SpawnPoints { get; private set; }
 
         /// <summary>
         /// Loads data required by this definition.
@@ -132,16 +132,16 @@ namespace Headquarters4DCS.DefinitionLibrary
                     Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
 
                 // [Airbases] section
-                Airbases = new DefinitionTheaterLocationAirbase[ini.GetKeysInSection("Airbases").Length];
+                Airbases = new DefinitionTheaterAirbase[ini.GetKeysInSection("Airbases").Length];
                 i = 0;
                 foreach (string k in ini.GetKeysInSection("Airbases"))
-                { Airbases[i] = new DefinitionTheaterLocationAirbase(ini, k); i++; }
+                { Airbases[i] = new DefinitionTheaterAirbase(ini, k); i++; }
 
                 // [SpawnPoints] section
-                SpawnPoints = new DefinitionTheaterLocationSpawnPoint[ini.GetKeysInSection("SpawnPoints").Length];
+                SpawnPoints = new DefinitionTheaterSpawnPoint[ini.GetKeysInSection("SpawnPoints").Length];
                 i = 0;
                 foreach (string k in ini.GetKeysInSection("SpawnPoints"))
-                { SpawnPoints[i] = new DefinitionTheaterLocationSpawnPoint(ini, k); i++; }
+                { SpawnPoints[i] = new DefinitionTheaterSpawnPoint(ini, k); i++; }
             }
 
             //// Location files

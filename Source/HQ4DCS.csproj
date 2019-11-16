@@ -85,8 +85,8 @@
     <Compile Include="DefinitionLibrary\DefinitionLanguage.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheater.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterLocation.cs" />
-    <Compile Include="DefinitionLibrary\DefinitionTheaterLocationAirbase.cs" />
-    <Compile Include="DefinitionLibrary\DefinitionTheaterLocationSpawnPoint.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterAirbase.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionTheaterSpawnPoint.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterWeather.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterWind.cs" />
     <Compile Include="DefinitionLibrary\DefinitionUnit.cs" />
@@ -161,6 +161,7 @@
     <Compile Include="Mission\DCSMissionUnitGroup.cs" />
     <Compile Include="Mission\DCSMissionUnitGroupCustomValueKey.cs" />
     <Compile Include="Mission\DCSMissionWaypoint.cs" />
+    <Compile Include="TypeConverters\MissionTemplatePlayerFlightGroupConverter.cs" />
     <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverterPlayerAircraft.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />

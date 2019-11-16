@@ -27,10 +27,10 @@ namespace Headquarters4DCS.DefinitionLibrary
     /// <summary>
     /// Information about an airbase.
     /// </summary>
-    public struct DefinitionTheaterLocationAirbase
+    public struct DefinitionTheaterAirbase
     {
         /// <summary>
-        /// The name of the airdrome.
+        /// The name of the airbase.
         /// </summary>
         public readonly string Name;
 
@@ -50,12 +50,12 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly string[] TACAN;
 
         /// <summary>
-        /// Internal ID of this airdrome in DCS World.
+        /// Internal ID of this airbase in DCS World.
         /// </summary>
         public readonly int ID;
 
         /// <summary>
-        /// Number of parking spots on this airdrome.
+        /// Number of parking spots on this airbase.
         /// </summary>
         public readonly int ParkingSpots;
 
@@ -65,16 +65,26 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly int[] Runways;
 
         /// <summary>
-        /// Is this airdrome a military airdrome?
+        /// Is this airbase a military airbase?
         /// </summary>
         public readonly bool IsMilitary;
+
+        /// <summary>
+        /// In which country is this airbase located?
+        /// </summary>
+        public readonly DCSCountry Country;
+
+        /// <summary>
+        /// Which coalition this airbase belongs to?
+        /// </summary>
+        public readonly Coalition Coalition;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="ini">The .ini file to load airbase data from.</param>
         /// <param name="airbaseKey">The top-level key (airbase unique ID)</param>
-        public DefinitionTheaterLocationAirbase(INIFile ini, string airbaseKey)
+        public DefinitionTheaterAirbase(INIFile ini, string airbaseKey)
         {
             ATC = ini.GetValueArray<float>("Airbase", $"{airbaseKey}.ATC");
             ID = ini.GetValue<int>("Airbase", $"{airbaseKey}.ID");
@@ -84,6 +94,8 @@ namespace Headquarters4DCS.DefinitionLibrary
             ParkingSpots = ini.GetValue<int>("Airbase", $"{airbaseKey}.ParkingSpots");
             Runways = ini.GetValueArray<int>("Airbase", $"{airbaseKey}.Runways");
             TACAN = ini.GetValueArray<string>("Airbase", $"{airbaseKey}.TACAN");
+            Country = ini.GetValue<DCSCountry>("Airbase", $"{airbaseKey}.Country");
+            Coalition = ini.GetValue<Coalition>("Airbase", $"{airbaseKey}.Coalition");
         }
     }
 }
