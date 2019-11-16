@@ -150,9 +150,8 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log();
         //}
 
-        public int AddPlayerFlightGroup(DCSMission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup flightGroupTemplate/*, MissionTemplateLocation airbaseNode*/)
+        public int AddPlayerFlightGroup(DCSMission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup pfg/*, MissionTemplateLocation airbaseNode*/)
         {
-            return -1;
             //if ((airbaseNode == null) || (airbaseNode.Definition.LocationType != TheaterLocationType.Airbase)) return -1; // No node, or not is not an airbase
             //DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
             ////DefinitionTheaterNodeAirbase airbaseDefinition = HQLibrary.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
@@ -214,14 +213,15 @@ namespace Headquarters4DCS.Generator
             //}
 
             //mission.BriefingFlightPackage.Add(
-            //new DCSMissionBriefingFlightGroup(
-            //    unitGroup.Name, unitGroup.Units[0], DCSAircraftTask.CAS, airbaseNode.Definition.DisplayName, // FIXME: tasking
-            //    unitGroup.UnitCount, unitGroup.RadioFrequency)); // FIXME: complete
+            //    new DCSMissionBriefingFlightGroup(
+            //        unitGroup.Name, unitGroup.Units[0], DCSAircraftTask.CAS, airbaseNode.Definition.DisplayName, // FIXME: tasking
+            //        unitGroup.UnitCount, unitGroup.RadioFrequency)); // FIXME: complete
 
             //mission.UnitGroups.Add(unitGroup);
             //GroupID++;
 
             //return GroupID - 1;
+            return -1;
         }
 
         private AircraftPayloadType GetPayloadByPlayerGroupTask(DCSFlightGroupTask task)
