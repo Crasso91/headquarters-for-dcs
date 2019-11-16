@@ -310,5 +310,10 @@ namespace Headquarters4DCS.Forms
             if (!result)
                 MessageBox.Show("Failed to export briefing", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void Event_TemplatePropertyGridPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            GenerateMission();
+        }
     }
 }

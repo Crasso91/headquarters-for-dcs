@@ -345,6 +345,7 @@
             this.TemplatePropertyGrid.Name = "TemplatePropertyGrid";
             this.TemplatePropertyGrid.Size = new System.Drawing.Size(261, 512);
             this.TemplatePropertyGrid.TabIndex = 0;
+            this.TemplatePropertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.Event_TemplatePropertyGridPropertyValueChanged);
             // 
             // BriefingPanel
             // 
