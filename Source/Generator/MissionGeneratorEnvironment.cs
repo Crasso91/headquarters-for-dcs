@@ -74,7 +74,8 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log($"  Mission should take place during the {timePeriod.ToString().Substring(6)}s");
             switch (timePeriod)
             {
-                // TODO: TimePeriod.Decade1940, TimePeriod.Decade1950
+                case TimePeriod.Decade1940: mission.DateYear = HQTools.RandomInt(1940, 1950); break;
+                case TimePeriod.Decade1950: mission.DateYear = HQTools.RandomInt(1950, 1960); break;
                 case TimePeriod.Decade1960: mission.DateYear = HQTools.RandomInt(1960, 1970); break;
                 case TimePeriod.Decade1970: mission.DateYear = HQTools.RandomInt(1970, 1980); break;
                 case TimePeriod.Decade1980: mission.DateYear = HQTools.RandomInt(1980, 1990); break;
