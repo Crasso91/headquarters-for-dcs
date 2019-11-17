@@ -158,5 +158,19 @@ namespace Headquarters4DCS.Template
         {
             return $"PlayerFlightGroup{HQTools.ValToString(groupIndex + 1, "00")}";
         }
+
+        /// <summary>
+        /// Returns the number of player-controlled aircraft in this flight group.
+        /// </summary>
+        /// <returns>Number of player-controlled aircraft</returns>
+        public int GetPlayerCount()
+        {
+            switch (WingmenAI)
+            {
+                case PlayerFlightGroupAI.AllPlayers: return Count;
+                case PlayerFlightGroupAI.OnePlayerThenAIWingmen: return 1;
+                default: return 0;
+            }
+        }
     }
 }

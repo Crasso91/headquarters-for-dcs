@@ -180,21 +180,21 @@
             // MenuMissionExportBriefingHTML
             // 
             this.MenuMissionExportBriefingHTML.Name = "MenuMissionExportBriefingHTML";
-            this.MenuMissionExportBriefingHTML.Size = new System.Drawing.Size(106, 22);
+            this.MenuMissionExportBriefingHTML.Size = new System.Drawing.Size(180, 22);
             this.MenuMissionExportBriefingHTML.Text = "HTML";
             this.MenuMissionExportBriefingHTML.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MenuMissionExportBriefingJPG
             // 
             this.MenuMissionExportBriefingJPG.Name = "MenuMissionExportBriefingJPG";
-            this.MenuMissionExportBriefingJPG.Size = new System.Drawing.Size(106, 22);
+            this.MenuMissionExportBriefingJPG.Size = new System.Drawing.Size(180, 22);
             this.MenuMissionExportBriefingJPG.Text = "JPG";
             this.MenuMissionExportBriefingJPG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MenuMissionExportBriefingPNG
             // 
             this.MenuMissionExportBriefingPNG.Name = "MenuMissionExportBriefingPNG";
-            this.MenuMissionExportBriefingPNG.Size = new System.Drawing.Size(106, 22);
+            this.MenuMissionExportBriefingPNG.Size = new System.Drawing.Size(180, 22);
             this.MenuMissionExportBriefingPNG.Text = "PNG";
             this.MenuMissionExportBriefingPNG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
@@ -289,6 +289,7 @@
             this.ToolStripButtonMissionExportMIZ.Name = "ToolStripButtonMissionExportMIZ";
             this.ToolStripButtonMissionExportMIZ.Size = new System.Drawing.Size(23, 22);
             this.ToolStripButtonMissionExportMIZ.Text = "Export mission to MIZ";
+            this.ToolStripButtonMissionExportMIZ.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportBriefing
             // 
@@ -306,20 +307,23 @@
             // ToolStripButtonMissionExportBriefingHTML
             // 
             this.ToolStripButtonMissionExportBriefingHTML.Name = "ToolStripButtonMissionExportBriefingHTML";
-            this.ToolStripButtonMissionExportBriefingHTML.Size = new System.Drawing.Size(106, 22);
+            this.ToolStripButtonMissionExportBriefingHTML.Size = new System.Drawing.Size(180, 22);
             this.ToolStripButtonMissionExportBriefingHTML.Text = "HTML";
+            this.ToolStripButtonMissionExportBriefingHTML.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportBriefingJPG
             // 
             this.ToolStripButtonMissionExportBriefingJPG.Name = "ToolStripButtonMissionExportBriefingJPG";
-            this.ToolStripButtonMissionExportBriefingJPG.Size = new System.Drawing.Size(106, 22);
+            this.ToolStripButtonMissionExportBriefingJPG.Size = new System.Drawing.Size(180, 22);
             this.ToolStripButtonMissionExportBriefingJPG.Text = "JPG";
+            this.ToolStripButtonMissionExportBriefingJPG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportBriefingPNG
             // 
             this.ToolStripButtonMissionExportBriefingPNG.Name = "ToolStripButtonMissionExportBriefingPNG";
-            this.ToolStripButtonMissionExportBriefingPNG.Size = new System.Drawing.Size(106, 22);
+            this.ToolStripButtonMissionExportBriefingPNG.Size = new System.Drawing.Size(180, 22);
             this.ToolStripButtonMissionExportBriefingPNG.Text = "PNG";
+            this.ToolStripButtonMissionExportBriefingPNG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MainSplitContainer
             // 

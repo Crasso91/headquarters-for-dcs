@@ -264,13 +264,19 @@ namespace Headquarters4DCS.Template
         /// </summary>
         public MissionTemplate()
         {
-            Clear();
+            Clear(true);
         }
 
         /// <summary>
         /// Sets a new "clean" template. Resets all settings to their default.
         /// </summary>
-        public void Clear()
+        public void Clear() { Clear(true); }
+
+        /// <summary>
+        /// Sets a new "clean" template. Resets all settings to their default.
+        /// </summary>
+        /// <param name="addDefaultFlightGroup">Should a default flight group be added?</param>
+        private void Clear(bool addDefaultFlightGroup)
         {
             //Theater = Library.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : Library.Instance.Common.DefaultTheater;
             //DefinitionTheater theaterDefinition = Library.Instance.GetDefinition<DefinitionTheater>(Theater);
@@ -300,8 +306,7 @@ namespace Headquarters4DCS.Template
             ObjectiveDistance = AmountR.Random;
             ObjectiveType = Library.Instance.Common.DefaultObjective;
 
-            PlayerFlightGroups = new MissionTemplatePlayerFlightGroup[0];
-            // TODO: default flight group
+            PlayerFlightGroups = addDefaultFlightGroup ? new MissionTemplatePlayerFlightGroup[] { new MissionTemplatePlayerFlightGroup() } : new MissionTemplatePlayerFlightGroup[0];
 
 #if DEBUG
             PreferencesEnemiesOnF10Map = true;
@@ -329,7 +334,7 @@ namespace Headquarters4DCS.Template
         /// <returns>True if everything went right, false if an error happened.</returns>
         public bool LoadFromFile(string filePath)
         {
-            Clear();
+            Clear(false);
 
             using (INIFile ini = new INIFile(filePath))
             {
@@ -442,13 +447,7 @@ namespace Headquarters4DCS.Template
             int playerCount = 0;
 
             foreach (MissionTemplatePlayerFlightGroup pfg in PlayerFlightGroups)
-            {
-                switch (pfg.WingmenAI)
-                {
-                    case PlayerFlightGroupAI.AllPlayers: playerCount += pfg.Count; break;
-                    case PlayerFlightGroupAI.OnePlayerThenAIWingmen: playerCount++; break;
-                }
-            }
+                playerCount += pfg.GetPlayerCount();
 
             return playerCount;
         }

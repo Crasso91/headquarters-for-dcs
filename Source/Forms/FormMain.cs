@@ -123,6 +123,10 @@ namespace Headquarters4DCS.Forms
 
             switch (senderName)
             {
+                case "MenuFileNew":
+                case "ToolStripButtonFileNew":
+                    Template.Clear();
+                    return;
                 case "MenuFileOpen":
                 case "ToolStripButtonFileOpen":
                     string fileToLoad = GUITools.ShowOpenFileDialog("hqt", HQTools.PATH_TEMPLATES, "HQ4DCS mission templates");
