@@ -33,7 +33,6 @@
             this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFileNew = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFileOpen = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuFileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFileSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuFileS1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuFileExit = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,7 +49,6 @@
             this.MainFormToolStrip = new System.Windows.Forms.ToolStrip();
             this.ToolStripButtonFileNew = new System.Windows.Forms.ToolStripButton();
             this.ToolStripButtonFileOpen = new System.Windows.Forms.ToolStripButton();
-            this.ToolStripButtonFileSave = new System.Windows.Forms.ToolStripButton();
             this.ToolStripButtonFileSaveAs = new System.Windows.Forms.ToolStripButton();
             this.ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolStripButtonMissionGenerate = new System.Windows.Forms.ToolStripButton();
@@ -63,6 +61,8 @@
             this.TemplatePropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.BriefingPanel = new System.Windows.Forms.Panel();
             this.BriefingWebBrowser = new System.Windows.Forms.WebBrowser();
+            this.ToolStripButtonFileSave = new System.Windows.Forms.ToolStripButton();
+            this.MenuFileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.MainFormMenuStrip.SuspendLayout();
             this.MainFormToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
@@ -110,13 +110,6 @@
             this.MenuFileOpen.Size = new System.Drawing.Size(215, 22);
             this.MenuFileOpen.Text = "&Open mission template";
             this.MenuFileOpen.Click += new System.EventHandler(this.Event_MenuClick);
-            // 
-            // MenuFileSave
-            // 
-            this.MenuFileSave.Name = "MenuFileSave";
-            this.MenuFileSave.Size = new System.Drawing.Size(215, 22);
-            this.MenuFileSave.Text = "&Save mission template";
-            this.MenuFileSave.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MenuFileSaveAs
             // 
@@ -180,21 +173,21 @@
             // MenuMissionExportBriefingHTML
             // 
             this.MenuMissionExportBriefingHTML.Name = "MenuMissionExportBriefingHTML";
-            this.MenuMissionExportBriefingHTML.Size = new System.Drawing.Size(180, 22);
+            this.MenuMissionExportBriefingHTML.Size = new System.Drawing.Size(106, 22);
             this.MenuMissionExportBriefingHTML.Text = "HTML";
             this.MenuMissionExportBriefingHTML.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MenuMissionExportBriefingJPG
             // 
             this.MenuMissionExportBriefingJPG.Name = "MenuMissionExportBriefingJPG";
-            this.MenuMissionExportBriefingJPG.Size = new System.Drawing.Size(180, 22);
+            this.MenuMissionExportBriefingJPG.Size = new System.Drawing.Size(106, 22);
             this.MenuMissionExportBriefingJPG.Text = "JPG";
             this.MenuMissionExportBriefingJPG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MenuMissionExportBriefingPNG
             // 
             this.MenuMissionExportBriefingPNG.Name = "MenuMissionExportBriefingPNG";
-            this.MenuMissionExportBriefingPNG.Size = new System.Drawing.Size(180, 22);
+            this.MenuMissionExportBriefingPNG.Size = new System.Drawing.Size(106, 22);
             this.MenuMissionExportBriefingPNG.Text = "PNG";
             this.MenuMissionExportBriefingPNG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
@@ -238,6 +231,7 @@
             this.ToolStripButtonFileNew.Name = "ToolStripButtonFileNew";
             this.ToolStripButtonFileNew.Size = new System.Drawing.Size(23, 22);
             this.ToolStripButtonFileNew.Text = "New mission template";
+            this.ToolStripButtonFileNew.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonFileOpen
             // 
@@ -247,15 +241,7 @@
             this.ToolStripButtonFileOpen.Name = "ToolStripButtonFileOpen";
             this.ToolStripButtonFileOpen.Size = new System.Drawing.Size(23, 22);
             this.ToolStripButtonFileOpen.Text = "Open mission template";
-            // 
-            // ToolStripButtonFileSave
-            // 
-            this.ToolStripButtonFileSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ToolStripButtonFileSave.Image = ((System.Drawing.Image)(resources.GetObject("ToolStripButtonFileSave.Image")));
-            this.ToolStripButtonFileSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ToolStripButtonFileSave.Name = "ToolStripButtonFileSave";
-            this.ToolStripButtonFileSave.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripButtonFileSave.Text = "Save mission template";
+            this.ToolStripButtonFileOpen.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonFileSaveAs
             // 
@@ -265,6 +251,7 @@
             this.ToolStripButtonFileSaveAs.Name = "ToolStripButtonFileSaveAs";
             this.ToolStripButtonFileSaveAs.Size = new System.Drawing.Size(23, 22);
             this.ToolStripButtonFileSaveAs.Text = "Save mission template as...";
+            this.ToolStripButtonFileSaveAs.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripSeparator1
             // 
@@ -307,21 +294,21 @@
             // ToolStripButtonMissionExportBriefingHTML
             // 
             this.ToolStripButtonMissionExportBriefingHTML.Name = "ToolStripButtonMissionExportBriefingHTML";
-            this.ToolStripButtonMissionExportBriefingHTML.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripButtonMissionExportBriefingHTML.Size = new System.Drawing.Size(106, 22);
             this.ToolStripButtonMissionExportBriefingHTML.Text = "HTML";
             this.ToolStripButtonMissionExportBriefingHTML.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportBriefingJPG
             // 
             this.ToolStripButtonMissionExportBriefingJPG.Name = "ToolStripButtonMissionExportBriefingJPG";
-            this.ToolStripButtonMissionExportBriefingJPG.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripButtonMissionExportBriefingJPG.Size = new System.Drawing.Size(106, 22);
             this.ToolStripButtonMissionExportBriefingJPG.Text = "JPG";
             this.ToolStripButtonMissionExportBriefingJPG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // ToolStripButtonMissionExportBriefingPNG
             // 
             this.ToolStripButtonMissionExportBriefingPNG.Name = "ToolStripButtonMissionExportBriefingPNG";
-            this.ToolStripButtonMissionExportBriefingPNG.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripButtonMissionExportBriefingPNG.Size = new System.Drawing.Size(106, 22);
             this.ToolStripButtonMissionExportBriefingPNG.Text = "PNG";
             this.ToolStripButtonMissionExportBriefingPNG.Click += new System.EventHandler(this.Event_MenuClick);
             // 
@@ -370,6 +357,23 @@
             this.BriefingWebBrowser.Size = new System.Drawing.Size(515, 508);
             this.BriefingWebBrowser.TabIndex = 0;
             // 
+            // ToolStripButtonFileSave
+            // 
+            this.ToolStripButtonFileSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripButtonFileSave.Image = ((System.Drawing.Image)(resources.GetObject("ToolStripButtonFileSave.Image")));
+            this.ToolStripButtonFileSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripButtonFileSave.Name = "ToolStripButtonFileSave";
+            this.ToolStripButtonFileSave.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripButtonFileSave.Text = "Save mission template";
+            this.ToolStripButtonFileSave.Click += new System.EventHandler(this.Event_MenuClick);
+            // 
+            // MenuFileSave
+            // 
+            this.MenuFileSave.Name = "MenuFileSave";
+            this.MenuFileSave.Size = new System.Drawing.Size(215, 22);
+            this.MenuFileSave.Text = "&Save mission template";
+            this.MenuFileSave.Click += new System.EventHandler(this.Event_MenuClick);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -415,11 +419,9 @@
         private System.Windows.Forms.ToolStripMenuItem MenuTools;
         private System.Windows.Forms.ToolStripMenuItem MenuFileNew;
         private System.Windows.Forms.ToolStripMenuItem MenuFileOpen;
-        private System.Windows.Forms.ToolStripMenuItem MenuFileSave;
         private System.Windows.Forms.ToolStripMenuItem MenuFileSaveAs;
         private System.Windows.Forms.ToolStripSeparator MenuFileS1;
         private System.Windows.Forms.ToolStripMenuItem MenuFileExit;
-        private System.Windows.Forms.ToolStripButton ToolStripButtonFileSave;
         private System.Windows.Forms.ToolStripButton ToolStripButtonFileSaveAs;
         private System.Windows.Forms.ToolStripSeparator ToolStripSeparator1;
         private System.Windows.Forms.ToolStripButton ToolStripButtonMissionGenerate;
@@ -436,5 +438,7 @@
         private System.Windows.Forms.ToolStripMenuItem ToolStripButtonMissionExportBriefingJPG;
         private System.Windows.Forms.ToolStripMenuItem ToolStripButtonMissionExportBriefingPNG;
         private System.Windows.Forms.ToolStripSeparator MenuMissionS1;
+        private System.Windows.Forms.ToolStripButton ToolStripButtonFileSave;
+        private System.Windows.Forms.ToolStripMenuItem MenuFileSave;
     }
 }

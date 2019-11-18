@@ -94,12 +94,10 @@ namespace Headquarters4DCS.Template
         /// Constructor.
         /// </summary>
         /// <param name="ini">The .ini file to load from</param>
-        /// <param name="section">The .ini section to save to. Should be the MissionTemplateLocation.INISection</param>
-        /// <param name="groupIndex">Zero-based player flight group index for this group at this location.</param>
-        public MissionTemplatePlayerFlightGroup(INIFile ini, string section, int groupIndex)
+        /// <param name="section">The .ini section to load from.</param>
+        /// <param name="key">The .ini key to load from.</param>
+        public MissionTemplatePlayerFlightGroup(INIFile ini, string section, string key)
         {
-            string key = GetINIKey(groupIndex);
-
             AircraftType = ini.GetValue<string>(section, $"{key}.Type");
             Count = ini.GetValue<int>(section, $"{key}.Count");
             Task = ini.GetValue<PlayerFlightGroupTask>(section, $"{key}.Task");
@@ -128,12 +126,10 @@ namespace Headquarters4DCS.Template
         /// Saves the flight group to an .ini file.
         /// </summary>
         /// <param name="ini"></param>
-        /// <param name="section">The .ini section to save to. Should be the MissionTemplateLocation.INISection</param>
-        /// <param name="groupIndex">Zero-based player flight group index for this group at this location.</param>
-        public void SaveToFile(INIFile ini, string section, int groupIndex)
+        /// <param name="section">The .ini section to save to.</param>
+        /// <param name="key">The .ini key to save to.</param>
+        public void SaveToFile(INIFile ini, string section, string key)
         {
-            string key = GetINIKey(groupIndex);
-
             ini.SetValue(section, $"{key}.Type", AircraftType);
             ini.SetValue(section, $"{key}.Count", Count);
             ini.SetValue(section, $"{key}.Task", Task);
@@ -141,22 +137,16 @@ namespace Headquarters4DCS.Template
             ini.SetValue(section, $"{key}.StartLocation", StartLocation);
         }
 
+        /// <summary>
+        /// Converts 
+        /// </summary>
+        /// <returns>A string to display in the PropertyGrid.</returns>
         public override string ToString()
         {
             string acName = Library.Instance.DefinitionExists<DefinitionUnit>(AircraftType) ? Library.Instance.GetDefinition<DefinitionUnit>(AircraftType).DisplayName : AircraftType;
 
             return $"{HQTools.ValToString(Count)}x {acName}, {GUITools.SplitEnumCamelCase(Task)} " +
                 $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}, {GUITools.SplitEnumCamelCase(WingmenAI).ToLowerInvariant()})";
-        }
-
-        /// <summary>
-        /// Returns an unique .ini key from the group index.
-        /// </summary>
-        /// <param name="groupIndex">The index of the group</param>
-        /// <returns>An ini key string.</returns>
-        private static string GetINIKey(int groupIndex) // Has to be static because it's used in the struct constructor
-        {
-            return $"PlayerFlightGroup{HQTools.ValToString(groupIndex + 1, "00")}";
         }
 
         /// <summary>

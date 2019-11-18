@@ -25,6 +25,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.TypeConverters;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
@@ -278,14 +279,6 @@ namespace Headquarters4DCS.Template
         /// <param name="addDefaultFlightGroup">Should a default flight group be added?</param>
         private void Clear(bool addDefaultFlightGroup)
         {
-            //Theater = Library.Instance.DefinitionExists<DefinitionTheater>(theaterID) ? theaterID : Library.Instance.Common.DefaultTheater;
-            //DefinitionTheater theaterDefinition = Library.Instance.GetDefinition<DefinitionTheater>(Theater);
-
-            //Locations.Clear();
-
-            //foreach (DefinitionTheaterLocation n in theaterDefinition.Locations.Values)
-            //    Locations.Add(n.ID, new MissionTemplateLocation(n));
-
             BriefingDescription = "";
             BriefingName = "";
             BriefingUnits = UnitSystem.ByCoalition;
@@ -308,11 +301,7 @@ namespace Headquarters4DCS.Template
 
             PlayerFlightGroups = addDefaultFlightGroup ? new MissionTemplatePlayerFlightGroup[] { new MissionTemplatePlayerFlightGroup() } : new MissionTemplatePlayerFlightGroup[0];
 
-#if DEBUG
-            PreferencesEnemiesOnF10Map = true;
-#else
             PreferencesEnemiesOnF10Map = false;
-#endif
             PreferencesForceClientInSP = false;
             PreferencesLanguage = Library.Instance.Common.DefaultLanguage;
             PreferencesPilotGender = Gender.Male;
@@ -372,18 +361,10 @@ namespace Headquarters4DCS.Template
                 SituationEnemySkillAir = ini.GetValue("Settings", "Situation.Skill.Enemy.Air", SituationEnemySkillAir);
                 SituationEnemySkillGround = ini.GetValue("Settings", "Situation.Skill.Enemy.Ground", SituationEnemySkillGround);
 
-                //string theater = ini.GetValue<string>("Settings", "Theater");
-                //if (!Library.Instance.DefinitionExists<DefinitionTheater>(theater))
-                //{
-                //    Clear(Library.Instance.Common.DefaultTheater);
-                //    return false;
-                //}
-                //Clear(theater);
-
-                //DefinitionTheater theaterDefinition = Library.Instance.GetDefinition<DefinitionTheater>(Theater);
-
-                //foreach (string k in Locations.Keys)
-                //    Locations[k].LoadFromFile(ini);
+                List<MissionTemplatePlayerFlightGroup> playerFlightGroupsList = new List<MissionTemplatePlayerFlightGroup>();
+                foreach (string k in ini.GetKeysInSection("FlightGroups"))
+                    playerFlightGroupsList.Add(new MissionTemplatePlayerFlightGroup(ini, "FlightGroups", k));
+                PlayerFlightGroups = playerFlightGroupsList.ToArray();
             }
 
             return true;
@@ -431,6 +412,9 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Situation.Skill.Ally.Ground", SituationAllySkillGround);
                 ini.SetValue("Settings", "Situation.Skill.Enemy.Air", SituationEnemySkillAir);
                 ini.SetValue("Settings", "Situation.Skill.Enemy.Ground", SituationEnemySkillGround);
+
+                for (int i = 0; i < PlayerFlightGroups.Length; i++)
+                    PlayerFlightGroups[i].SaveToFile(ini, "FlightGroups", $"FG{i.ToString("000")}");
 
                 ini.SaveToFile(filePath);
             }

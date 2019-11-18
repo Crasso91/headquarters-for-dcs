@@ -24,8 +24,8 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 
 using Headquarters4DCS.Mission;
 using Headquarters4DCS.Miz;
-using Headquarters4DCS.Tools;
 using Headquarters4DCS.Template;
+using Headquarters4DCS.Tools;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -43,7 +43,7 @@ namespace Headquarters4DCS.Forms
         public MissionTemplate Template { get; private set; } = null;
 
         /// <summary>
-        /// Generated mission
+        /// Generated mission.
         /// </summary>
         private DCSMission Mission = null;
 
@@ -52,6 +52,9 @@ namespace Headquarters4DCS.Forms
         /// </summary>
         private string LastSaveFilePath = null;
 
+        /// <summary>
+        /// The main class of the application.
+        /// </summary>
         private readonly HQ4DCS HQ;
 
         /// <summary>
@@ -78,7 +81,6 @@ namespace Headquarters4DCS.Forms
             MenuFileExit.Image = GUITools.GetImageFromResource("Icons.exit.png");
 
             MenuMissionGenerate.Image = GUITools.GetImageFromResource("Icons.refresh.png");
-            //GenerateToolStripButton.Image = GUITools.GetImageFromResource("Icons.refresh.png");
             MenuMissionExportMIZ.Image = GUITools.GetImageFromResource("Icons.exportMIZ.png");
             MenuMissionExportBriefing.Image = GUITools.GetImageFromResource("Icons.exportBriefing.png");
 
