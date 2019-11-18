@@ -52,7 +52,7 @@ namespace Headquarters4DCS.Mission
         /// <summary>
         /// The task assigned to this flight group.
         /// </summary>
-        public readonly DCSAircraftTask Task;
+        public readonly DCSFlightGroupTask Task;
 
         /// <summary>
         /// The radio frequency of this flight group.
@@ -74,7 +74,7 @@ namespace Headquarters4DCS.Mission
         /// <param name="unitCount">The number of units in this flight group.</param>
         /// <param name="frequency">The radio frequency of this flight group.</param>
         /// <param name="tacan">The TACAN frequency of this flight group. Mostly for tankers.</param>
-        public DCSMissionBriefingFlightGroup(string callsign, string unitType, DCSAircraftTask task, string airbaseName, int unitCount = 1, float frequency = 0.0f, string tacan = null)
+        public DCSMissionBriefingFlightGroup(string callsign, string unitType, DCSFlightGroupTask task, string airbaseName, int unitCount = 1, float frequency = 0.0f, string tacan = null)
         {
             Callsign = callsign;
             UnitType = unitType;
@@ -90,7 +90,7 @@ namespace Headquarters4DCS.Mission
         /// </summary>
         public bool IsSupport
         {
-            get { return (Task == DCSAircraftTask.AWACS) || (Task == DCSAircraftTask.Refueling) || (Task == DCSAircraftTask.Transport); }
+            get { return (Task == DCSFlightGroupTask.AWACS) || (Task == DCSFlightGroupTask.Refueling) || (Task == DCSFlightGroupTask.Transport); }
         }
     }
 }

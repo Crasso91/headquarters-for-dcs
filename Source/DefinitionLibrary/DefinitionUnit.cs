@@ -112,7 +112,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// Default DCS World task for this aircraft.
         /// </summary>
-        public DCSAircraftTask AircraftDefaultTask { get; private set; } = DCSAircraftTask.CAP;
+        public DCSFlightGroupTask AircraftDefaultTask { get; private set; } = DCSFlightGroupTask.CAP;
 
         /// <summary>
         /// Air-to-air power rating of this aircraft. Value #0 is "when carrying an A2A payload", value #1 is "when carrying an A2G payload".
@@ -214,7 +214,7 @@ namespace Headquarters4DCS.DefinitionLibrary
                 // ----------------------------------------------------
                 if ((Category == UnitCategory.Helicopter) || (Category == UnitCategory.Plane))
                 {
-                    AircraftDefaultTask = ini.GetValue<DCSAircraftTask>("Aircraft", "DefaultTask");
+                    AircraftDefaultTask = ini.GetValue<DCSFlightGroupTask>("Aircraft", "DefaultTask");
                     AircraftAirToAirRating[0] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2APayload");
                     AircraftAirToAirRating[1] = ini.GetValue<int>("Aircraft", "AirToAirRating.A2GPayload");
                     AircraftCruiseAltitude = ini.GetValue<int>("Aircraft", "CruiseAltitude") * HQTools.FEET_TO_METERS;

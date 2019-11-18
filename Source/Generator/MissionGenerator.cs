@@ -164,7 +164,7 @@ namespace Headquarters4DCS.Generator
                 using (MissionGeneratorUnitGroups unitGroups = new MissionGeneratorUnitGroups(language, callsignGenerator))
                 {
                     foreach (MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups)
-                        unitGroups.AddPlayerFlightGroup(mission, template, pfg);
+                        unitGroups.AddPlayerFlightGroup(mission, template, pfg, missionAirbase);
 
                     //unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
                     //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);

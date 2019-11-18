@@ -80,6 +80,11 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly Coalition Coalition;
 
         /// <summary>
+        /// Map X,Y coordinates of this airbase
+        /// </summary>
+        public readonly Coordinates Coordinates;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="ini">The .ini file to load airbase data from.</param>
@@ -89,6 +94,7 @@ namespace Headquarters4DCS.DefinitionLibrary
             ATC = ini.GetValueArray<float>("Airbase", $"{airbaseKey}.ATC");
             ID = ini.GetValue<int>("Airbase", $"{airbaseKey}.ID");
             ILS = ini.GetValueArray<string>("Airbase", $"{airbaseKey}.ILS");
+            Coordinates = ini.GetValue<Coordinates>("Airbase", $"{airbaseKey}.Coordinates");
             IsMilitary = ini.GetValue<bool>("Airbase", $"{airbaseKey}.Military");
             Name = ini.GetValue<string>("Airbase", $"{airbaseKey}.Name");
             ParkingSpots = ini.GetValue<int>("Airbase", $"{airbaseKey}.ParkingSpots");

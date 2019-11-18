@@ -29,7 +29,11 @@ namespace Headquarters4DCS
     /// </summary>
     public enum DCSFlightGroupTask
     {
+        Nothing,
+
+        AFAC,
         AntishipStrike,
+        AWACS,
         CAS,
         CAP,
         Escort,
@@ -38,6 +42,7 @@ namespace Headquarters4DCS
         Intercept,
         PinpointStrike,
         Reconnaissance,
+        Refueling,
         RunwayAttack,
         SEAD,
         Transport,

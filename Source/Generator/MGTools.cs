@@ -29,25 +29,25 @@ namespace Headquarters4DCS.Generator
     /// </summary>
     public static class MGTools
     {
-        public static string GetDCSTaskNameString(DCSAircraftTask dcsTask)
+        public static string GetDCSTaskNameString(DCSFlightGroupTask dcsTask)
         {
             // FIXME: "Ground attack" in two words, etc.
 
             //switch (dcsTask)
             //{
-            //    //case  AircraftTask.
+            //    //case  DCSFlightGroupTask.
             //}
 
             return dcsTask.ToString();
         }
 
-        public static string GetDCSTaskAdditionalTasksString(DCSAircraftTask dcsTask, int firstTaskIndex = 1)
+        public static string GetDCSTaskAdditionalTasksString(DCSFlightGroupTask dcsTask, int firstTaskIndex = 1)
         {
             string taskInfo = "";
 
             switch (dcsTask)
             {
-                case DCSAircraftTask.CAS:
+                case DCSFlightGroupTask.CAS:
                     taskInfo =
                         "[$1$] = { [\"enabled\"] = true, [\"key\"] = \"CAS\", [\"id\"] = \"EngageTargets\", [\"number\"] = $1$, " +
                         "[\"auto\"] = true, [\"params\"] = { [\"targetTypes\"] = { [1] = \"Helicopters\", [2] = \"Ground Units\", [3] = \"Light armed ships\", }, [\"priority\"] = 0, }, },";

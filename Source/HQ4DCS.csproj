@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefinitionLibrary\DefinitionObjective.cs" />
+    <Compile Include="DefinitionLibrary\DefinitionObjectiveUnitGroup.cs" />
     <Compile Include="Enums\AmountR.cs" />
     <Compile Include="Enums\BriefingExportFileFormat.cs" />
     <Compile Include="Enums\CountriesCoalition.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Enums\Coalition.cs" />
     <Compile Include="Enums\CoalitionNeutral.cs" />
     <Compile Include="Enums\DCSCountry.cs" />
-    <Compile Include="Enums\DCSAircraftTask.cs" />
     <Compile Include="Enums\DCSOption.cs" />
     <Compile Include="Enums\DCSSkillLevel.cs" />
     <Compile Include="Enums\FeatureCategory.cs" />
