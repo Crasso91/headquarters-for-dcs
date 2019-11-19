@@ -83,9 +83,9 @@ namespace Headquarters4DCS.DefinitionLibrary
                 WaypointOnGround = ini.GetValue<bool>("Objective", "Waypoint.OnGround");
 
                 // [Groups] section
-                Groups = new DefinitionObjectiveUnitGroup[ini.GetKeysInSection("Groups").Length];
+                Groups = new DefinitionObjectiveUnitGroup[ini.GetTopLevelKeysInSection("UnitGroups").Length];
                 int i = 0;
-                foreach (string k in ini.GetKeysInSection("Groups"))
+                foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
                 { Groups[i] = new DefinitionObjectiveUnitGroup(ini, k); i++; }
             }
 

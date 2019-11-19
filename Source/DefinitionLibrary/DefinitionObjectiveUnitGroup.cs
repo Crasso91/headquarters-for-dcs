@@ -39,14 +39,19 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly MinMaxI Count;
 
         /// <summary>
+        /// The Lua template for the group.
+        /// </summary>
+        public readonly string LuaGroup;
+
+        /// <summary>
+        /// The Lua template for each unit in the group.
+        /// </summary>
+        public readonly string LuaUnit;
+
+        /// <summary>
         /// Special flags for this unit group.
         /// </summary>
         public readonly MissionObjectiveUnitGroupFlags[] Flags;
-
-        ///// <summary>
-        ///// Type of spawn point this group can be spawned at.
-        ///// </summary>
-        //public readonly TheaterLocationSpawnPointType[] SpawnPoint;
 
         /// <summary>
         /// The fixed ID of this unit group.
@@ -62,11 +67,13 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <param name="key">The .ini file key to load from</param>
         public DefinitionObjectiveUnitGroup(INIFile ini, string key)
         {
-            Family = ini.GetValueArray<UnitFamily>("Groups", $"{key}.Family");
+            Family = ini.GetValueArray<UnitFamily>("UnitGroups", $"{key}.Family");
             if (Family.Length == 0) Family = new UnitFamily[] { UnitFamily.VehicleTransport };
-            Count = ini.GetValue<MinMaxI>("Groups", $"{key}.Count");
-            Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>("Groups", $"{key}.Flags");
-            GroupID = HQTools.Clamp(ini.GetValue<int>("Groups", $"{key}.ID"), 0, 999);
+            Count = ini.GetValue<MinMaxI>("UnitGroups", $"{key}.Count");
+            Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>("UnitGroups", $"{key}.Flags");
+            LuaGroup = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Group");
+            LuaUnit = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Unit");
+            GroupID = HQTools.Clamp(ini.GetValue<int>("UnitGroups", $"{key}.ID"), 0, 999);
         }
     }
 }
