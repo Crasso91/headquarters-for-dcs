@@ -179,7 +179,7 @@ namespace Headquarters4DCS.Miz
                     $"[{i + 1}] =\r\n" +
                     "{\r\n" +
                     $"[\"id\"] = {(int)missHQ.Countries[(int)coalition][i]},\r\n" +
-                    ((i == 0) ? MakeUnitsLua(missHQ, coalition) + "\r\n" : "") +
+                    ((i == 0) ? MakeUnitsLua(missHQ, coalition) + "\r\n" : "") + // All units belong to the first country in the coalition, others are empty
                     $"}}, -- end of [{i + 1}]\r\n";
 
             return coalitionTableLua;

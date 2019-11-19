@@ -406,53 +406,53 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log();
         //}
 
-        //public void GenerateObjectiveUnitGroupsAtEachObjective(HQMission mission, MissionTemplate template, DefinitionMissionObjective missionTask, DefinitionCoalition[] coalitions)
-        //{
-        //    int i;
+        public void AddObjectiveUnitGroupsAtEachObjective(DCSMission mission, MissionTemplate template, DefinitionObjective objective, Coordinates[] objectivesSpawnPoints, DefinitionCoalition[] coalitions)
+        {
+            //int i;
 
-        //    HQDebugLog.Instance.Log("Generating mission objective unit groups at each objective...");
+            DebugLog.Instance.Log("Generating mission objective unit groups at each objective...");
 
-        //    CommonSettingsEnemyAirDefense airDefense = Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)];
+            //CommonSettingsEnemyAirDefense airDefense = Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)];
 
-        //    for (i = 0; i < mission.Objectives.Count; i++)
-        //    {
-        //        DefinitionMissionObjectiveUnitGroup grp = missionTask.UnitGroupObjective;
-        //        if (string.IsNullOrEmpty(grp.LuaGroup)) break; // No units
+            //for (i = 0; i < mission.Objectives.Count; i++)
+            //{
+            //    DefinitionMissionObjectiveUnitGroup grp = objective.UnitGroupObjective;
+            //    if (string.IsNullOrEmpty(grp.LuaGroup)) break; // No units
 
-        //        HQMissionObjectiveLocation obj = mission.Objectives[i];
+            //    HQMissionObjectiveLocation obj = mission.Objectives[i];
 
-        //        Coalition groupCoalition = grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
+            //    Coalition groupCoalition = grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
 
-        //        HQMissionUnitGroup uGroup = null;
+            //    HQMissionUnitGroup uGroup = null;
 
-        //        List<UnitFamily> availableFamilies = new List<UnitFamily>(grp.Families);
-        //        while (availableFamilies.Count > 0)
-        //        {
-        //            UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
+            //    List<UnitFamily> availableFamilies = new List<UnitFamily>(grp.Families);
+            //    while (availableFamilies.Count > 0)
+            //    {
+            //        UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
 
-        //            uGroup =
-        //                HQMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
-        //                    Library,
-        //                    grp.LuaGroup, grp.LuaUnit, coalitions[(int)groupCoalition],
-        //                    template.TimePeriod, selectedFamily, grp.UnitCount.GetValue(),
-        //                    (i + 1) * 1000, groupCoalition, obj.Coordinates);
+            //        uGroup =
+            //            HQMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+            //                Library,
+            //                grp.LuaGroup, grp.LuaUnit, coalitions[(int)groupCoalition],
+            //                template.TimePeriod, selectedFamily, grp.UnitCount.GetValue(),
+            //                (i + 1) * 1000, groupCoalition, obj.Coordinates);
 
-        //            if (uGroup.UnitCount > 0) break;
+            //        if (uGroup.UnitCount > 0) break;
 
-        //            availableFamilies.Remove(selectedFamily);
-        //        }
+            //        availableFamilies.Remove(selectedFamily);
+            //    }
 
-        //        if ((uGroup == null) || (uGroup.UnitCount == 0))
-        //            throw new Exception($"Found no valid units to generate mission critical group of {uGroup.Coalition} {uGroup.Category}.");
+            //    if ((uGroup == null) || (uGroup.UnitCount == 0))
+            //        throw new Exception($"Found no valid units to generate mission critical group of {uGroup.Coalition} {uGroup.Category}.");
 
-        //        if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
-        //            uGroup.AddAirDefenseUnits(Library, coalitions[(int)groupCoalition], template.TimePeriod, Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)]);
+            //    if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
+            //        uGroup.AddAirDefenseUnits(Library, coalitions[(int)groupCoalition], template.TimePeriod, Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)]);
 
-        //        mission.UnitGroups.Add(uGroup);
-        //    }
+            //    mission.UnitGroups.Add(uGroup);
+            //}
 
-        //    HQDebugLog.Instance.Log();
-        //}
+            DebugLog.Instance.Log();
+        }
 
         //public void GenerateObjectiveUnitGroupsAtCenter(HQMission mission, MissionTemplate template, MissionObjectiveDefinition missionTask, CoalitionDefinition[] coalitions)
         //{

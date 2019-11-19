@@ -75,6 +75,7 @@ namespace Headquarters4DCS.Generator
                 coalitions[(int)Coalition.Red] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionRed);
 
                 DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
+                DefinitionObjective objective = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
                 DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
 
                 // Create a list of all available objective names
@@ -111,9 +112,32 @@ namespace Headquarters4DCS.Generator
                     environment.GenerateWind(mission, template.EnvironmentWind, theater);
                 }
 
-                DefinitionTheaterAirbase missionAirbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theater.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
-                mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", missionAirbase.Name));
-                mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", missionAirbase.Name));
+                // Randomly select players' airbase
+                DefinitionTheaterAirbase airbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theater.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
+
+                // Randomly select objective spawn points
+                int objectiveCount = (int)template.ObjectiveCount + 1; // TODO: random amount of objectives
+                MinMaxD distanceFromLastPoint = new MinMaxD(10 * HQTools.NM_TO_METERS, 30 * HQTools.NM_TO_METERS); // TODO: from template, smaller distance between objectives than between airbase and objective #1
+                Coordinates[] objectivesSpawnPoints = new Coordinates[objectiveCount];
+                List<string> usedSpawnPointsID = new List<string>();
+                for (i = 0; i < objectiveCount; i++)
+                {
+                    Coordinates previousPoint = (i == 0) ? airbase.Coordinates : objectivesSpawnPoints[i - 1];
+
+                    // Select all unused spawn points of the correct type, at the proper distance
+                    DefinitionTheaterSpawnPoint[] validSpawnPoints =
+                        (from DefinitionTheaterSpawnPoint sp in theater.SpawnPoints where
+                         objective.SpawnPointType.Contains(sp.PointType) && distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&
+                         !usedSpawnPointsID.Contains(sp.UniqueID) select sp).ToArray();
+
+                    if (validSpawnPoints.Length == 0) // No valid spawn point, throw an error
+                        throw new HQ4DCSException($"Cannot find a valid spawn point for objective #{i + 1}");
+
+                    // Randomly select a spawn point
+                    DefinitionTheaterSpawnPoint selectedSP = HQTools.RandomFrom(validSpawnPoints);
+                    objectivesSpawnPoints[i] = selectedSP.Position;
+                    usedSpawnPointsID.Add(selectedSP.UniqueID); // Add spawn point unique ID to the list of already used spawn points
+                }
 
                 CreateFeatures(mission, template, unitGroupsGenerator, language, waypointNames, out Coordinates[] usedNodesCoordinates);
                 List<string> usedPlayerAircraftTypeList = new List<string>();
@@ -161,10 +185,10 @@ namespace Headquarters4DCS.Generator
                 */
 
                 // Generate units
-                using (MissionGeneratorUnitGroups unitGroups = new MissionGeneratorUnitGroups(language, callsignGenerator))
+                using (MissionGeneratorUnitGroups unitGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator))
                 {
                     foreach (MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups)
-                        unitGroups.AddPlayerFlightGroup(mission, template, pfg, missionAirbase);
+                        unitGenerator.AddPlayerFlightGroup(mission, template, pfg, airbase);
 
                     //unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
                     //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);
@@ -179,23 +203,26 @@ namespace Headquarters4DCS.Generator
                     //if (template.FlightGroupsAWACS)
                     //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneAWACS, "GroupPlaneAWACS", CallsignFamily.AWACS, DCSAircraftTask.AWACS);
 
-                    //unitGroups.GenerateObjectiveUnitGroupsAtEachObjective(mission, template, missionObjective, coalitions);
+                    unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objective, objectivesSpawnPoints, coalitions);
                     ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
                     //unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
                     //unitGroups.GeneralEnemyCAP(mission, template.EnemyCombatAirPatrols, theater, coalitions[(int)mission.CoalitionEnemy]);
                 }
 
-                using (MissionGeneratorBriefing briefing = new MissionGeneratorBriefing(language))
+                using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(language))
                 {
-                    briefing.GenerateMissionName(mission, template.BriefingName);
+                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", airbase.Name));
+                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", airbase.Name));
+
+                    briefingGenerator.GenerateMissionName(mission, template.BriefingName);
                     /*
                         briefing.GenerateMissionDescription(mission, template.BriefingDescription, missionObjective);
                         briefing.GenerateMissionTasks(mission, template, missionObjective);
                         briefing.GenerateMissionRemarks(mission, template, missionObjective);
                         */
-                    briefing.GenerateRawTextBriefing(mission, template/*, missionObjective*/);
-                    briefing.GenerateHTMLBriefing(mission, template/*, missionObjective*/);
+                    briefingGenerator.GenerateRawTextBriefing(mission, template/*, missionObjective*/);
+                    briefingGenerator.GenerateHTMLBriefing(mission, template/*, missionObjective*/);
                 }
 
                 stopwatch.Stop();
@@ -221,9 +248,6 @@ namespace Headquarters4DCS.Generator
                 mission.Dispose();
                 mission = null;
             }
-
-            //unitGroupsGenerator.Dispose();
-            //callsignGenerator.Dispose();
 
             DebugLog.Instance.SaveToFileAndClear("MissionGeneration");
             return mission;

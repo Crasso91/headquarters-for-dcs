@@ -50,16 +50,32 @@ namespace Headquarters4DCS.DefinitionLibrary
         public bool WaypointOnGround { get; private set; }
 
         /// <summary>
+        /// Scripts to include only once.
+        /// </summary>
+        public string[] ScriptsOnce { get; private set; }
+
+        /// <summary>
+        /// Scripts to incude once per objective.
+        /// </summary>
+        public string[] ScriptsEachObjective { get; private set; }
+
+        /// <summary>
+        /// OGG files to include.
+        /// </summary>
+        public string[] OGGFiles { get; private set; }
+
+        /// <summary>
         /// Unit groups to spawn for this mission objective.
         /// </summary>
         public DefinitionObjectiveUnitGroup[] Groups { get; private set; }
-
-        // TODO: scripts (once per mission, once per objective), OGG files
 
         protected override bool OnLoad(string path)
         {
             using (INIFile ini = new INIFile(path))
             {
+                ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
+                ScriptsOnce = ini.GetValueArray<string>("Objective", "Scripts.Once");
+
                 SpawnPointType = ini.GetValueArray<TheaterLocationSpawnPointType>("Objective", "SpawnPoint.Type");
                 if (SpawnPointType.Length == 0) SpawnPointType = new TheaterLocationSpawnPointType[] { TheaterLocationSpawnPointType.LandMedium, TheaterLocationSpawnPointType.LandLarge };
 
