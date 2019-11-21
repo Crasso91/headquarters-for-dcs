@@ -174,9 +174,13 @@ namespace Headquarters4DCS.Forms
                         if (Mission == null) return;
 
                         string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
-                        if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "NewMission";
+                        if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "New mission";
 
-                        string mizFilePath = GUITools.ShowSaveFileDialog(
+#if DEBUG
+                    using (MizExporter mizExporters = new MizExporter())
+                    { mizExporters.CreateMizFile(Mission, $"{HQTools.PATH_DEBUG}DebugMission.miz"); }
+#else
+                    string mizFilePath = GUITools.ShowSaveFileDialog(
                             "miz", HQTools.GetDCSMissionPath(),
                             defaultFileName, "DCS World mission files");
 
@@ -185,6 +189,7 @@ namespace Headquarters4DCS.Forms
                             using (MizExporter mizExporters = new MizExporter())
                             { mizExporters.CreateMizFile(Mission, mizFilePath); }
                         }
+#endif
                     return;
 
                 case "MenuMissionExportBriefingHTML":

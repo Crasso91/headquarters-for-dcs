@@ -103,7 +103,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// Path to the "debug output" directory.
         /// </summary>
-        public static readonly string PATH_DEBUG = PATH + "(OutputDebug)\\";
+        public static readonly string PATH_DEBUG = PATH + "(DebugOutput)\\";
 #endif
 
         /// <summary>
