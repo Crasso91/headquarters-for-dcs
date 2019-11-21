@@ -132,9 +132,9 @@ namespace Headquarters4DCS.DefinitionLibrary
                     Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
 
                 // [Airbases] section
-                Airbases = new DefinitionTheaterAirbase[ini.GetKeysInSection("Airbases").Length];
+                Airbases = new DefinitionTheaterAirbase[ini.GetTopLevelKeysInSection("Airbases").Length];
                 i = 0;
-                foreach (string k in ini.GetKeysInSection("Airbases"))
+                foreach (string k in ini.GetTopLevelKeysInSection("Airbases"))
                 { Airbases[i] = new DefinitionTheaterAirbase(ini, k); i++; }
 
                 // [SpawnPoints] section

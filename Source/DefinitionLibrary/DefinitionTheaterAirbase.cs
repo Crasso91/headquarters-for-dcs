@@ -91,17 +91,17 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <param name="airbaseKey">The top-level key (airbase unique ID)</param>
         public DefinitionTheaterAirbase(INIFile ini, string airbaseKey)
         {
-            ATC = ini.GetValueArray<float>("Airbase", $"{airbaseKey}.ATC");
-            ID = ini.GetValue<int>("Airbase", $"{airbaseKey}.ID");
-            ILS = ini.GetValueArray<string>("Airbase", $"{airbaseKey}.ILS");
-            Coordinates = ini.GetValue<Coordinates>("Airbase", $"{airbaseKey}.Coordinates");
-            IsMilitary = ini.GetValue<bool>("Airbase", $"{airbaseKey}.Military");
-            Name = ini.GetValue<string>("Airbase", $"{airbaseKey}.Name");
-            ParkingSpots = ini.GetValue<int>("Airbase", $"{airbaseKey}.ParkingSpots");
-            Runways = ini.GetValueArray<int>("Airbase", $"{airbaseKey}.Runways");
-            TACAN = ini.GetValueArray<string>("Airbase", $"{airbaseKey}.TACAN");
-            Country = ini.GetValue<DCSCountry>("Airbase", $"{airbaseKey}.Country");
-            Coalition = ini.GetValue<Coalition>("Airbase", $"{airbaseKey}.Coalition");
+            ATC = ini.GetValueArray<float>("Airbases", $"{airbaseKey}.ATC");
+            ID = ini.GetValue<int>("Airbases", $"{airbaseKey}.ID");
+            ILS = ini.GetValueArray<string>("Airbases", $"{airbaseKey}.ILS");
+            Coordinates = ini.GetValue<Coordinates>("Airbases", $"{airbaseKey}.Coordinates");
+            IsMilitary = ini.GetValue<bool>("Airbases", $"{airbaseKey}.Military");
+            Name = ini.GetValue<string>("Airbases", $"{airbaseKey}.Name");
+            ParkingSpots = ini.GetValue<int>("Airbases", $"{airbaseKey}.ParkingSpots");
+            Runways = ini.GetValueArray<int>("Airbases", $"{airbaseKey}.Runways");
+            TACAN = ini.GetValueArray<string>("Airbases", $"{airbaseKey}.TACAN");
+            Country = ini.GetValue<DCSCountry>("Airbases", $"{airbaseKey}.Country");
+            Coalition = ini.GetValue<Coalition>("Airbases", $"{airbaseKey}.Coalition");
         }
     }
 }
