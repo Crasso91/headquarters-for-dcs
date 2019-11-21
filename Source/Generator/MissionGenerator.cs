@@ -116,7 +116,7 @@ namespace Headquarters4DCS.Generator
                 DefinitionTheaterAirbase airbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theater.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
 
                 // Randomly select objective spawn points
-                int objectiveCount = (int)template.ObjectiveCount + 1; // TODO: random amount of objectives
+                int objectiveCount = 1; // (int)template.ObjectiveCount + 1; // TODO: random amount of objectives
                 MinMaxD distanceFromLastPoint = new MinMaxD(10 * HQTools.NM_TO_METERS, 30 * HQTools.NM_TO_METERS); // TODO: from template, smaller distance between objectives than between airbase and objective #1
                 List<string> usedSpawnPointsID = new List<string>();
                 List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
@@ -128,7 +128,7 @@ namespace Headquarters4DCS.Generator
                     // Select all unused spawn points of the correct type, at the proper distance
                     DefinitionTheaterSpawnPoint[] validSpawnPoints =
                         (from DefinitionTheaterSpawnPoint sp in theater.SpawnPoints where
-                         objective.SpawnPointType.Contains(sp.PointType) && distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&
+                         objective.SpawnPointType.Contains(sp.PointType) && /*distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&*/
                          !usedSpawnPointsID.Contains(sp.UniqueID) select sp).ToArray();
 
                     if (validSpawnPoints.Length == 0) // No valid spawn point, throw an error
@@ -152,18 +152,17 @@ namespace Headquarters4DCS.Generator
 
                 mission.Objectives = objectivesList.ToArray();
 
-                CreateFeatures(mission, template, unitGroupsGenerator, language, objectiveNames, out Coordinates[] usedNodesCoordinates);
+                //CreateFeatures(mission, template, unitGroupsGenerator, language, objectiveNames, out Coordinates[] usedNodesCoordinates);
                 List<string> usedPlayerAircraftTypeList = new List<string>();
                 CreatePlayerFlightGroups(mission, template, unitGroupsGenerator, usedPlayerAircraftTypeList);
                 mission.UsedPlayerAircraftTypes = (from string aircraftID in usedPlayerAircraftTypeList select aircraftID).Distinct().OrderBy(x => x).ToArray();
 
+                mission.MapCenter = Coordinates.GetCenter(
+                    (from DCSMissionObjectiveLocation o in mission.Objectives select o.Coordinates).Union(new Coordinates[] { airbase.Coordinates }).ToArray());
+
                 mission.Bullseye = new Coordinates[2];
                 for (i = 0; i < 2; i++)
-                    mission.Bullseye[i] =
-                        Coordinates.GetCenter(usedNodesCoordinates) +
-                        Coordinates.CreateRandomInaccuracy(10000, 20000);
-
-                mission.MapCenter = Coordinates.GetCenter(usedNodesCoordinates);
+                    mission.Bullseye[i] = mission.MapCenter + Coordinates.CreateRandomInaccuracy(10000, 20000);
 
                 // Copy scripts
                 //mission.ScriptsMission = missionObjective.ScriptMission.ToList();
@@ -221,13 +220,15 @@ namespace Headquarters4DCS.Generator
 
                     //unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
                     //unitGroups.GeneralEnemyCAP(mission, template.EnemyCombatAirPatrols, theater, coalitions[(int)mission.CoalitionEnemy]);
-
-                    MessageBox.Show(mission.UnitGroups.Count.ToString());
                 }
 
                 using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(language))
                 {
                     mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", airbase.Name));
+
+                    for (i = 0; i < mission.Objectives.Length; i++)
+                        mission.BriefingTasks.Add($"Accomplish objective {mission.Objectives[i].Name.ToUpperInvariant()}");
+
                     mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", airbase.Name));
 
                     briefingGenerator.GenerateMissionName(mission, template.BriefingName);
