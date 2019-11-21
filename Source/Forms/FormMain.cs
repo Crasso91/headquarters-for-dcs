@@ -171,14 +171,19 @@ namespace Headquarters4DCS.Forms
 
                 case "MenuMissionExportMIZ":
                 case "ToolStripButtonMissionExportMIZ":
-                        if (Mission == null) return;
+                    if (Mission == null) return;
 
-                        string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
-                        if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "New mission";
+                    string defaultFileName = HQTools.RemoveInvalidFileNameCharacters(Mission.BriefingName ?? "");
+                    if (string.IsNullOrEmpty(defaultFileName)) defaultFileName = "New mission";
 
 #if DEBUG
-                    using (MizExporter mizExporters = new MizExporter())
-                    { mizExporters.CreateMizFile(Mission, $"{HQTools.PATH_DEBUG}DebugMission.miz"); }
+                    using (MizExporter mizExporter = new MizExporter())
+                    {
+                        if (mizExporter.CreateMizFile(Mission, $"{HQTools.PATH_DEBUG}DebugMission.miz"))
+                            MessageBox.Show($"Mission exported to (DebugOutput)\\DebugMission.miz", "Debug export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        else
+                            MessageBox.Show($"Failed to export mission to (DebugOutput)\\DebugMission.miz", "Debug export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
 #else
                     string mizFilePath = GUITools.ShowSaveFileDialog(
                             "miz", HQTools.GetDCSMissionPath(),
@@ -186,8 +191,8 @@ namespace Headquarters4DCS.Forms
 
                         if (!string.IsNullOrEmpty(mizFilePath))
                         {
-                            using (MizExporter mizExporters = new MizExporter())
-                            { mizExporters.CreateMizFile(Mission, mizFilePath); }
+                            using (MizExporter mizExporter = new MizExporter())
+                            { mizExporter.CreateMizFile(Mission, mizFilePath); }
                         }
 #endif
                     return;
