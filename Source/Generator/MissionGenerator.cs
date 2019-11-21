@@ -75,7 +75,7 @@ namespace Headquarters4DCS.Generator
                 coalitions[(int)Coalition.Red] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionRed);
 
                 DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
-                DefinitionObjective objective = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
+                DefinitionObjective objectiveDef = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
                 DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
 
                 // Create a list of all available objective names
@@ -120,6 +120,7 @@ namespace Headquarters4DCS.Generator
                 MinMaxD distanceFromLastPoint = new MinMaxD(10 * HQTools.NM_TO_METERS, 30 * HQTools.NM_TO_METERS); // TODO: from template, smaller distance between objectives than between airbase and objective #1
                 List<string> usedSpawnPointsID = new List<string>();
                 List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
+                List<DCSMissionWaypoint> waypointsList = new List<DCSMissionWaypoint>();
                 for (i = 0; i < objectiveCount; i++)
                 {
                     // If this is the first objective, measure distance from the airbase. Else measure distance from the previous objective.
@@ -128,7 +129,7 @@ namespace Headquarters4DCS.Generator
                     // Select all unused spawn points of the correct type, at the proper distance
                     DefinitionTheaterSpawnPoint[] validSpawnPoints =
                         (from DefinitionTheaterSpawnPoint sp in theater.SpawnPoints where
-                         objective.SpawnPointType.Contains(sp.PointType) && /*distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&*/
+                         objectiveDef.SpawnPointType.Contains(sp.PointType) && /*distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&*/
                          !usedSpawnPointsID.Contains(sp.UniqueID) select sp).ToArray();
 
                     if (validSpawnPoints.Length == 0) // No valid spawn point, throw an error
@@ -147,10 +148,12 @@ namespace Headquarters4DCS.Generator
                         objectiveNames.Remove(objName);
                     }
 
-                    objectivesList.Add(new DCSMissionObjectiveLocation(selectedSP.Position, objName, objective.WaypointOnGround ? 0.0 : 1.0, 0));
+                    objectivesList.Add(new DCSMissionObjectiveLocation(selectedSP.Position, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
+                    waypointsList.Add(new DCSMissionWaypoint(selectedSP.Position + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
                 }
 
                 mission.Objectives = objectivesList.ToArray();
+                mission.Waypoints = waypointsList.ToArray();
 
                 //CreateFeatures(mission, template, unitGroupsGenerator, language, objectiveNames, out Coordinates[] usedNodesCoordinates);
                 List<string> usedPlayerAircraftTypeList = new List<string>();
@@ -180,9 +183,9 @@ namespace Headquarters4DCS.Generator
                 //    mission.AirbasesCoalition.Add(ab.DCSID, template.InvertTheaterCountries ? (Coalition)(1 - (int)ab.Coalition) : ab.Coalition);
                 //}
 
-                //mission.OggFiles.Clear();
-                //mission.OggFiles.Add("radio0"); // FIXME: remove?
-                //mission.OggFiles.AddRange(missionObjective.MediaOgg);
+                List<string> oggFilesList = new List<string> { "Radio" }; // Default wave files
+                oggFilesList.AddRange(objectiveDef.FilesOgg);
+                mission.OggFiles = oggFilesList.Distinct().ToArray();
 
                 /*
                 // Generate mission flight plan
@@ -215,7 +218,7 @@ namespace Headquarters4DCS.Generator
                     //if (template.FlightGroupsAWACS)
                     //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneAWACS, "GroupPlaneAWACS", CallsignFamily.AWACS, DCSAircraftTask.AWACS);
 
-                    unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objective, coalitions);
+                    unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objectiveDef, coalitions);
                     ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
                     //unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
