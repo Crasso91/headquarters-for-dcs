@@ -60,9 +60,9 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string[] ScriptsEachObjective { get; private set; }
 
         /// <summary>
-        /// OGG files to include.
+        /// Ogg Vorbis files to include.
         /// </summary>
-        public string[] OGGFiles { get; private set; }
+        public string[] FilesOgg { get; private set; }
 
         /// <summary>
         /// Unit groups to spawn for this mission objective.
@@ -73,6 +73,8 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             using (INIFile ini = new INIFile(path))
             {
+                FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
+
                 ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
                 ScriptsOnce = ini.GetValueArray<string>("Objective", "Scripts.Once");
 
