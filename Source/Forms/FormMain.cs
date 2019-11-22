@@ -272,8 +272,7 @@ namespace Headquarters4DCS.Forms
         /// </summary>
         private void GenerateMission()
         {
-            MenuMissionExportMIZ.Enabled = false;
-            ToolStripButtonMissionExportMIZ.Enabled = false;
+            SetExportMenuButtonsEnabledState(false);
 
             DestroyMission();
             Mission = HQ.Generator.Generate(Template, out string errorMessage);
@@ -281,16 +280,27 @@ namespace Headquarters4DCS.Forms
             BriefingWebBrowser.Navigate("about:blank");
             BriefingWebBrowser.Document.OpenNew(false);
             if (Mission == null)
-            {
-                // TODO: proper message
-                BriefingWebBrowser.Document.Write($"<html><head></head><body><h4>Failed to generate mission</h4><p>{errorMessage}</p></body>");
-                return; // No mission, no need to go further
-            }
-            BriefingWebBrowser.Document.Write(Mission.BriefingHTML);
+                BriefingWebBrowser.Document.Write($"<html><head></head><body><h2>Failed to generate mission</h2><p><strong>ERROR: </strong>{errorMessage}</p></body>");
+            else
+                BriefingWebBrowser.Document.Write(Mission.BriefingHTML);
             BriefingWebBrowser.Refresh();
 
-            MenuMissionExportMIZ.Enabled = true;
-            ToolStripButtonMissionExportMIZ.Enabled = true;
+            SetExportMenuButtonsEnabledState(Mission != null);
+        }
+
+        private void SetExportMenuButtonsEnabledState(bool enabled)
+        {
+            MenuMissionExportMIZ.Enabled = enabled;
+            ToolStripButtonMissionExportMIZ.Enabled = enabled;
+
+            MenuMissionExportBriefing.Enabled = enabled;
+            ToolStripButtonMissionExportBriefing.Enabled = enabled;
+            MenuMissionExportBriefingHTML.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingHTML.Enabled = enabled;
+            MenuMissionExportBriefingJPG.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingJPG.Enabled = enabled;
+            MenuMissionExportBriefingPNG.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingPNG.Enabled = enabled;
         }
 
         /// <summary>
