@@ -153,7 +153,32 @@ namespace Headquarters4DCS.Generator
                     }
 
                     objectivesList.Add(new DCSMissionObjectiveLocation(selectedSP.Position, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
+
+                    // Add a waypoint for each objective
                     waypointsList.Add(new DCSMissionWaypoint(selectedSP.Position + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
+                }
+
+                // If required, add additional waypoints on the way to & from the objectives
+                if (template.PreferencesExtraWaypoints && (waypointsList.Count > 0))
+                {
+                    Coordinates firstWPCoos = waypointsList.First().Coordinates;
+                    Coordinates lastWPCoos = waypointsList.Last().Coordinates;
+
+                    int wpBeforeCount = HQTools.RandomMinMax(1, 3);
+                    for (i = 0; i < wpBeforeCount; i++)
+                        waypointsList.Insert(i,
+                            new DCSMissionWaypoint(
+                                Coordinates.Lerp(airbase.Coordinates, firstWPCoos, (double)(i + 1) / (wpBeforeCount + 1)) +
+                                Coordinates.CreateRandomInaccuracy(firstWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.05, firstWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.15),
+                                $"WP{(i + 1).ToString()}"));
+
+                    int wpAfterCount = HQTools.RandomMinMax(1, 2);
+                    for (i = 0; i < wpAfterCount; i++)
+                        waypointsList.Add(
+                            new DCSMissionWaypoint(
+                                Coordinates.Lerp(lastWPCoos, airbase.Coordinates, (double)(i + 1) / (wpAfterCount + 1)) +
+                                Coordinates.CreateRandomInaccuracy(lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.05, lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.15),
+                                $"WP{waypointsList.Count.ToString()}"));
                 }
 
                 mission.Objectives = objectivesList.ToArray();
@@ -178,13 +203,26 @@ namespace Headquarters4DCS.Generator
                 mission.RealismBirdStrikes = template.RealismBirdStrikes;
                 mission.RealismRandomFailures = template.RealismRandomFailures;
 
-                // Create list of airports alignment from the theater definition
-                //mission.AirbasesCoalition.Clear();
-                //foreach (DefinitionTheaterAirbase ab in theater.Airbases)
-                //{
-                //    if (mission.AirbasesCoalition.ContainsKey(ab.ID)) continue;
-                //    mission.AirbasesCoalition.Add(ab.DCSID, template.InvertTheaterCountries ? (Coalition)(1 - (int)ab.Coalition) : ab.Coalition);
-                //}
+                // Create list of airbase alignment from the theater definition
+                mission.AirbasesCoalition.Clear();
+                foreach (DefinitionTheaterAirbase ab in theater.Airbases)
+                {
+                    if (mission.AirbasesCoalition.ContainsKey(ab.DCSID)) continue;
+
+                    Coalition airbaseCoalition = ab.Coalition;
+                    switch (template.ContextCountriesCoalitions)
+                    {
+                        case CountriesCoalition.AllBlue: airbaseCoalition = Coalition.Blue; break;
+                        case CountriesCoalition.AllRed: airbaseCoalition = Coalition.Red; break;
+                        case CountriesCoalition.Inverted: airbaseCoalition = (Coalition)(1 - (int)ab.Coalition); break;
+                    }
+
+                    mission.AirbasesCoalition.Add(ab.DCSID, airbaseCoalition);
+                }
+
+                // Make sure the starting airbase belongs to the players' coalition no matter which coalition other airbases belong to
+                if (mission.AirbasesCoalition.ContainsKey(airbase.DCSID))
+                    mission.AirbasesCoalition[airbase.DCSID] = template.ContextPlayerCoalition;
 
                 List<string> oggFilesList = new List<string> { "Radio" }; // Default wave files
                 oggFilesList.AddRange(objectiveDef.FilesOgg);

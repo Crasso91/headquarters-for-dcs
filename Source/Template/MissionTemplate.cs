@@ -205,6 +205,14 @@ namespace Headquarters4DCS.Template
         public Gender PreferencesPilotGender { get; set; }
 
         /// <summary>
+        /// Should enemy units be visible on the F10 map?
+        /// </summary>
+        [Category("Preferences")]
+        [DisplayName("Extra waypoints"), Description("If enabled, extra navigation waypoints will be added between the takeoff/landing waypoints and the objective waypoints.")]
+        [TypeConverter(typeof(BooleanYesNoTypeConverter))]
+        public bool PreferencesExtraWaypoints { get; set; }
+
+        /// <summary>
         /// Allow external views?
         /// </summary>
         [Category("Realism")]
@@ -231,34 +239,34 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Skill level of friendly AI aircraft.
         /// </summary>
-        [Category("Situation")]
+        [Category("Difficulty")]
         [DisplayName("Skill level, friendly aircraft"), Description("Skill level of friendly AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel SituationAllySkillAir { get; set; }
+        public HQSkillLevel DifficultyAllySkillAir { get; set; }
 
         /// <summary>
         /// Skill level of friendly AI ground units.
         /// </summary>
-        [Category("Situation")]
+        [Category("Difficulty")]
         [DisplayName("Skill level, friendly ground units"), Description("Skill level of friendly AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel SituationAllySkillGround { get; set; }
+        public HQSkillLevel DifficultyAllySkillGround { get; set; }
 
         /// <summary>
         /// Skill level of enemy AI aircraft.
         /// </summary>
-        [Category("Situation")]
+        [Category("Difficulty")]
         [DisplayName("Skill level, enemy aircraft"), Description("Skill level of enemy AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel SituationEnemySkillAir { get; set; }
+        public HQSkillLevel DifficultyEnemySkillAir { get; set; }
 
         /// <summary>
         /// Skill level of enemy AI ground units.
         /// </summary>
-        [Category("Situation")]
+        [Category("Difficulty")]
         [DisplayName("Skill level, enemy ground units"), Description("Skill level of enemy AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel SituationEnemySkillGround { get; set; }
+        public HQSkillLevel DifficultyEnemySkillGround { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -290,6 +298,11 @@ namespace Headquarters4DCS.Template
             ContextTheater = Library.Instance.Common.DefaultTheater;
             ContextTimePeriod = TimePeriod.Decade2000;
 
+            DifficultyAllySkillAir = HQSkillLevel.Random;
+            DifficultyAllySkillGround = HQSkillLevel.Random;
+            DifficultyEnemySkillAir = HQSkillLevel.Random;
+            DifficultyEnemySkillGround = HQSkillLevel.Random;
+
             EnvironmentSeason = Season.Random;
             EnvironmentTimeOfDay = TimeOfDay.RandomDaytime;
             EnvironmentWeather = Weather.Random;
@@ -305,15 +318,11 @@ namespace Headquarters4DCS.Template
             PreferencesForceClientInSP = false;
             PreferencesLanguage = Library.Instance.Common.DefaultLanguage;
             PreferencesPilotGender = Gender.Male;
+            PreferencesExtraWaypoints = true;
 
             RealismAllowExternalViews = DCSOption.Default;
             RealismBirdStrikes = DCSOption.Default;
             RealismRandomFailures = DCSOption.Default;
-
-            SituationAllySkillAir = HQSkillLevel.Random;
-            SituationAllySkillGround = HQSkillLevel.Random;
-            SituationEnemySkillAir = HQSkillLevel.Random;
-            SituationEnemySkillGround = HQSkillLevel.Random;
         }
 
         /// <summary>
@@ -338,6 +347,11 @@ namespace Headquarters4DCS.Template
                 ContextTheater = ini.GetValue("Settings", "Context.Theater", ContextTheater);
                 ContextTimePeriod = ini.GetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
+                DifficultyAllySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
+                DifficultyAllySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
+                DifficultyEnemySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
+                DifficultyEnemySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
+
                 EnvironmentSeason = ini.GetValue("Settings", "Environment.Season", EnvironmentSeason);
                 EnvironmentTimeOfDay = ini.GetValue("Settings", "Environment.TimeOfDay", EnvironmentTimeOfDay);
                 EnvironmentWeather = ini.GetValue("Settings", "Environment.Weather", EnvironmentWeather);
@@ -348,6 +362,7 @@ namespace Headquarters4DCS.Template
                 ObjectiveType = ini.GetValue("Settings", "Objective.Type", ObjectiveType);
 
                 PreferencesEnemiesOnF10Map = ini.GetValue("Settings", "Preferences.EnemiesOnF10Map", PreferencesEnemiesOnF10Map);
+                PreferencesExtraWaypoints = ini.GetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
                 PreferencesForceClientInSP = ini.GetValue("Settings", "Preferences.ForceClientInSP", PreferencesForceClientInSP);
                 PreferencesLanguage = ini.GetValue("Settings", "Preferences.Language", PreferencesLanguage);
                 PreferencesPilotGender = ini.GetValue("Settings", "Preferences.PilotGender", PreferencesPilotGender);
@@ -355,11 +370,6 @@ namespace Headquarters4DCS.Template
                 RealismAllowExternalViews = ini.GetValue("Settings", "Realism.AllowExternalViews", RealismAllowExternalViews);
                 RealismBirdStrikes = ini.GetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
                 RealismRandomFailures = ini.GetValue("Settings", "Realism.RandomFailures", RealismRandomFailures);
-
-                SituationAllySkillAir = ini.GetValue("Settings", "Situation.Skill.Ally.Air", SituationAllySkillAir);
-                SituationAllySkillGround = ini.GetValue("Settings", "Situation.Skill.Ally.Ground", SituationAllySkillGround);
-                SituationEnemySkillAir = ini.GetValue("Settings", "Situation.Skill.Enemy.Air", SituationEnemySkillAir);
-                SituationEnemySkillGround = ini.GetValue("Settings", "Situation.Skill.Enemy.Ground", SituationEnemySkillGround);
 
                 List<MissionTemplatePlayerFlightGroup> playerFlightGroupsList = new List<MissionTemplatePlayerFlightGroup>();
                 foreach (string k in ini.GetKeysInSection("FlightGroups"))
@@ -390,6 +400,11 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Context.Theater", ContextTheater);
                 ini.SetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
+                ini.SetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
+                ini.SetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
+                ini.SetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
+                ini.SetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
+
                 ini.SetValue("Settings", "Environment.Season", EnvironmentSeason);
                 ini.SetValue("Settings", "Environment.TimeOfDay", EnvironmentTimeOfDay);
                 ini.SetValue("Settings", "Environment.Weather", EnvironmentWeather);
@@ -400,6 +415,7 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Objective.Type", ObjectiveType);
 
                 ini.SetValue("Settings", "Preferences.EnemiesOnF10Map", PreferencesEnemiesOnF10Map);
+                ini.SetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
                 ini.SetValue("Settings", "Preferences.ForceClientInSP", PreferencesForceClientInSP);
                 ini.SetValue("Settings", "Preferences.Language", PreferencesLanguage);
                 ini.SetValue("Settings", "Preferences.PilotGender", PreferencesPilotGender);
@@ -407,11 +423,6 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Realism.AllowExternalViews", RealismAllowExternalViews);
                 ini.SetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
                 ini.SetValue("Settings", "Realism.RandomFailures", RealismRandomFailures);
-
-                ini.SetValue("Settings", "Situation.Skill.Ally.Air", SituationAllySkillAir);
-                ini.SetValue("Settings", "Situation.Skill.Ally.Ground", SituationAllySkillGround);
-                ini.SetValue("Settings", "Situation.Skill.Enemy.Air", SituationEnemySkillAir);
-                ini.SetValue("Settings", "Situation.Skill.Enemy.Ground", SituationEnemySkillGround);
 
                 for (int i = 0; i < PlayerFlightGroups.Length; i++)
                     PlayerFlightGroups[i].SaveToFile(ini, "FlightGroups", $"FG{i.ToString("000")}");

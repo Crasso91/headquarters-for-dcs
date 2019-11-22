@@ -174,7 +174,7 @@ namespace Headquarters4DCS.Generator
 
             SetupAircraftGroup(
                 unitGroup, mission, CallsignFamily.Aircraft, true,
-                aircraftDefinition, GetPayloadByPlayerGroupTask(fgTask), airbase.ID);
+                aircraftDefinition, GetPayloadByPlayerGroupTask(fgTask), airbase.DCSID);
 
             bool usePlayerInsteadOfClient = (template.GetPlayerCount() < 2) && !template.PreferencesForceClientInSP;
 
@@ -190,16 +190,16 @@ namespace Headquarters4DCS.Generator
                     break;
                 case PlayerFlightGroupAI.OnePlayerThenAIWingmen:
                     // set group AI to default allied AI, and add a special flag so the first unit of the group will be a client
-                    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.SituationAllySkillAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
+                    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.DifficultyAllySkillAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
                     unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
                     break;
             }
 
-            unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbase.ID));
+            unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbase.DCSID));
             //unitGroup.CustomValues.Add("FinalWPIndex", HQTools.ValToString(mission.Waypoints.Count + 2));
             unitGroup.CustomValues.Add("FinalX", HQTools.ValToString(airbase.Coordinates.X));
             unitGroup.CustomValues.Add("FinalY", HQTools.ValToString(airbase.Coordinates.Y));
-            unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbase.ID));
+            unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbase.DCSID));
             //unitGroup.CustomValues.Add("DCSTask", MGTools.GetDCSTaskNameString(missionObjective.DCSTask));
             //unitGroup.CustomValues.Add("DCSTaskTasks", MGTools.GetDCSTaskAdditionalTasksString(missionObjective.DCSTask, 2));
 
