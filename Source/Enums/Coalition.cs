@@ -26,11 +26,11 @@ namespace Headquarters4DCS
 {
     /// <summary>
     /// A DCS World coalition color. Blue or red.
-    /// Cast to int32 must be 0 or 1
+    /// Cast to Int32 must be 0 or 1 so coalition can be changed by computing "1 - Coalition"
     /// </summary>
     public enum Coalition
     {
-        Blue,
-        Red
+        Blue = 0,
+        Red = 1
     }
 }

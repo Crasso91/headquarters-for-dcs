@@ -52,7 +52,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// Internal ID of this airbase in DCS World.
         /// </summary>
-        public readonly int ID;
+        public readonly int DCSID;
 
         /// <summary>
         /// Number of parking spots on this airbase.
@@ -92,7 +92,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionTheaterAirbase(INIFile ini, string airbaseKey)
         {
             ATC = ini.GetValueArray<float>("Airbases", $"{airbaseKey}.ATC");
-            ID = ini.GetValue<int>("Airbases", $"{airbaseKey}.ID");
+            DCSID = ini.GetValue<int>("Airbases", $"{airbaseKey}.ID");
             ILS = ini.GetValueArray<string>("Airbases", $"{airbaseKey}.ILS");
             Coordinates = ini.GetValue<Coordinates>("Airbases", $"{airbaseKey}.Coordinates");
             IsMilitary = ini.GetValue<bool>("Airbases", $"{airbaseKey}.Military");
