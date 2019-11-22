@@ -22,11 +22,6 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-
 namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
@@ -34,6 +29,21 @@ namespace Headquarters4DCS.DefinitionLibrary
     /// </summary>
     public sealed class DefinitionObjective : Definition
     {
+        /// <summary>
+        /// Key of the language string to use for the briefing description.
+        /// </summary>
+        public string BriefingDescription { get; private set; }
+
+        /// <summary>
+        /// Keys of the language string to use for the briefing remarks.
+        /// </summary>
+        public string[] BriefingRemarks { get; private set; }
+
+        /// <summary>
+        /// Key of the language string to use for the briefing task.
+        /// </summary>
+        public string BriefingTask { get; private set; }
+
         /// <summary>
         /// Valid spawn point types for this objective.
         /// </summary>
@@ -73,6 +83,10 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             using (INIFile ini = new INIFile(path))
             {
+                BriefingDescription = ini.GetValue<string>("Objective", "Briefing.Description");
+                BriefingRemarks = ini.GetValueArray<string>("Objective", "Briefing.Remarks");
+                BriefingTask = ini.GetValue<string>("Objective", "Briefing.Task");
+
                 FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
 
                 ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
