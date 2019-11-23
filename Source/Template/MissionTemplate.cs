@@ -165,11 +165,12 @@ namespace Headquarters4DCS.Template
         public string ObjectiveType { get; set; }
 
         /// <summary>
-        /// XXXXXXXXXXXXXXXXXXXXXXXXX
+        /// Player flight groups
         /// </summary>
         [Category("Mission package")]
-        [DisplayName("Flight groups"), Description("XXXXXXXXXXXXXXXXXXX")]
+        [DisplayName("Flight groups"), Description("All player controlled flight groups")]
         [TypeConverter(typeof(MissionTemplatePlayerFlightGroupConverter))]
+        [Editor(typeof(DescriptionArrayEditor), typeof(UITypeEditor))]
         public MissionTemplatePlayerFlightGroup[] PlayerFlightGroups { get; set; }
 
         /// <summary>
