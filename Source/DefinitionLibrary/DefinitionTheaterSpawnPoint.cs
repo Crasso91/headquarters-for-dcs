@@ -46,7 +46,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// DCS map coordinates of this spawn point.
         /// </summary>
-        public readonly Coordinates Position;
+        public readonly Coordinates Coordinates;
 
         /// <summary>
         /// The type of spawn point.
@@ -68,7 +68,7 @@ namespace Headquarters4DCS.DefinitionLibrary
 
             try
             {
-                Position = new Coordinates(HQTools.StringToDouble(vals[0]), HQTools.StringToDouble(vals[1]));
+                Coordinates = new Coordinates(HQTools.StringToDouble(vals[0]), HQTools.StringToDouble(vals[1]));
                 PointType = (TheaterLocationSpawnPointType)Enum.Parse(typeof(TheaterLocationSpawnPointType), vals[2], true);
                 Country = (DCSCountry)Enum.Parse(typeof(DCSCountry), vals[3], true);
             }
