@@ -46,7 +46,7 @@ namespace Headquarters4DCS.Generator
         ///// <summary>
         ///// The flight package's (player FG + escort AI FG) total "air-to-air" score. Used to know how many enemy aircraft should be spawned.
         ///// </summary>
-        //private double TotalAAValue = 0;
+        private double TotalAAValue = 0;
 
         /// <summary>
         /// Unique ID of the next group to spawn. Only for "non-critical" groups.
@@ -519,127 +519,126 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Log();
         //}
 
-        //public void GenerateEnemyGroundAirDefense(
-        //    HQMission mission, MissionTemplate template,
-        //    DefinitionTheater theater, DefinitionMissionObjective missionTask, DefinitionCoalition[] coalitions)
-        //{
-        //    HQDebugLog.Instance.Log("Generating enemy ground air defense units...");
+        public void AddEnemyAirDefenseUnits(DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionObjective objective, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase airbase)
+        {
+            DebugLog.Instance.Log("Generating enemy ground air defense units...");
 
-        //    AmountNR airDefenseLevel = HQTools.ResolveRandomAmount(template.EnemyAirDefense);
+            AmountNR airDefenseLevel = HQTools.ResolveRandomAmount(template.DifficultyEnemyAirDefense);
 
-        //    HQDebugLog.Instance.Log(
-        //        $"  Enemy air defense should be {template.EnemyAirDefense.ToString().ToUpperInvariant()}" +
-        //        ((template.EnemyAirDefense == AmountNR.Random) ?
-        //        $" (randomly selected level {airDefenseLevel.ToString().ToUpperInvariant()})" : ""));
+            DebugLog.Instance.Log(
+                $"  Enemy air defense should be {template.DifficultyEnemyAirDefense.ToString().ToUpperInvariant()}" +
+                ((template.DifficultyEnemyAirDefense == AmountNR.Random) ?
+                $" (randomly selected level {airDefenseLevel.ToString().ToUpperInvariant()})" : ""));
 
-        //    CommonSettingsEnemyAirDefense airDefense = Library.Common.EnemyAirDefense[(int)airDefenseLevel];
+            LibraryCommonSettingsEnemyAirDefense airDefense = Library.Instance.Common.AirDefense[(int)airDefenseLevel];
 
-        //    foreach (AirDefenseRange adr in Enum.GetValues(typeof(AirDefenseRange)))
-        //    {
-        //        int adGroupCount = airDefense.InAreaGroupCount[(int)adr].GetValue();
-        //        if (adGroupCount == 0) continue; // no unit groups for this air defense range
+            foreach (AirDefenseRange adr in Enum.GetValues(typeof(AirDefenseRange)))
+            {
+                int adGroupCount = airDefense.InAreaGroupCount[(int)adr].GetValue();
+                if (adGroupCount == 0) continue; // no unit groups for this air defense range
 
-        //        CommonSettingsEnemyAirDefenseDistance distanceSettings = Library.Common.EnemyAirDefenseDistance[(int)adr];
+                LibraryCommonSettingsEnemyAirDefenseDistance distanceSettings = Library.Instance.Common.AirDefenseDistance[(int)adr];
 
-        //        for (int i = 0; i < adGroupCount; i++)
-        //        {
-        //            // Select nodes (1) far enough from the player starting airbase and (2) between min and max distance from an objective
-        //            DefinitionTheaterNode? selNode = theater.SelectNode(
-        //                distanceSettings.NodeTypes, null,
-        //                mission.Airbases[0].Coordinates, new MinMaxD(distanceSettings.MinDistanceFromTakeOffLocation, double.MaxValue),
-        //                HQTools.RandomFrom(mission.Objectives).Coordinates, distanceSettings.DistanceFromObjective);
+                for (int i = 0; i < adGroupCount; i++)
+                {
+                    // Select nodes (1) far enough from the player starting airbase and (2) between min and max distance from an objective
+                    DefinitionTheaterSpawnPoint? selNode = theater.GetRandomSpawnPoint(
+                        distanceSettings.NodeTypes, null,
+                        new MinMaxD(distanceSettings.MinDistanceFromTakeOffLocation, double.MaxValue), airbase.Coordinates,
+                        null,
+                        distanceSettings.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
 
-        //            if (!selNode.HasValue) // No nodes matching search criteria, don't spawn anything
-        //            {
-        //                HQDebugLog.Instance.Log("WARNING: failed to find a node to spawn enemy air defense.");
-        //                continue;
-        //            }
+                    if (!selNode.HasValue) // No nodes matching search criteria, don't spawn anything
+                    {
+                        DebugLog.Instance.Log("WARNING: failed to find a node to spawn enemy air defense.");
+                        continue;
+                    }
 
-        //            HQMissionUnitGroup uGroup = HQMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
-        //                Library,
-        //                "GroupVehicleIdle", "UnitVehicle",
-        //                coalitions[(int)mission.CoalitionEnemy], template.TimePeriod,
-        //                HQTools.RandomFrom(airDefense.InAreaFamilies[(int)adr]), airDefense.InAreaGroupSize[(int)adr].GetValue(),
-        //                GroupID, mission.CoalitionEnemy, selNode.Value.Coordinates);
+                    DCSMissionUnitGroup uGroup = DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                        "GroupVehicleIdle", "UnitVehicle",
+                        coalitions[(int)mission.CoalitionEnemy], template.ContextTimePeriod,
+                        HQTools.RandomFrom(airDefense.InAreaFamilies[(int)adr]), airDefense.InAreaGroupSize[(int)adr].GetValue(),
+                        LastGroupID, mission.CoalitionEnemy, selNode.Value.Coordinates);
 
-        //            uGroup.Name = GetGroupName(UnitFamily.VehicleSAMMedium);
+                    uGroup.Name = GetGroupName(UnitFamily.VehicleSAMMedium);
 
-        //            if (uGroup.UnitCount == 0) continue;
+                    if (uGroup.UnitCount == 0) continue;
 
-        //            mission.UnitGroups.Add(uGroup);
-        //            GroupID++;
-        //        }
-        //    }
+                    mission.UnitGroups.Add(uGroup);
+                    LastGroupID++;
+                }
+            }
 
-        //    HQDebugLog.Instance.Log();
-        //}
+            DebugLog.Instance.Log();
+        }
 
-        //public void GeneralEnemyCAP(HQMission mission, AmountNR enemyCombatAirPatrols, DefinitionTheater theater, DefinitionCoalition enemyCoalition)
-        //{
-        //    HQDebugLog.Instance.Log("Generating enemy combat air patrols...");
+        public void AddEnemyCAPUnits(DCSMission mission, AmountNR enemyCombatAirPatrols, DefinitionTheater theater, DefinitionCoalition enemyCoalition, DefinitionTheaterAirbase missionAirbase)
+        {
+            DebugLog.Instance.Log("Generating enemy combat air patrols...");
 
-        //    // Select a random enemy CAP intensity if set to Random.
-        //    enemyCombatAirPatrols = HQTools.ResolveRandomAmount(enemyCombatAirPatrols);
+            // Select a random enemy CAP intensity if set to Random.
+            enemyCombatAirPatrols = HQTools.ResolveRandomAmount(enemyCombatAirPatrols);
 
-        //    // Multiply the total "air-to-air" score of friendly air groups by a multiplier according to the select "enemy air patrols" setting
-        //    TotalAAValue = TotalAAValue * Library.Common.EnemyCAPMultiplier[(int)enemyCombatAirPatrols];
+            // Multiply the total "air-to-air" score of friendly air groups by a multiplier according to the select "enemy air patrols" setting
+            TotalAAValue = TotalAAValue * Library.Instance.Common.EnemyCAPMultiplier[(int)enemyCombatAirPatrols];
 
-        //    HQDebugLog.Instance.Log("  Enemy CAP air-to-air power: " + TotalAAValue.ToString("F0"));
+            DebugLog.Instance.Log("  Enemy CAP air-to-air power: " + TotalAAValue.ToString("F0"));
 
-        //    if (TotalAAValue <= 0) return; // No AA points to spend, no units
+            if (TotalAAValue <= 0) return; // No AA points to spend, no units
 
-        //    string[] availableFighterUnits = enemyCoalition.GetUnits(Library, mission.TimePeriod, UnitFamily.PlaneFighter, true, false);
+            string[] availableFighterUnits = enemyCoalition.GetUnits(mission.TimePeriod, UnitFamily.PlaneFighter, true, false);
 
-        //    if (availableFighterUnits.Length == 0)
-        //    {
-        //        HQDebugLog.Instance.Log("  WARNING: No fighters or interceptors found in enemy army, could not generate enemy combat air patrols.");
-        //        return;
-        //    }
+            if (availableFighterUnits.Length == 0)
+            {
+                DebugLog.Instance.Log("  WARNING: No fighters or interceptors found in enemy army, could not generate enemy combat air patrols.");
+                return;
+            }
 
-        //    while (TotalAAValue > 0)
-        //    {
-        //        List<string> groupUnits = new List<string>();
+            while (TotalAAValue > 0)
+            {
+                List<string> groupUnits = new List<string>();
 
-        //        string unit = HQTools.RandomFrom(availableFighterUnits);
-        //        DefinitionUnit aircraftDefinition = Library.GetDefinition<DefinitionUnit>(unit);
-        //        if (aircraftDefinition == null) { TotalAAValue--; continue; }
-        //        int aaValueCost = Math.Max(1, aircraftDefinition.AircraftAirToAirRating[0]);
+                string unit = HQTools.RandomFrom(availableFighterUnits);
+                DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(unit);
+                if (aircraftDefinition == null) { TotalAAValue--; continue; }
+                int aaValueCost = Math.Max(1, aircraftDefinition.AircraftAirToAirRating[0]);
 
-        //        do
-        //        {
-        //            groupUnits.Add(unit);
-        //            TotalAAValue -= aaValueCost;
+                do
+                {
+                    groupUnits.Add(unit);
+                    TotalAAValue -= aaValueCost;
 
-        //            if (TotalAAValue <= 0) break; // All "antiair points" have been expended, stop here
-        //            if (groupUnits.Count >= HQTools.RandomFrom(2, 2, 3, 4, 4, 4)) break; // Group is full, stop here
-        //        } while (true);
+                    if (TotalAAValue <= 0) break; // All "antiair points" have been expended, stop here
+                    if (groupUnits.Count >= HQTools.RandomFrom(2, 2, 3, 4, 4, 4)) break; // Group is full, stop here
+                } while (true);
 
-        //        if (groupUnits.Count == 0) { TotalAAValue--; continue; }
+                if (groupUnits.Count == 0) { TotalAAValue--; continue; }
 
-        //        // Select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
-        //        // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
-        //        DefinitionTheaterNode? selNode = theater.SelectNode(
-        //            null, null,
-        //            mission.Airbases[0].Coordinates, new MinMaxD(Library.Common.EnemyCAPMinDistanceFromStartLocation, double.MaxValue),
-        //            HQTools.RandomFrom(mission.Objectives).Coordinates, Library.Common.EnemyCAPDistanceFromObjectives);
+                // Select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
+                // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
+                DefinitionTheaterSpawnPoint? selNode = theater.GetRandomSpawnPoint(
+                    null, null,
+                    new MinMaxD(Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation, double.MaxValue), missionAirbase.Coordinates,
+                    null,
+                    Library.Instance.Common.EnemyCAPDistance.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
 
-        //        if (!selNode.HasValue) { TotalAAValue--; continue; }
+                if (!selNode.HasValue) { TotalAAValue--; continue; }
 
-        //        HQMissionUnitGroup uGroup = new HQMissionUnitGroup(
-        //            "GroupPlaneEnemyCAP", "UnitAircraft",
-        //            UnitCategory.Plane, GroupID, mission.CoalitionEnemy, selNode.Value.Coordinates,
-        //            groupUnits.ToArray());
+                DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
+                    "GroupPlaneEnemyCAP", "UnitAircraft",
+                    UnitCategory.Plane, LastGroupID, mission.CoalitionEnemy, selNode.Value.Coordinates,
+                    groupUnits.ToArray());
 
-        //        SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, AircraftPayloadType.A2A);
-        //        uGroup.CustomValues.Add("LateActivation", "false"); // FIXME: random chance
-        //        uGroup.CustomValues.Add("ParkingID", "0"); // FIXME: should not be used, remove from Lua file
+                SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, AircraftPayloadType.A2A);
+                uGroup.CustomValues.Add("LateActivation", "false"); // FIXME: random chance
+                uGroup.CustomValues.Add("ParkingID", "0"); // FIXME: should not be used, remove from Lua file
 
-        //        mission.UnitGroups.Add(uGroup);
-        //        GroupID++;
-        //    }
+                mission.UnitGroups.Add(uGroup);
+                LastGroupID++;
+            }
 
-        //    HQDebugLog.Instance.Log();
-        //}
+            DebugLog.Instance.Log();
+        }
 
         /// <summary>
         /// Sets the various parameters and special values required for aircraft (fixed-wing and helicopters) unit groups.

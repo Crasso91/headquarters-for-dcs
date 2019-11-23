@@ -120,7 +120,7 @@ namespace Headquarters4DCS.Generator
                 }
 
                 // Randomly select players' airbase
-                DefinitionTheaterAirbase airbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theaterDef.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
+                DefinitionTheaterAirbase missionAirbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theaterDef.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
 
                 // Randomly select objective spawn points
                 int objectiveCount = (int)template.ObjectiveCount;
@@ -134,7 +134,7 @@ namespace Headquarters4DCS.Generator
                 for (i = 0; i < objectiveCount; i++)
                 {
                     // If this is the first objective, measure distance from the airbase. Else measure distance from the previous objective.
-                    Coordinates previousPoint = (i == 0) ? airbase.Coordinates : objectivesList[i - 1].Coordinates;
+                    Coordinates previousPoint = (i == 0) ? missionAirbase.Coordinates : objectivesList[i - 1].Coordinates;
 
                     MinMaxD distanceFromLastPoint =
                         (i == 0) ?
@@ -158,10 +158,10 @@ namespace Headquarters4DCS.Generator
                         objectiveNames.Remove(objName);
                     }
 
-                    objectivesList.Add(new DCSMissionObjectiveLocation(spawnPoint.Value.Position, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
+                    objectivesList.Add(new DCSMissionObjectiveLocation(spawnPoint.Value.Coordinates, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
 
                     // Add a waypoint for each objective
-                    waypointsList.Add(new DCSMissionWaypoint(spawnPoint.Value.Position + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
+                    waypointsList.Add(new DCSMissionWaypoint(spawnPoint.Value.Coordinates + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
                 }
 
                 // If required, add additional waypoints on the way to & from the objectives
@@ -174,16 +174,16 @@ namespace Headquarters4DCS.Generator
                     for (i = 0; i < wpBeforeCount; i++)
                         waypointsList.Insert(i,
                             new DCSMissionWaypoint(
-                                Coordinates.Lerp(airbase.Coordinates, firstWPCoos, (double)(i + 1) / (wpBeforeCount + 1)) +
-                                Coordinates.CreateRandomInaccuracy(firstWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.05, firstWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.15),
+                                Coordinates.Lerp(missionAirbase.Coordinates, firstWPCoos, (double)(i + 1) / (wpBeforeCount + 1)) +
+                                Coordinates.CreateRandomInaccuracy(firstWPCoos.GetDistanceFrom(missionAirbase.Coordinates) * 0.05, firstWPCoos.GetDistanceFrom(missionAirbase.Coordinates) * 0.15),
                                 $"WP{(i + 1).ToString()}"));
 
                     int wpAfterCount = HQTools.RandomMinMax(1, 2);
                     for (i = 0; i < wpAfterCount; i++)
                         waypointsList.Add(
                             new DCSMissionWaypoint(
-                                Coordinates.Lerp(lastWPCoos, airbase.Coordinates, (double)(i + 1) / (wpAfterCount + 1)) +
-                                Coordinates.CreateRandomInaccuracy(lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.05, lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.15),
+                                Coordinates.Lerp(lastWPCoos, missionAirbase.Coordinates, (double)(i + 1) / (wpAfterCount + 1)) +
+                                Coordinates.CreateRandomInaccuracy(lastWPCoos.GetDistanceFrom(missionAirbase.Coordinates) * 0.05, lastWPCoos.GetDistanceFrom(missionAirbase.Coordinates) * 0.15),
                                 $"WP{(waypointsList.Count + 1).ToString()}"));
                 }
 
@@ -194,9 +194,9 @@ namespace Headquarters4DCS.Generator
                 for (i = 0; i <= mission.Waypoints.Length; i++)
                 {
                     if (i == 0) // first point, add distance between the takeoff airbase and the first waypoint
-                        mission.TotalFlightPlanDistance += airbase.Coordinates.GetDistanceFrom(mission.Waypoints.First().Coordinates);
+                        mission.TotalFlightPlanDistance += missionAirbase.Coordinates.GetDistanceFrom(mission.Waypoints.First().Coordinates);
                     else if (i == mission.Waypoints.Length) // last point, add distance between last waypoint and landing airbase
-                        mission.TotalFlightPlanDistance += airbase.Coordinates.GetDistanceFrom(mission.Waypoints.Last().Coordinates);
+                        mission.TotalFlightPlanDistance += missionAirbase.Coordinates.GetDistanceFrom(mission.Waypoints.Last().Coordinates);
                     else // any other point, add distance between this waypoint and the last one
                         mission.TotalFlightPlanDistance += mission.Waypoints[i].Coordinates.GetDistanceFrom(mission.Waypoints[i - 1].Coordinates);
                 }
@@ -208,7 +208,7 @@ namespace Headquarters4DCS.Generator
 
                 // Generate bullseyes and map center
                 mission.MapCenter = Coordinates.GetCenter(
-                    (from DCSMissionObjectiveLocation o in mission.Objectives select o.Coordinates).Union(new Coordinates[] { airbase.Coordinates }).ToArray());
+                    (from DCSMissionObjectiveLocation o in mission.Objectives select o.Coordinates).Union(new Coordinates[] { missionAirbase.Coordinates }).ToArray());
                 mission.Bullseye = new Coordinates[2];
                 for (i = 0; i < 2; i++)
                     mission.Bullseye[i] = mission.MapCenter + Coordinates.CreateRandomInaccuracy(10000, 20000);
@@ -239,8 +239,8 @@ namespace Headquarters4DCS.Generator
                 }
 
                 // Make sure the starting airbase belongs to the players' coalition no matter which coalition other airbases belong to
-                if (mission.AirbasesCoalition.ContainsKey(airbase.DCSID))
-                    mission.AirbasesCoalition[airbase.DCSID] = template.ContextPlayerCoalition;
+                if (mission.AirbasesCoalition.ContainsKey(missionAirbase.DCSID))
+                    mission.AirbasesCoalition[missionAirbase.DCSID] = template.ContextPlayerCoalition;
 
                 List<string> oggFilesList = new List<string> { "Radio" }; // Default wave files
                 oggFilesList.AddRange(objectiveDef.FilesOgg);
@@ -262,7 +262,7 @@ namespace Headquarters4DCS.Generator
                 using (MissionGeneratorUnitGroups unitGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator))
                 {
                     foreach (MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups)
-                        unitGenerator.AddPlayerFlightGroup(mission, template, pfg, airbase);
+                        unitGenerator.AddPlayerFlightGroup(mission, template, pfg, missionAirbase);
 
                     //unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
                     //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);
@@ -280,8 +280,8 @@ namespace Headquarters4DCS.Generator
                     unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objectiveDef, coalitions);
                     ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
-                    //unitGroups.GenerateEnemyGroundAirDefense(mission, template, theater, missionObjective, coalitions);
-                    //unitGroups.GeneralEnemyCAP(mission, template.EnemyCombatAirPatrols, theater, coalitions[(int)mission.CoalitionEnemy]);
+                    unitGenerator.AddEnemyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase);
+                    unitGenerator.AddEnemyCAPUnits(mission, template.DifficultyEnemyCAP, theaterDef, coalitions[1 - (int)template.ContextPlayerCoalition], missionAirbase);
                 }
 
                 using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(language))
@@ -290,10 +290,10 @@ namespace Headquarters4DCS.Generator
                     for (i = 0; i < objectiveDef.BriefingRemarks.Length; i++)
                         mission.BriefingRemarks.Add(language.GetString("Briefing", $"Remark.{objectiveDef.BriefingRemarks}"));
 
-                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", airbase.Name));
+                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", missionAirbase.Name));
                     for (i = 0; i < mission.Objectives.Length; i++)
                         mission.BriefingTasks.Add(language.GetString("Briefing", $"Task.{objectiveDef.BriefingTask}", "Objective", mission.Objectives[i].Name.ToUpperInvariant()));
-                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", airbase.Name));
+                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", missionAirbase.Name));
 
                     briefingGenerator.GenerateMissionName(mission, template.BriefingName);
                     /*
