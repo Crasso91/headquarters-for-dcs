@@ -212,6 +212,7 @@
             this.MenuToolsRadioMessageGenerator.Name = "MenuToolsRadioMessageGenerator";
             this.MenuToolsRadioMessageGenerator.Size = new System.Drawing.Size(207, 22);
             this.MenuToolsRadioMessageGenerator.Text = "&Radio message generator";
+            this.MenuToolsRadioMessageGenerator.Click += new System.EventHandler(this.Event_MenuClick);
             // 
             // MainFormToolStrip
             // 
