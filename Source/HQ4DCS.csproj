@@ -55,8 +55,13 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\AirDefenseRange.cs" />
     <Compile Include="DefinitionLibrary\DefinitionObjective.cs" />
     <Compile Include="DefinitionLibrary\DefinitionObjectiveUnitGroup.cs" />
+    <Compile Include="DefinitionLibrary\LibraryCommonSettingsDistanceToObjective.cs" />
+    <Compile Include="DefinitionLibrary\LibraryCommonSettingsEnemyAirDefenseDistance.cs" />
+    <Compile Include="DefinitionLibrary\LibraryCommonSettingsEnemyAirDefense.cs" />
+    <Compile Include="Enums\Count12345R.cs" />
     <Compile Include="Enums\AmountR.cs" />
     <Compile Include="Enums\BriefingExportFileFormat.cs" />
     <Compile Include="Enums\CountriesCoalition.cs" />
@@ -85,7 +90,6 @@
     <Compile Include="DefinitionLibrary\DefinitionFeatureUnitGroup.cs" />
     <Compile Include="DefinitionLibrary\DefinitionLanguage.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheater.cs" />
-    <Compile Include="DefinitionLibrary\DefinitionTheaterLocation.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterAirbase.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterSpawnPoint.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterWeather.cs" />

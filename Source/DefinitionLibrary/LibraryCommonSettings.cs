@@ -72,13 +72,41 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string[] SharedOggFiles { get; private set; }
 
         /// <summary>
+        /// Settings for various amount of air defense intensity.
+        /// </summary>
+        public LibraryCommonSettingsEnemyAirDefense[] AirDefense { get; private set; }
+
+        /// <summary>
+        /// Settings for min/max distance of short, medium and long range air defense units.
+        /// </summary>
+        public LibraryCommonSettingsEnemyAirDefenseDistance[] AirDefenseDistance { get; private set; }
+
+        /// <summary>
+        /// Min/max distance for various "distance to target" options.
+        /// </summary>
+        public LibraryCommonSettingsDistanceToObjective[] DistanceToObjective { get; private set; }
+
+        /// <summary>
+        /// How far should enemy combat air patrols be spawned from the objective and the players' initial location?
+        /// </summary>
+        public LibraryCommonSettingsEnemyAirDefenseDistance EnemyCAPDistance { get; private set; }
+
+        /// <summary>
+        /// How many times stronger/weaker should the enemy air force be, relative to the allied air force, for various settings of Enemy CAP
+        /// </summary>
+        public double[] EnemyCAPMultiplier { get; private set; }
+
+        /// <summary>
         /// Constructor.
         /// Loads all data from Library\Settings.ini
         /// </summary>
         public LibraryCommonSettings()
         {
+            int i;
+
             using (INIFile ini = new INIFile($"{HQTools.PATH_LIBRARY}Settings.ini"))
             {
+                // Default values
                 DefaultCoalitionBlue = ini.GetValue("Defaults", "Coalition.Blue", "USA");
                 DefaultCoalitionRed = ini.GetValue("Defaults", "Coalition.Red", "Russia");
                 DefaultLanguage = ini.GetValue("Defaults", "Language", "English");
@@ -87,7 +115,26 @@ namespace Headquarters4DCS.DefinitionLibrary
                 DefaultPlayerFlightGroupStartLocation = ini.GetValue("Defaults", "PlayerFlightGroup.StartLocation", PlayerFlightGroupStartLocation.FromParking);
                 DefaultTheater = ini.GetValue("Defaults", "Theater", "Caucasus");
 
+                // Common media files
                 SharedOggFiles = ini.GetValueArray<string>("Shared", "OggFiles");
+
+                AirDefense = new LibraryCommonSettingsEnemyAirDefense[HQTools.EnumCount<AmountNR>() - 1]; // -1 because we don't need "Random"
+                for (i = 0; i < AirDefense.Length; i++)
+                    AirDefense[i] = new LibraryCommonSettingsEnemyAirDefense(ini, "EnemyAirDefense", ((AmountNR)i).ToString());
+
+                AirDefenseDistance = new LibraryCommonSettingsEnemyAirDefenseDistance[HQTools.EnumCount<AirDefenseRange>()];
+                for (i = 0; i < AirDefenseDistance.Length; i++)
+                    AirDefenseDistance[i] = new LibraryCommonSettingsEnemyAirDefenseDistance(ini, "EnemyAirDefenseDistance", ((AirDefenseRange)i).ToString());
+
+                DistanceToObjective = new LibraryCommonSettingsDistanceToObjective[HQTools.EnumCount<AmountR>() - 1]; // -1 because we don't need "Random"
+                for (i = 0; i < DistanceToObjective.Length; i++)
+                    DistanceToObjective[i] = new LibraryCommonSettingsDistanceToObjective(ini, "DistanceToObjective", ((AmountR)i).ToString());
+
+                EnemyCAPDistance = new LibraryCommonSettingsEnemyAirDefenseDistance(ini, "EnemyCombatAirPatrols", null);
+
+                EnemyCAPMultiplier = new double[HQTools.EnumCount<AmountNR>() - 1]; // -1 because we don't need "Random"
+                for (i = 0; i < EnemyCAPMultiplier.Length; i++)
+                    EnemyCAPMultiplier[i] = Math.Max(0, ini.GetValue<int>("EnemyCombatAirPatrols", $"Multiplier.{((AmountNR)i).ToString()}")) / 100.0;
             }
         }
 
