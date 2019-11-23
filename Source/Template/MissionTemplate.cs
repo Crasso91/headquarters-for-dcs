@@ -145,8 +145,8 @@ namespace Headquarters4DCS.Template
         /// </summary>
         [Category("Mission objective")]
         [DisplayName("Objective count"), Description("How many objectives/targets will be present in the mission?")]
-        [TypeConverter(typeof(SplitEnumTypeConverter<AmountR>))]
-        public AmountR ObjectiveCount { get; set; }
+        [TypeConverter(typeof(SplitEnumTypeConverter<Count12345R>))]
+        public Count12345R ObjectiveCount { get; set; }
 
         /// <summary>
         /// How far from the player(s) starting airbase will the objectives be?
@@ -308,7 +308,7 @@ namespace Headquarters4DCS.Template
             EnvironmentWeather = Weather.Random;
             EnvironmentWind = Wind.Auto;
 
-            ObjectiveCount = AmountR.Random;
+            ObjectiveCount = Count12345R.Random;
             ObjectiveDistance = AmountR.Random;
             ObjectiveType = Library.Instance.Common.DefaultObjective;
 
