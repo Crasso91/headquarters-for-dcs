@@ -182,7 +182,7 @@ namespace Headquarters4DCS.Generator
             {
                 case PlayerFlightGroupAI.AllAI:
                     if (flightGroupTemplate.Task == PlayerFlightGroupTask.PrimaryMission)
-                        throw new HQ4DCSException("AI flight groups cannot yet be tasked with the primary mission. Please change the flight package accordingly in the template.");
+                        throw new HQ4DCSException("AI flight groups cannot be tasked with the primary mission.");
                     break;
                 case PlayerFlightGroupAI.AllPlayers:
                     // No AI wingmen: make all units clients

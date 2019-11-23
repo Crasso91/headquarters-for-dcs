@@ -69,6 +69,9 @@ namespace Headquarters4DCS.Generator
                 using (MissionGeneratorTemplateChecker templateChecker = new MissionGeneratorTemplateChecker())
                 { templateChecker.CheckTemplate(template); }
 
+                if (template.GetPlayerCount() < 1)
+                    throw new HQ4DCSException("Mission must include at least one player-controlled aircraft.");
+
                 // Pick definitions
                 DefinitionCoalition[] coalitions = new DefinitionCoalition[2];
                 coalitions[(int)Coalition.Blue] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionBlue);
@@ -76,7 +79,7 @@ namespace Headquarters4DCS.Generator
 
                 DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
                 DefinitionObjective objectiveDef = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
-                DefinitionTheater theater = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
+                DefinitionTheater theaterDef = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
 
                 // Create a list of all available objective names
                 List<string> objectiveNames = language.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
@@ -111,17 +114,20 @@ namespace Headquarters4DCS.Generator
                 using (MissionGeneratorEnvironment environment = new MissionGeneratorEnvironment())
                 {
                     environment.GenerateMissionDate(mission, template.ContextTimePeriod, template.EnvironmentSeason);
-                    environment.GenerateMissionTime(mission, template.EnvironmentTimeOfDay, theater);
-                    environment.GenerateWeather(mission, template.EnvironmentWeather, theater);
-                    environment.GenerateWind(mission, template.EnvironmentWind, theater);
+                    environment.GenerateMissionTime(mission, template.EnvironmentTimeOfDay, theaterDef);
+                    environment.GenerateWeather(mission, template.EnvironmentWeather, theaterDef);
+                    environment.GenerateWind(mission, template.EnvironmentWind, theaterDef);
                 }
 
                 // Randomly select players' airbase
-                DefinitionTheaterAirbase airbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theater.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
+                DefinitionTheaterAirbase airbase = HQTools.RandomFrom((from DefinitionTheaterAirbase ab in theaterDef.Airbases where ab.Coalition == template.ContextPlayerCoalition select ab).ToArray());
 
                 // Randomly select objective spawn points
-                int objectiveCount = 1; // (int)template.ObjectiveCount + 1; // TODO: random amount of objectives
-                MinMaxD distanceFromLastPoint = new MinMaxD(10 * HQTools.NM_TO_METERS, 30 * HQTools.NM_TO_METERS); // TODO: from template, smaller distance between objectives than between airbase and objective #1
+                int objectiveCount = (int)template.ObjectiveCount;
+                if (objectiveCount == 0) objectiveCount = HQTools.RandomFrom(1, 1, 1, 2, 2, 3, 3, 4, 5); // Random objective count
+                AmountR objectiveDistance = template.ObjectiveDistance;
+                if (objectiveDistance == AmountR.Random) objectiveDistance =
+                        HQTools.RandomFrom(AmountR.VeryLow, AmountR.VeryLow, AmountR.Low, AmountR.Low, AmountR.Low, AmountR.Average, AmountR.Average, AmountR.Average, AmountR.High, AmountR.High, AmountR.VeryHigh);
                 List<string> usedSpawnPointsID = new List<string>();
                 List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
                 List<DCSMissionWaypoint> waypointsList = new List<DCSMissionWaypoint>();
@@ -130,18 +136,18 @@ namespace Headquarters4DCS.Generator
                     // If this is the first objective, measure distance from the airbase. Else measure distance from the previous objective.
                     Coordinates previousPoint = (i == 0) ? airbase.Coordinates : objectivesList[i - 1].Coordinates;
 
-                    // Select all unused spawn points of the correct type, at the proper distance
-                    DefinitionTheaterSpawnPoint[] validSpawnPoints =
-                        (from DefinitionTheaterSpawnPoint sp in theater.SpawnPoints where
-                         objectiveDef.SpawnPointType.Contains(sp.PointType) && /*distanceFromLastPoint.Contains(sp.Position.GetDistanceFrom(previousPoint)) &&*/
-                         !usedSpawnPointsID.Contains(sp.UniqueID) select sp).ToArray();
+                    MinMaxD distanceFromLastPoint =
+                        (i == 0) ?
+                        Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceFromStartLocation :
+                        Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceBetweenTargets;
 
-                    if (validSpawnPoints.Length == 0) // No valid spawn point, throw an error
+                    DefinitionTheaterSpawnPoint ? spawnPoint =
+                        theaterDef.GetRandomSpawnPoint(objectiveDef.SpawnPointType, null, distanceFromLastPoint, previousPoint, usedSpawnPointsID);
+
+                    if (!spawnPoint.HasValue) // No valid spawn point, throw an error
                         throw new HQ4DCSException($"Cannot find a valid spawn point for objective #{i + 1}");
 
-                    // Randomly select a spawn point
-                    DefinitionTheaterSpawnPoint selectedSP = HQTools.RandomFrom(validSpawnPoints);
-                    usedSpawnPointsID.Add(selectedSP.UniqueID); // Add spawn point unique ID to the list of already used spawn points
+                    usedSpawnPointsID.Add(spawnPoint.Value.UniqueID); // Add spawn point unique ID to the list of already used spawn points
 
                     // Select a random name for the objective
                     string objName;
@@ -152,10 +158,10 @@ namespace Headquarters4DCS.Generator
                         objectiveNames.Remove(objName);
                     }
 
-                    objectivesList.Add(new DCSMissionObjectiveLocation(selectedSP.Position, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
+                    objectivesList.Add(new DCSMissionObjectiveLocation(spawnPoint.Value.Position, objName, objectiveDef.WaypointOnGround ? 0.0 : 1.0, 0));
 
                     // Add a waypoint for each objective
-                    waypointsList.Add(new DCSMissionWaypoint(selectedSP.Position + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
+                    waypointsList.Add(new DCSMissionWaypoint(spawnPoint.Value.Position + Coordinates.CreateRandomInaccuracy(objectiveDef.WaypointInaccuracy), objName));
                 }
 
                 // If required, add additional waypoints on the way to & from the objectives
@@ -178,19 +184,31 @@ namespace Headquarters4DCS.Generator
                             new DCSMissionWaypoint(
                                 Coordinates.Lerp(lastWPCoos, airbase.Coordinates, (double)(i + 1) / (wpAfterCount + 1)) +
                                 Coordinates.CreateRandomInaccuracy(lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.05, lastWPCoos.GetDistanceFrom(airbase.Coordinates) * 0.15),
-                                $"WP{waypointsList.Count.ToString()}"));
+                                $"WP{(waypointsList.Count + 1).ToString()}"));
                 }
 
                 mission.Objectives = objectivesList.ToArray();
                 mission.Waypoints = waypointsList.ToArray();
 
+                mission.TotalFlightPlanDistance = 0.0;
+                for (i = 0; i <= mission.Waypoints.Length; i++)
+                {
+                    if (i == 0) // first point, add distance between the takeoff airbase and the first waypoint
+                        mission.TotalFlightPlanDistance += airbase.Coordinates.GetDistanceFrom(mission.Waypoints.First().Coordinates);
+                    else if (i == mission.Waypoints.Length) // last point, add distance between last waypoint and landing airbase
+                        mission.TotalFlightPlanDistance += airbase.Coordinates.GetDistanceFrom(mission.Waypoints.Last().Coordinates);
+                    else // any other point, add distance between this waypoint and the last one
+                        mission.TotalFlightPlanDistance += mission.Waypoints[i].Coordinates.GetDistanceFrom(mission.Waypoints[i - 1].Coordinates);
+                }
+
+                // Create a of used player aircraft type, so the proper kneeboard subdirectories can be created in the .miz file
                 mission.UsedPlayerAircraftTypes =
                     (from MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups
                      where pfg.WingmenAI != PlayerFlightGroupAI.AllAI select pfg.AircraftType).Distinct().OrderBy(x => x).ToArray();
 
+                // Generate bullseyes and map center
                 mission.MapCenter = Coordinates.GetCenter(
                     (from DCSMissionObjectiveLocation o in mission.Objectives select o.Coordinates).Union(new Coordinates[] { airbase.Coordinates }).ToArray());
-
                 mission.Bullseye = new Coordinates[2];
                 for (i = 0; i < 2; i++)
                     mission.Bullseye[i] = mission.MapCenter + Coordinates.CreateRandomInaccuracy(10000, 20000);
@@ -205,7 +223,7 @@ namespace Headquarters4DCS.Generator
 
                 // Create list of airbase alignment from the theater definition
                 mission.AirbasesCoalition.Clear();
-                foreach (DefinitionTheaterAirbase ab in theater.Airbases)
+                foreach (DefinitionTheaterAirbase ab in theaterDef.Airbases)
                 {
                     if (mission.AirbasesCoalition.ContainsKey(ab.DCSID)) continue;
 

@@ -25,6 +25,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.IO;
 
 namespace Headquarters4DCS.DefinitionLibrary
@@ -155,6 +156,43 @@ namespace Headquarters4DCS.DefinitionLibrary
             //}
 
             return true;
+        }
+
+        public DefinitionTheaterSpawnPoint? GetRandomSpawnPoint(
+            TheaterLocationSpawnPointType[] validTypes = null, DCSCountry[] validCountries = null,
+            MinMaxD? distanceFrom = null, Coordinates? distanceOrigin = null,
+            IEnumerable<string> invalidIDs = null)
+        {
+            IEnumerable<DefinitionTheaterSpawnPoint> validSP = (from DefinitionTheaterSpawnPoint s in SpawnPoints select s);
+
+            if (invalidIDs != null)
+                validSP = (from DefinitionTheaterSpawnPoint s in validSP where !invalidIDs.Contains(s.UniqueID) select s);
+
+            if (validTypes != null)
+                validSP = (from DefinitionTheaterSpawnPoint s in validSP where validTypes.Contains(s.PointType) select s);
+
+            if (validCountries != null)
+                validSP = (from DefinitionTheaterSpawnPoint s in validSP where validCountries.Contains(s.Country) select s);
+
+            if (distanceFrom.HasValue && distanceOrigin.HasValue)
+            {
+                if (validSP.Count() == 0) return null;
+
+                MinMaxD searchRange = distanceFrom.Value;
+
+                IEnumerable<DefinitionTheaterSpawnPoint> validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP select s);
+
+                do
+                {
+                    validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin.Value.GetDistanceFrom(s.Position)) select s);
+                    searchRange = new MinMaxD(searchRange.Min * 0.9, searchRange.Max * 1.1);
+                } while (validSPInRange.Count() == 0);
+
+                validSP = (from DefinitionTheaterSpawnPoint s in validSPInRange select s);
+            }
+
+            if (validSP.Count() == 0) return null;
+            return HQTools.RandomFrom(validSP.ToArray());
         }
     }
 }
