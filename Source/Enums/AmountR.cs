@@ -31,10 +31,10 @@ namespace Headquarters4DCS
     {
         Random = -1, // "Random" must always be < 0 (so it's ignored when cast to/from int)
 
-        VeryLow = 1,
-        Low = 2,
-        Average = 3,
-        High = 4,
-        VeryHigh = 5
+        VeryLow = 0,
+        Low = 1,
+        Average = 2,
+        High = 3,
+        VeryHigh = 4
     }
 }

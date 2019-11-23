@@ -92,7 +92,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionTheaterAirbase(INIFile ini, string airbaseKey)
         {
             ATC = ini.GetValueArray<float>("Airbases", $"{airbaseKey}.ATC");
-            DCSID = ini.GetValue<int>("Airbases", $"{airbaseKey}.ID");
+            DCSID = ini.GetValue<int>("Airbases", $"{airbaseKey}.DCSID");
             ILS = ini.GetValueArray<string>("Airbases", $"{airbaseKey}.ILS");
             Coordinates = ini.GetValue<Coordinates>("Airbases", $"{airbaseKey}.Coordinates");
             IsMilitary = ini.GetValue<bool>("Airbases", $"{airbaseKey}.Military");

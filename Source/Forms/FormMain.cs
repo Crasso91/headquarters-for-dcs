@@ -160,10 +160,6 @@ namespace Headquarters4DCS.Forms
                 case "ToolStripButtonMissionGenerate":
                     GenerateMission();
                     return;
-                //case "MenuDevelopmentMizToIni":
-                //    ShowDevToolWarningMessage();
-                //    using (FormMizToINI miz2IniForm = new FormMizToINI()) { miz2IniForm.ShowDialog(); }
-                //    return;
                 case "MenuToolsRadioMessageGenerator":
                     ShowDevToolWarningMessage();
                     using (FormRadioMessageGenerator rmgForm = new FormRadioMessageGenerator()) { rmgForm.ShowDialog(); }
@@ -232,6 +228,16 @@ namespace Headquarters4DCS.Forms
         }
 
         /// <summary>
+        /// Event raised when the mission template is changed in the property grid. Generates a new mission.
+        /// </summary>
+        /// <param name="s">The changed value</param>
+        /// <param name="e">Property event</param>
+        private void Event_TemplatePropertyGridPropertyValueChanged(object source, PropertyValueChangedEventArgs e)
+        {
+            GenerateMission();
+        }
+
+        /// <summary>
         /// Destroys the generated mission, if a mission was generated.
         /// </summary>
         private void DestroyMission()
@@ -288,21 +294,6 @@ namespace Headquarters4DCS.Forms
             SetExportMenuButtonsEnabledState(Mission != null);
         }
 
-        private void SetExportMenuButtonsEnabledState(bool enabled)
-        {
-            MenuMissionExportMIZ.Enabled = enabled;
-            ToolStripButtonMissionExportMIZ.Enabled = enabled;
-
-            MenuMissionExportBriefing.Enabled = enabled;
-            ToolStripButtonMissionExportBriefing.Enabled = enabled;
-            MenuMissionExportBriefingHTML.Enabled = enabled;
-            ToolStripButtonMissionExportBriefingHTML.Enabled = enabled;
-            MenuMissionExportBriefingJPG.Enabled = enabled;
-            ToolStripButtonMissionExportBriefingJPG.Enabled = enabled;
-            MenuMissionExportBriefingPNG.Enabled = enabled;
-            ToolStripButtonMissionExportBriefingPNG.Enabled = enabled;
-        }
-
         /// <summary>
         /// Exports the mission briefing to an HTML or image file.
         /// </summary>
@@ -337,9 +328,23 @@ namespace Headquarters4DCS.Forms
                 MessageBox.Show("Failed to export briefing", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void Event_TemplatePropertyGridPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        /// <summary>
+        /// Changes the enabled state of all mission/briefing export MenuItems and ToolStripButtons.
+        /// </summary>
+        /// <param name="enabled">Should the buttons be enabled?</param>
+        private void SetExportMenuButtonsEnabledState(bool enabled)
         {
-            GenerateMission();
+            MenuMissionExportMIZ.Enabled = enabled;
+            ToolStripButtonMissionExportMIZ.Enabled = enabled;
+
+            MenuMissionExportBriefing.Enabled = enabled;
+            ToolStripButtonMissionExportBriefing.Enabled = enabled;
+            MenuMissionExportBriefingHTML.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingHTML.Enabled = enabled;
+            MenuMissionExportBriefingJPG.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingJPG.Enabled = enabled;
+            MenuMissionExportBriefingPNG.Enabled = enabled;
+            ToolStripButtonMissionExportBriefingPNG.Enabled = enabled;
         }
     }
 }
