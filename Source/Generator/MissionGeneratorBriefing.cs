@@ -154,22 +154,25 @@ namespace Headquarters4DCS.Generator
             string text = "";
 
             if (template.GetPlayerCount() == 1)
-                text += $"{GetString("Subtitle.SinglePlayer")}\n\n";
+                text += $"{Language.GetString("Briefing", "Subtitle.SinglePlayer")}\n\n";
             else
-                text += $"{GetString("Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}\n\n";
+                text += $"{Language.GetString("Briefing", "Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}\n\n";
 
             text += mission.BriefingDescription + "\n\n";
 
             // Tasks
-            text += $"{GetString("Section.Tasks").ToUpperInvariant()}{Language.Semicolon}\n";
+            text += $"{Language.GetString("Briefing", "Section.Tasks").ToUpperInvariant()}{Language.Semicolon}\n";
             foreach (string t in mission.BriefingTasks) text += $"- {t}\n";
-            if (mission.BriefingTasks.Count == 0) text += $"- {GetString("Misc.None")}\n";
+            if (mission.BriefingTasks.Count == 0) text += $"- {Language.GetString("Briefing", "Misc.None")}\n";
             text += "\n";
 
             // Remarks
-            text += $"{GetString("Section.Remarks").ToUpperInvariant()}{Language.Semicolon}\n";
+            text += $"{Language.GetString("Briefing", "Section.Remarks").ToUpperInvariant()}{Language.Semicolon}\n";
+            if (mission.BriefingImperialUnits)
+                text += $"- {Language.GetString("Briefing", "Remark.TotalFlightPlanNM", "Distance", (mission.TotalFlightPlanDistance * HQTools.METERS_TO_NM).ToString("F0"))}\n";
+            else
+                text += $"- {Language.GetString("Briefing", "Remark.TotalFlightPlanKM", "Distance", (mission.TotalFlightPlanDistance / 1000.0).ToString("F0"))}\n";
             foreach (string t in mission.BriefingRemarks) text += $"- {t}\n";
-            if (mission.BriefingRemarks.Count == 0) text += $"- {GetString("Misc.None")}\n";
             text += "\n";
 
             // Flight package
@@ -197,36 +200,41 @@ namespace Headquarters4DCS.Generator
             html += $"<h1>{mission.BriefingName}</h1>";
 
             if (template.GetPlayerCount() == 1)
-                html += $"<h3>{GetString("Subtitle.SinglePlayer")}</h3>";
+                html += $"<h3>{Language.GetString("Briefing", "Subtitle.SinglePlayer")}</h3>";
             else
-                html += $"<h3>{GetString("Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}</h3>";
+                html += $"<h3>{Language.GetString("Briefing", "Subtitle.PvE").Replace("$PLAYERS$", HQTools.ValToString(template.GetPlayerCount()))}</h3>";
 
             // Header (objective/task, date, time...)
             html += "<p>";
-            html += $"<strong>{GetString("Section.Date")}{semiColon}</strong> {FormatDate(mission, true)}<br />";
-            html += $"<strong>{GetString("Section.Time")}{semiColon}</strong> {FormatTime(mission, true)}<br />";
-            html += $"<strong>{GetString("Section.Weather")}{semiColon}</strong> {Language.GetEnum(mission.WeatherLevel)}<br />";
-            html += $"<strong>{GetString("Section.Wind")}{semiColon}</strong> {Language.GetEnum(mission.WindLevel)}";
+            html += $"<strong>{Language.GetString("Briefing", "Section.Date")}{semiColon}</strong> {FormatDate(mission, true)}<br />";
+            html += $"<strong>{Language.GetString("Briefing", "Section.Time")}{semiColon}</strong> {FormatTime(mission, true)}<br />";
+            html += $"<strong>{Language.GetString("Briefing", "Section.Weather")}{semiColon}</strong> {Language.GetEnum(mission.WeatherLevel)}<br />";
+            html += $"<strong>{Language.GetString("Briefing", "Section.Wind")}{semiColon}</strong> {Language.GetEnum(mission.WindLevel)}";
             html += $" ({mission.WeatherWindSpeedAverage.ToString("F0")} m/s)";
             html += "</p>";
 
             // Description
-            html += $"<h2>{GetString("Section.Description")}</h2>";
+            html += $"<h2>{Language.GetString("Briefing", "Section.Description")}</h2>";
             html += $"<p>{mission.BriefingDescription}</p>";
 
             // Tasks
-            html += $"<h2>{GetString("Section.Tasks")}</h2>";
+            html += $"<h2>{Language.GetString("Briefing", "Section.Tasks")}</h2>";
             html += "<ul>";
             foreach (string task in mission.BriefingTasks) html += $"<li>{task}</li>";
-            if (mission.BriefingTasks.Count == 0) html += $"<li>{GetString("Misc.None")}</li>";
+            if (mission.BriefingTasks.Count == 0) html += $"<li>{Language.GetString("Briefing", "Misc.None")}</li>";
             html += "</ul>";
 
             // Remarks
-            html += $"<h2>{GetString("Section.Remarks")}</h2>";
+            html += $"<h2>{Language.GetString("Briefing", "Section.Remarks")}</h2>";
             html += "<ul>";
+            if (mission.BriefingImperialUnits)
+                html += $"<li>{Language.GetString("Briefing", "Remark.TotalFlightPlanNM", "Distance", (mission.TotalFlightPlanDistance * HQTools.METERS_TO_NM).ToString("F0"))}</li>";
+            else
+                html += $"<li>{Language.GetString("Briefing", "Remark.TotalFlightPlanKM", "Distance", (mission.TotalFlightPlanDistance / 1000.0).ToString("F0"))}</li>";
             foreach (string remark in mission.BriefingRemarks) html += $"<li>{remark}</li>";
-            if (mission.BriefingRemarks.Count == 0) html += $"<li>{GetString("Misc.None")}</li>";
             html += "</ul>";
+
+            // mission.FlightPlanLength
 
             // Airbases
             //html += $"<h2>{Language.GetString("BriefingCommon", "Airbases")}</h2>";
@@ -245,9 +253,9 @@ namespace Headquarters4DCS.Generator
             //html += "</table>";
 
             // Flight package
-            html += $"<h2>{GetString("Section.FlightPackage")}</h2>";
+            html += $"<h2>{Language.GetString("Briefing", "Section.FlightPackage")}</h2>";
             html += "<table>";
-            html += $"<tr><th>{GetString("Table.Header.Callsign")}</th><th>{GetString("Table.Header.Aircraft")}</th><th>{GetString("Table.Header.Task")}</th><th>{GetString("Table.Header.Airbase")}</th><th>{GetString("Table.Header.Radio")}</th></tr>";
+            html += $"<tr><th>{Language.GetString("Briefing", "Table.Header.Callsign")}</th><th>{Language.GetString("Briefing", "Table.Header.Aircraft")}</th><th>{Language.GetString("Briefing", "Table.Header.Task")}</th><th>{Language.GetString("Briefing", "Table.Header.Airbase")}</th><th>{Language.GetString("Briefing", "Table.Header.Radio")}</th></tr>";
             foreach (DCSMissionBriefingFlightGroup fg in (from DCSMissionBriefingFlightGroup f in mission.BriefingFlightPackage where !f.IsSupport select f).OrderBy(x => x.Task))
                 html += // TODO: localize fg.Task
                     $"<tr><td>{fg.Callsign}</td><td>{fg.UnitCount}x {GetUnitName(fg.UnitType)}</td>" +
@@ -285,17 +293,9 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log("");
         }
 
-        private string GetString(string key, bool randomizeString = false)
-        {
-            if (randomizeString)
-                return Language.GetStringRandom("Briefing", key);
-            else
-                return Language.GetString("Briefing", key);
-        }
-
         private string FormatDate(DCSMission mission, bool longFormat)
         {
-            string formattedString = GetString(longFormat ? "Format.Date.Long" : "Format.Date.Short");
+            string formattedString = Language.GetString("Briefing", longFormat ? "Format.Date.Long" : "Format.Date.Short");
 
             DateTime dt = new DateTime(2003, 5, 1);
 
@@ -315,7 +315,7 @@ namespace Headquarters4DCS.Generator
 
         private string FormatTime(DCSMission mission, bool longFormat)
         {
-            string formattedString = GetString(longFormat ? "Format.Time.Long" : "Format.Time.Short");
+            string formattedString = Language.GetString("Briefing", longFormat ? "Format.Time.Long" : "Format.Time.Short");
 
             formattedString = formattedString
                 .Replace("$H$", HQTools.ValToString(mission.TimeHour, "0"))

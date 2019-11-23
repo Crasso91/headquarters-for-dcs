@@ -219,6 +219,11 @@ namespace Headquarters4DCS.Mission
         public List<DCSMissionUnitGroup> UnitGroups { get; set; } = new List<DCSMissionUnitGroup>();
 
         /// <summary>
+        /// Total length of the flight plan, in meters.
+        /// </summary>
+        public double TotalFlightPlanDistance { get; set; }
+
+        /// <summary>
         /// Mission waypoints.
         /// </summary>
         public DCSMissionWaypoint[] Waypoints { get; set; }
