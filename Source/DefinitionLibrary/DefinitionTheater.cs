@@ -161,7 +161,8 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionTheaterSpawnPoint? GetRandomSpawnPoint(
             TheaterLocationSpawnPointType[] validTypes = null, DCSCountry[] validCountries = null,
             MinMaxD? distanceFrom = null, Coordinates? distanceOrigin = null,
-            IEnumerable<string> invalidIDs = null)
+            IEnumerable<string> invalidIDs = null,
+            MinMaxD? distanceFrom2 = null, Coordinates? distanceOrigin2 = null)
         {
             IEnumerable<DefinitionTheaterSpawnPoint> validSP = (from DefinitionTheaterSpawnPoint s in SpawnPoints select s);
 
@@ -184,7 +185,24 @@ namespace Headquarters4DCS.DefinitionLibrary
 
                 do
                 {
-                    validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin.Value.GetDistanceFrom(s.Position)) select s);
+                    validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin.Value.GetDistanceFrom(s.Coordinates)) select s);
+                    searchRange = new MinMaxD(searchRange.Min * 0.9, searchRange.Max * 1.1);
+                } while (validSPInRange.Count() == 0);
+
+                validSP = (from DefinitionTheaterSpawnPoint s in validSPInRange select s);
+            }
+
+            if (distanceFrom2.HasValue && distanceOrigin2.HasValue)
+            {
+                if (validSP.Count() == 0) return null;
+
+                MinMaxD searchRange = distanceFrom2.Value;
+
+                IEnumerable<DefinitionTheaterSpawnPoint> validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP select s);
+
+                do
+                {
+                    validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin2.Value.GetDistanceFrom(s.Coordinates)) select s);
                     searchRange = new MinMaxD(searchRange.Min * 0.9, searchRange.Max * 1.1);
                 } while (validSPInRange.Count() == 0);
 
