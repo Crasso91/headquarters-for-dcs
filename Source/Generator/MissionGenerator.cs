@@ -80,6 +80,7 @@ namespace Headquarters4DCS.Generator
                 DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
                 DefinitionObjective objectiveDef = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
                 DefinitionTheater theaterDef = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
+                theaterDef.ResetUsedSpawnPoints();
 
                 // Create a list of all available objective names
                 List<string> objectiveNames = language.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
@@ -128,7 +129,6 @@ namespace Headquarters4DCS.Generator
                 AmountR objectiveDistance = template.ObjectiveDistance;
                 if (objectiveDistance == AmountR.Random) objectiveDistance =
                         HQTools.RandomFrom(AmountR.VeryLow, AmountR.VeryLow, AmountR.Low, AmountR.Low, AmountR.Low, AmountR.Average, AmountR.Average, AmountR.Average, AmountR.High, AmountR.High, AmountR.VeryHigh);
-                List<string> usedSpawnPointsID = new List<string>();
                 List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
                 List<DCSMissionWaypoint> waypointsList = new List<DCSMissionWaypoint>();
                 for (i = 0; i < objectiveCount; i++)
@@ -142,12 +142,10 @@ namespace Headquarters4DCS.Generator
                         Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceBetweenTargets;
 
                     DefinitionTheaterSpawnPoint ? spawnPoint =
-                        theaterDef.GetRandomSpawnPoint(objectiveDef.SpawnPointType, null, distanceFromLastPoint, previousPoint, usedSpawnPointsID);
+                        theaterDef.GetRandomSpawnPoint(objectiveDef.SpawnPointType, null, distanceFromLastPoint, previousPoint);
 
                     if (!spawnPoint.HasValue) // No valid spawn point, throw an error
                         throw new HQ4DCSException($"Cannot find a valid spawn point for objective #{i + 1}");
-
-                    usedSpawnPointsID.Add(spawnPoint.Value.UniqueID); // Add spawn point unique ID to the list of already used spawn points
 
                     // Select a random name for the objective
                     string objName;
@@ -281,7 +279,7 @@ namespace Headquarters4DCS.Generator
                     ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
                     unitGenerator.AddEnemyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase);
-                    unitGenerator.AddEnemyCAPUnits(mission, template.DifficultyEnemyCAP, theaterDef, coalitions[1 - (int)template.ContextPlayerCoalition], missionAirbase);
+                    unitGenerator.AddCombatAirPatrolUnits(mission, template, theaterDef, coalitions, missionAirbase);
                 }
 
                 using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(language))

@@ -43,11 +43,6 @@ namespace Headquarters4DCS.Generator
         private List<int> UsedOnboardNumbers = new List<int>();
         private List<int> UsedFakeGroupNamesNumbers = new List<int>();
 
-        ///// <summary>
-        ///// The flight package's (player FG + escort AI FG) total "air-to-air" score. Used to know how many enemy aircraft should be spawned.
-        ///// </summary>
-        private double TotalAAValue = 0;
-
         /// <summary>
         /// Unique ID of the next group to spawn. Only for "non-critical" groups.
         /// (objective "waypoint" groups have an ID of 1000*(objectiveIndex + 1), objective "center" group has an ID of 10000)
@@ -190,7 +185,7 @@ namespace Headquarters4DCS.Generator
                     break;
                 case PlayerFlightGroupAI.OnePlayerThenAIWingmen:
                     // set group AI to default allied AI, and add a special flag so the first unit of the group will be a client
-                    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.DifficultyAllySkillAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
+                    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.SkillFriendlyAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
                     unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
                     break;
             }
@@ -443,6 +438,9 @@ namespace Headquarters4DCS.Generator
                             template.ContextTimePeriod, selectedFamily, grp.Count.GetValue(),
                             groupID, groupCoalition, obj.Coordinates);
 
+                    if (uGroup == null)
+                        throw new HQ4DCSException($"Failed to generate required unit group of family {selectedFamily} at objective #{i + 1}. Perhaps no unit type of this type was found for the {groupCoalition} coalition.");
+
                     if (uGroup.UnitCount > 0) break;
 
                     availableFamilies.Remove(selectedFamily);
@@ -455,7 +453,7 @@ namespace Headquarters4DCS.Generator
                 if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense))
                     uGroup.AddAirDefenseUnits(
                         coalitions[(int)groupCoalition], template.ContextTimePeriod,
-                        Library.Instance.Common.AirDefense[(int)HQTools.ResolveRandomAmount(grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? template.DifficultyAllyAirDefense : template.DifficultyEnemyAirDefense)]);
+                        Library.Instance.Common.AirDefense[(int)HQTools.ResolveRandomAmount(grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? template.SituationFriendlyAirDefense : template.SituationEnemyAirDefense)]);
 
                 string hidden;
                 if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysVisible)) hidden = "false";
@@ -523,11 +521,11 @@ namespace Headquarters4DCS.Generator
         {
             DebugLog.Instance.Log("Generating enemy ground air defense units...");
 
-            AmountNR airDefenseLevel = HQTools.ResolveRandomAmount(template.DifficultyEnemyAirDefense);
+            AmountNR airDefenseLevel = HQTools.ResolveRandomAmount(template.SituationEnemyAirDefense);
 
             DebugLog.Instance.Log(
-                $"  Enemy air defense should be {template.DifficultyEnemyAirDefense.ToString().ToUpperInvariant()}" +
-                ((template.DifficultyEnemyAirDefense == AmountNR.Random) ?
+                $"  Enemy air defense should be {template.SituationEnemyAirDefense.ToString().ToUpperInvariant()}" +
+                ((template.SituationEnemyAirDefense == AmountNR.Random) ?
                 $" (randomly selected level {airDefenseLevel.ToString().ToUpperInvariant()})" : ""));
 
             LibraryCommonSettingsEnemyAirDefense airDefense = Library.Instance.Common.AirDefense[(int)airDefenseLevel];
@@ -545,7 +543,6 @@ namespace Headquarters4DCS.Generator
                     DefinitionTheaterSpawnPoint? selNode = theater.GetRandomSpawnPoint(
                         distanceSettings.NodeTypes, null,
                         new MinMaxD(distanceSettings.MinDistanceFromTakeOffLocation, double.MaxValue), airbase.Coordinates,
-                        null,
                         distanceSettings.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
 
                     if (!selNode.HasValue) // No nodes matching search criteria, don't spawn anything
@@ -554,11 +551,19 @@ namespace Headquarters4DCS.Generator
                         continue;
                     }
 
+                    UnitFamily unitFamily = HQTools.RandomFrom(airDefense.InAreaFamilies[(int)adr]);
+
                     DCSMissionUnitGroup uGroup = DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
                         "GroupVehicleIdle", "UnitVehicle",
                         coalitions[(int)mission.CoalitionEnemy], template.ContextTimePeriod,
-                        HQTools.RandomFrom(airDefense.InAreaFamilies[(int)adr]), airDefense.InAreaGroupSize[(int)adr].GetValue(),
+                        unitFamily, airDefense.InAreaGroupSize[(int)adr].GetValue(),
                         LastGroupID, mission.CoalitionEnemy, selNode.Value.Coordinates);
+
+                    if (uGroup == null)
+                    {
+                        DebugLog.Instance.Log($"WARNING: failed to generate air defense of type {unitFamily} for coalition {mission.CoalitionEnemy}.");
+                        continue;
+                    }
 
                     uGroup.Name = GetGroupName(UnitFamily.VehicleSAMMedium);
 
@@ -572,69 +577,80 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log();
         }
 
-        public void AddEnemyCAPUnits(DCSMission mission, AmountNR enemyCombatAirPatrols, DefinitionTheater theater, DefinitionCoalition enemyCoalition, DefinitionTheaterAirbase missionAirbase)
+        public void AddCombatAirPatrolUnits(DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase missionAirbase)
         {
-            DebugLog.Instance.Log("Generating enemy combat air patrols...");
+            DebugLog.Instance.Log("Generating combat air patrols...");
 
-            // Select a random enemy CAP intensity if set to Random.
-            enemyCombatAirPatrols = HQTools.ResolveRandomAmount(enemyCombatAirPatrols);
-
-            // Multiply the total "air-to-air" score of friendly air groups by a multiplier according to the select "enemy air patrols" setting
-            TotalAAValue = TotalAAValue * Library.Instance.Common.EnemyCAPMultiplier[(int)enemyCombatAirPatrols];
-
-            DebugLog.Instance.Log("  Enemy CAP air-to-air power: " + TotalAAValue.ToString("F0"));
-
-            if (TotalAAValue <= 0) return; // No AA points to spend, no units
-
-            string[] availableFighterUnits = enemyCoalition.GetUnits(mission.TimePeriod, UnitFamily.PlaneFighter, true, false);
-
-            if (availableFighterUnits.Length == 0)
+            for (int i = 0; i < 2; i++)
             {
-                DebugLog.Instance.Log("  WARNING: No fighters or interceptors found in enemy army, could not generate enemy combat air patrols.");
-                return;
-            }
+                // Select a enemy CAP intensity if set to Random
+                AmountNR capSetting;
+                if (i == (int)template.ContextPlayerCoalition)
+                    capSetting = HQTools.ResolveRandomAmount(template.SituationFriendlyCAP);
+                else
+                    capSetting = HQTools.ResolveRandomAmount(template.SituationEnemyCAP);
 
-            while (TotalAAValue > 0)
-            {
-                List<string> groupUnits = new List<string>();
+                DebugLog.Instance.Log($"  CAP for coalition {(Coalition)i} set to {capSetting.ToString().ToUpperInvariant()}");
 
-                string unit = HQTools.RandomFrom(availableFighterUnits);
-                DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(unit);
-                if (aircraftDefinition == null) { TotalAAValue--; continue; }
-                int aaValueCost = Math.Max(1, aircraftDefinition.AircraftAirToAirRating[0]);
+                // Get the proper number of aircraft according to Setting.ini
+                int capAircraftCount = Library.Instance.Common.CAPCount[(int)capSetting].GetValue();
+                if (capAircraftCount <= 0) return; // No aircraft
 
-                do
+                string[] availableFighterUnits = coalitions[i].GetUnits(mission.TimePeriod, UnitFamily.PlaneFighter, true, false);
+
+                if (availableFighterUnits.Length == 0)
                 {
-                    groupUnits.Add(unit);
-                    TotalAAValue -= aaValueCost;
+                    DebugLog.Instance.Log($"  WARNING: No fighters or interceptors found for coalition {(Coalition)i}, could not generate combat air patrols.");
+                    continue;
+                }
 
-                    if (TotalAAValue <= 0) break; // All "antiair points" have been expended, stop here
-                    if (groupUnits.Count >= HQTools.RandomFrom(2, 2, 3, 4, 4, 4)) break; // Group is full, stop here
-                } while (true);
+                while (capAircraftCount > 0)
+                {
+                    List<string> groupUnits = new List<string>();
 
-                if (groupUnits.Count == 0) { TotalAAValue--; continue; }
+                    string unit = HQTools.RandomFrom(availableFighterUnits);
+                    DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(unit);
+                    if (aircraftDefinition == null) { capAircraftCount--; continue; }
 
-                // Select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
-                // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
-                DefinitionTheaterSpawnPoint? selNode = theater.GetRandomSpawnPoint(
-                    null, null,
-                    new MinMaxD(Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation, double.MaxValue), missionAirbase.Coordinates,
-                    null,
-                    Library.Instance.Common.EnemyCAPDistance.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
+                    do
+                    {
+                        groupUnits.Add(unit);
+                        capAircraftCount--;
+                        if (capAircraftCount <= 0) break;
+                        if (groupUnits.Count >= HQTools.RandomFrom(2, 2, 3, 4, 4, 4)) break; // Group is full, stop here
+                    } while (true);
 
-                if (!selNode.HasValue) { TotalAAValue--; continue; }
+                    if (groupUnits.Count == 0) { capAircraftCount--; continue; }
 
-                DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
-                    "GroupPlaneEnemyCAP", "UnitAircraft",
-                    UnitCategory.Plane, LastGroupID, mission.CoalitionEnemy, selNode.Value.Coordinates,
-                    groupUnits.ToArray());
+                    DefinitionTheaterSpawnPoint? spawnPoint;
+                    if (i == (int)template.ContextPlayerCoalition)
+                        // Allied CAP: select any nodes (aircraft can be spawned anywhere, even over water) located close enough to the
+                        // players starting airbase (see HQLibrary.Common.EnemyCAPDistance)
+                        spawnPoint = theater.GetRandomSpawnPoint(
+                            null, null,
+                            new MinMaxD(0, Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation), missionAirbase.Coordinates);
+                    else
+                        // Enemy CAP: select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
+                        // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
+                        spawnPoint = theater.GetRandomSpawnPoint(
+                            null, null,
+                            new MinMaxD(Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation, double.MaxValue), missionAirbase.Coordinates,
+                            Library.Instance.Common.EnemyCAPDistance.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
 
-                SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, AircraftPayloadType.A2A);
-                uGroup.CustomValues.Add("LateActivation", "false"); // FIXME: random chance
-                uGroup.CustomValues.Add("ParkingID", "0"); // FIXME: should not be used, remove from Lua file
+                    if (!spawnPoint.HasValue) { capAircraftCount--; continue; }
 
-                mission.UnitGroups.Add(uGroup);
-                LastGroupID++;
+                    DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
+                        "GroupPlaneEnemyCAP", "UnitAircraft",
+                        UnitCategory.Plane, LastGroupID, (Coalition)i, spawnPoint.Value.Coordinates,
+                        groupUnits.ToArray());
+
+                    SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, AircraftPayloadType.A2A);
+                    uGroup.CustomValues.Add("LateActivation", "false"); // TODO: random chance
+                    uGroup.CustomValues.Add("ParkingID", "0"); // TODO: should not be used, remove from Lua file
+
+                    mission.UnitGroups.Add(uGroup);
+                    LastGroupID++;
+                }
             }
 
             DebugLog.Instance.Log();

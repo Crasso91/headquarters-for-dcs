@@ -92,9 +92,9 @@ namespace Headquarters4DCS.DefinitionLibrary
         public LibraryCommonSettingsEnemyAirDefenseDistance EnemyCAPDistance { get; private set; }
 
         /// <summary>
-        /// How many times stronger/weaker should the enemy air force be, relative to the allied air force, for various settings of Enemy CAP
+        /// How many aircraft should be spawned as combat air patrols
         /// </summary>
-        public double[] EnemyCAPMultiplier { get; private set; }
+        public MinMaxI[] CAPCount { get; private set; }
 
         /// <summary>
         /// Constructor.
@@ -130,11 +130,10 @@ namespace Headquarters4DCS.DefinitionLibrary
                 for (i = 0; i < DistanceToObjective.Length; i++)
                     DistanceToObjective[i] = new LibraryCommonSettingsDistanceToObjective(ini, "DistanceToObjective", ((AmountR)i).ToString());
 
-                EnemyCAPDistance = new LibraryCommonSettingsEnemyAirDefenseDistance(ini, "EnemyCombatAirPatrols", null);
-
-                EnemyCAPMultiplier = new double[HQTools.EnumCount<AmountNR>() - 1]; // -1 because we don't need "Random"
-                for (i = 0; i < EnemyCAPMultiplier.Length; i++)
-                    EnemyCAPMultiplier[i] = Math.Max(0, ini.GetValue<int>("EnemyCombatAirPatrols", $"Multiplier.{((AmountNR)i).ToString()}")) / 100.0;
+                EnemyCAPDistance = new LibraryCommonSettingsEnemyAirDefenseDistance(ini, "CombatAirPatrols", null);
+                CAPCount = new MinMaxI[HQTools.EnumCount<AmountNR>() - 1]; // -1 because we don't need "Random"
+                for (i = 0; i < CAPCount.Length; i++)
+                    CAPCount[i] = ini.GetValue<MinMaxI>("CombatAirPatrols", $"Count.{((AmountNR)i).ToString()}");
             }
         }
 
