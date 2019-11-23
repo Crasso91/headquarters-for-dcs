@@ -237,57 +237,57 @@ namespace Headquarters4DCS.Template
         [TypeConverter(typeof(SplitEnumTypeConverter<DCSOption>))]
         public DCSOption RealismRandomFailures { get; set; }
 
-        [Category("Difficulty")]
+        [Category("Situation")]
         [DisplayName("Enemy air defense"), Description("Amount of enemy surface-to-air defense.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
-        public AmountNR DifficultyEnemyAirDefense { get; set; }
+        public AmountNR SituationEnemyAirDefense { get; set; }
 
-        [Category("Difficulty")]
+        [Category("Situation")]
         [DisplayName("Friendly air defense"), Description("Amount of friendly surface-to-air defense.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
-        public AmountNR DifficultyAllyAirDefense { get; set; }
+        public AmountNR SituationFriendlyAirDefense { get; set; }
 
-        [Category("Difficulty")]
-        [DisplayName("Enemy air defense"), Description("Amount of enemy combat air patrols.")]
+        [Category("Situation")]
+        [DisplayName("Enemy CAP"), Description("Amount of enemy combat air patrols.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
-        public AmountNR DifficultyEnemyCAP { get; set; }
+        public AmountNR SituationEnemyCAP { get; set; }
 
-        [Category("Difficulty")]
-        [DisplayName("Friendly air defense"), Description("Amount of friendly combat air patrols.")]
+        [Category("Situation")]
+        [DisplayName("Friendly CAP"), Description("Amount of friendly combat air patrols.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
-        public AmountNR DifficultyAllyCAP { get; set; }
+        public AmountNR SituationFriendlyCAP { get; set; }
 
         /// <summary>
         /// Skill level of friendly AI aircraft.
         /// </summary>
-        [Category("Difficulty")]
+        [Category("Skill level")]
         [DisplayName("Friendly aircraft AI"), Description("Skill level of friendly AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel DifficultyAllySkillAir { get; set; }
+        public HQSkillLevel SkillFriendlyAir { get; set; }
 
         /// <summary>
         /// Skill level of friendly AI ground units.
         /// </summary>
-        [Category("Difficulty")]
+        [Category("Skill level")]
         [DisplayName("Friendly ground AI"), Description("Skill level of friendly AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel DifficultyAllySkillGround { get; set; }
+        public HQSkillLevel SkillFriendlyGround { get; set; }
 
         /// <summary>
         /// Skill level of enemy AI aircraft.
         /// </summary>
-        [Category("Difficulty")]
+        [Category("Skill level")]
         [DisplayName("Enemy aircraft AI"), Description("Skill level of enemy AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel DifficultyEnemySkillAir { get; set; }
+        public HQSkillLevel SkillEnemyAir { get; set; }
 
         /// <summary>
         /// Skill level of enemy AI ground units.
         /// </summary>
-        [Category("Difficulty")]
+        [Category("Skill level")]
         [DisplayName("Enemy ground AI"), Description("Skill level of enemy AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
-        public HQSkillLevel DifficultyEnemySkillGround { get; set; }
+        public HQSkillLevel SkillEnemyGround { get; set; }
 
         /// <summary>
         /// Constructor.
@@ -319,15 +319,6 @@ namespace Headquarters4DCS.Template
             ContextTheater = Library.Instance.Common.DefaultTheater;
             ContextTimePeriod = TimePeriod.Decade2000;
 
-            DifficultyAllyAirDefense = AmountNR.Random;
-            DifficultyAllyCAP = AmountNR.Random;
-            DifficultyAllySkillAir = HQSkillLevel.Random;
-            DifficultyAllySkillGround = HQSkillLevel.Random;
-            DifficultyEnemyAirDefense = AmountNR.Random;
-            DifficultyEnemyCAP = AmountNR.Random;
-            DifficultyEnemySkillAir = HQSkillLevel.Random;
-            DifficultyEnemySkillGround = HQSkillLevel.Random;
-
             EnvironmentSeason = Season.Random;
             EnvironmentTimeOfDay = TimeOfDay.RandomDaytime;
             EnvironmentWeather = Weather.Random;
@@ -348,6 +339,16 @@ namespace Headquarters4DCS.Template
             RealismAllowExternalViews = DCSOption.Default;
             RealismBirdStrikes = DCSOption.Default;
             RealismRandomFailures = DCSOption.Default;
+
+            SituationEnemyAirDefense = AmountNR.Random;
+            SituationEnemyCAP = AmountNR.Random;
+            SituationFriendlyAirDefense = AmountNR.Random;
+            SituationFriendlyCAP = AmountNR.Random;
+
+            SkillEnemyAir = HQSkillLevel.Random;
+            SkillEnemyGround = HQSkillLevel.Random;
+            SkillFriendlyAir = HQSkillLevel.Random;
+            SkillFriendlyGround = HQSkillLevel.Random;
         }
 
         /// <summary>
@@ -372,15 +373,6 @@ namespace Headquarters4DCS.Template
                 ContextTheater = ini.GetValue("Settings", "Context.Theater", ContextTheater);
                 ContextTimePeriod = ini.GetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
-                DifficultyAllyAirDefense = ini.GetValue("Settings", "Difficulty.Defense.Ally.Ground", DifficultyAllyAirDefense);
-                DifficultyAllyCAP = ini.GetValue("Settings", "Difficulty.Defense.Ally.Air", DifficultyAllyCAP);
-                DifficultyAllySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
-                DifficultyAllySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
-                DifficultyEnemyAirDefense = ini.GetValue("Settings", "Difficulty.Defense.Enemy.Ground", DifficultyEnemyAirDefense);
-                DifficultyEnemyCAP = ini.GetValue("Settings", "Difficulty.Defense.Enemy.Air", DifficultyEnemyCAP);
-                DifficultyEnemySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
-                DifficultyEnemySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
-
                 EnvironmentSeason = ini.GetValue("Settings", "Environment.Season", EnvironmentSeason);
                 EnvironmentTimeOfDay = ini.GetValue("Settings", "Environment.TimeOfDay", EnvironmentTimeOfDay);
                 EnvironmentWeather = ini.GetValue("Settings", "Environment.Weather", EnvironmentWeather);
@@ -389,6 +381,11 @@ namespace Headquarters4DCS.Template
                 ObjectiveCount = ini.GetValue("Settings", "Objective.Count", ObjectiveCount);
                 ObjectiveDistance = ini.GetValue("Settings", "Objective.Distance", ObjectiveDistance);
                 ObjectiveType = ini.GetValue("Settings", "Objective.Type", ObjectiveType);
+
+                List<MissionTemplatePlayerFlightGroup> playerFlightGroupsList = new List<MissionTemplatePlayerFlightGroup>();
+                foreach (string k in ini.GetKeysInSection("FlightGroups"))
+                    playerFlightGroupsList.Add(new MissionTemplatePlayerFlightGroup(ini, "FlightGroups", k));
+                PlayerFlightGroups = playerFlightGroupsList.ToArray();
 
                 PreferencesEnemiesOnF10Map = ini.GetValue("Settings", "Preferences.EnemiesOnF10Map", PreferencesEnemiesOnF10Map);
                 PreferencesExtraWaypoints = ini.GetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
@@ -400,10 +397,15 @@ namespace Headquarters4DCS.Template
                 RealismBirdStrikes = ini.GetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
                 RealismRandomFailures = ini.GetValue("Settings", "Realism.RandomFailures", RealismRandomFailures);
 
-                List<MissionTemplatePlayerFlightGroup> playerFlightGroupsList = new List<MissionTemplatePlayerFlightGroup>();
-                foreach (string k in ini.GetKeysInSection("FlightGroups"))
-                    playerFlightGroupsList.Add(new MissionTemplatePlayerFlightGroup(ini, "FlightGroups", k));
-                PlayerFlightGroups = playerFlightGroupsList.ToArray();
+                SituationEnemyAirDefense = ini.GetValue("Settings", "Situation.Enemy.AirDefense", SituationEnemyAirDefense);
+                SituationEnemyCAP = ini.GetValue("Settings", "Situation.Enemy.CAP", SituationEnemyCAP);
+                SituationFriendlyAirDefense = ini.GetValue("Settings", "Situation.Friendly.AirDefense", SituationFriendlyAirDefense);
+                SituationFriendlyCAP = ini.GetValue("Settings", "Situation.Friendly.CAP", SituationFriendlyCAP);
+
+                SkillEnemyAir = ini.GetValue("Settings", "Skill.Enemy.Air", SkillEnemyAir);
+                SkillEnemyGround = ini.GetValue("Settings", "Skill.Enemy.Ground", SkillEnemyGround);
+                SkillFriendlyAir = ini.GetValue("Settings", "Skill.Friendly.Air", SkillFriendlyAir);
+                SkillFriendlyGround = ini.GetValue("Settings", "Skill.Friendly.Ground", SkillFriendlyGround);
             }
 
             return true;
@@ -429,15 +431,6 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Context.Theater", ContextTheater);
                 ini.SetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
-                ini.SetValue("Settings", "Difficulty.Defense.Ally.Ground", DifficultyAllyAirDefense);
-                ini.SetValue("Settings", "Difficulty.Defense.Ally.Air", DifficultyAllyCAP);
-                ini.SetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
-                ini.SetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
-                ini.SetValue("Settings", "Difficulty.Defense.Enemy.Ground", DifficultyEnemyAirDefense);
-                ini.SetValue("Settings", "Difficulty.Defense.Enemy.Air", DifficultyEnemyCAP);
-                ini.SetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
-                ini.SetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
-
                 ini.SetValue("Settings", "Environment.Season", EnvironmentSeason);
                 ini.SetValue("Settings", "Environment.TimeOfDay", EnvironmentTimeOfDay);
                 ini.SetValue("Settings", "Environment.Weather", EnvironmentWeather);
@@ -456,6 +449,16 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Realism.AllowExternalViews", RealismAllowExternalViews);
                 ini.SetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
                 ini.SetValue("Settings", "Realism.RandomFailures", RealismRandomFailures);
+
+                ini.SetValue("Settings", "Situation.Enemy.AirDefense", SituationEnemyAirDefense);
+                ini.SetValue("Settings", "Situation.Enemy.CAP", SituationEnemyCAP);
+                ini.SetValue("Settings", "Situation.Friendly.AirDefense", SituationFriendlyAirDefense);
+                ini.SetValue("Settings", "Situation.Friendly.CAP", SituationFriendlyCAP);
+
+                ini.SetValue("Settings", "Skill.Enemy.Air", SkillEnemyAir);
+                ini.SetValue("Settings", "Skill.Enemy.Ground", SkillEnemyGround);
+                ini.SetValue("Settings", "Skill.Friendly.Air", SkillFriendlyAir);
+                ini.SetValue("Settings", "Skill.Friendly.Ground", SkillFriendlyGround);
 
                 for (int i = 0; i < PlayerFlightGroups.Length; i++)
                     PlayerFlightGroups[i].SaveToFile(ini, "FlightGroups", $"FG{i.ToString("000")}");
