@@ -91,6 +91,11 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionTheaterSpawnPoint[] SpawnPoints { get; private set; }
 
         /// <summary>
+        /// List of used spawn point used on this theater. Can be reset by using ResetUsedSpawnPoints
+        /// </summary>
+        private List<string> UsedSpawnPointsID = new List<string>();
+
+        /// <summary>
         /// Loads data required by this definition.
         /// </summary>
         /// <param name="path">Path to definition file or directory.</param>
@@ -145,29 +150,25 @@ namespace Headquarters4DCS.DefinitionLibrary
                 { SpawnPoints[i] = new DefinitionTheaterSpawnPoint(ini, k); i++; }
             }
 
-            //// Location files
-            //// ------------------
-            //Locations = new Dictionary<string, DefinitionTheaterLocation>(StringComparer.InvariantCultureIgnoreCase);
-            //foreach (string f in Directory.GetFiles(path, "Location_*.ini"))
-            //{
-            //    string k = DefinitionTheaterLocation.GetLocationIDFromINIFileName(f);
-            //    if (string.IsNullOrEmpty(k) || Locations.ContainsKey(k)) continue;
-            //    Locations.Add(k, new DefinitionTheaterLocation(f));
-            //}
+            ResetUsedSpawnPoints();
 
             return true;
+        }
+
+        /// <summary>
+        /// Resets the list of used spawn points
+        /// </summary>
+        public void ResetUsedSpawnPoints()
+        {
+            UsedSpawnPointsID.Clear();
         }
 
         public DefinitionTheaterSpawnPoint? GetRandomSpawnPoint(
             TheaterLocationSpawnPointType[] validTypes = null, DCSCountry[] validCountries = null,
             MinMaxD? distanceFrom = null, Coordinates? distanceOrigin = null,
-            IEnumerable<string> invalidIDs = null,
             MinMaxD? distanceFrom2 = null, Coordinates? distanceOrigin2 = null)
         {
-            IEnumerable<DefinitionTheaterSpawnPoint> validSP = (from DefinitionTheaterSpawnPoint s in SpawnPoints select s);
-
-            if (invalidIDs != null)
-                validSP = (from DefinitionTheaterSpawnPoint s in validSP where !invalidIDs.Contains(s.UniqueID) select s);
+            IEnumerable<DefinitionTheaterSpawnPoint> validSP = (from DefinitionTheaterSpawnPoint s in SpawnPoints where !UsedSpawnPointsID.Contains(s.UniqueID) select s);
 
             if (validTypes != null)
                 validSP = (from DefinitionTheaterSpawnPoint s in validSP where validTypes.Contains(s.PointType) select s);
@@ -186,7 +187,7 @@ namespace Headquarters4DCS.DefinitionLibrary
                 do
                 {
                     validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin.Value.GetDistanceFrom(s.Coordinates)) select s);
-                    searchRange = new MinMaxD(searchRange.Min * 0.9, searchRange.Max * 1.1);
+                    searchRange = new MinMaxD(searchRange.Min * 0.9, Math.Max(100, searchRange.Max * 1.1));
                 } while (validSPInRange.Count() == 0);
 
                 validSP = (from DefinitionTheaterSpawnPoint s in validSPInRange select s);
@@ -203,14 +204,17 @@ namespace Headquarters4DCS.DefinitionLibrary
                 do
                 {
                     validSPInRange = (from DefinitionTheaterSpawnPoint s in validSP where searchRange.Contains(distanceOrigin2.Value.GetDistanceFrom(s.Coordinates)) select s);
-                    searchRange = new MinMaxD(searchRange.Min * 0.9, searchRange.Max * 1.1);
+                    searchRange = new MinMaxD(searchRange.Min * 0.9, Math.Max(100, searchRange.Max * 1.1));
                 } while (validSPInRange.Count() == 0);
 
                 validSP = (from DefinitionTheaterSpawnPoint s in validSPInRange select s);
             }
 
             if (validSP.Count() == 0) return null;
-            return HQTools.RandomFrom(validSP.ToArray());
+
+            DefinitionTheaterSpawnPoint selectedSpawnPoint = HQTools.RandomFrom(validSP.ToArray());
+            UsedSpawnPointsID.Add(selectedSpawnPoint.UniqueID);
+            return selectedSpawnPoint;
         }
     }
 }
