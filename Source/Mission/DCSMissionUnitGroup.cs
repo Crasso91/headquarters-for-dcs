@@ -203,35 +203,32 @@ namespace Headquarters4DCS.Mission
         }
 
         // Adds "embedded" air defense to ground vehicle groups
-        //public void AddAirDefenseUnits(
-        //    HQLibrary library, DefinitionCoalition army, TimePeriod timePeriod,
-        //    CommonSettingsEnemyAirDefense airDefenseSettings)
-        //{
-        //    if (Category != UnitCategory.Vehicle) return;
+        public void AddAirDefenseUnits(DefinitionCoalition army, TimePeriod timePeriod, LibraryCommonSettingsEnemyAirDefense airDefenseSettings)
+        {
+            if (Category != UnitCategory.Vehicle) return;
 
-        //    List<string> unitList = new List<string>(Units);
+            List<string> unitList = new List<string>(Units);
 
-        //    if (HQTools.RandomDouble() < airDefenseSettings.EmbeddedChance)
-        //    {
-        //        int airDefCount = airDefenseSettings.EmbeddedCount.GetValue();
+            if (HQTools.RandomDouble() < airDefenseSettings.EmbeddedChance)
+            {
+                int airDefCount = airDefenseSettings.EmbeddedCount.GetValue();
 
-        //        for (int i = 0; i < airDefCount; i++)
-        //        {
-        //            string airDefUnit =
-        //                HQTools.RandomFrom(
-        //                    army.GetUnits(library, timePeriod,
-        //                    HQTools.RandomFrom(airDefenseSettings.EmbeddedFamilies), true, false));
-        //            if (airDefUnit == null) continue;
+                for (int i = 0; i < airDefCount; i++)
+                {
+                    string airDefUnit =
+                        HQTools.RandomFrom(
+                            army.GetUnits(timePeriod, HQTools.RandomFrom(airDefenseSettings.EmbeddedFamilies), true, false));
+                    if (airDefUnit == null) continue;
 
-        //            unitList.Add(airDefUnit);
-        //        }
-        //    }
+                    unitList.Add(airDefUnit);
+                }
+            }
 
-        //    // Randomize list order (so air defense units are not always at the end)
-        //    Units = unitList.OrderBy(x => HQTools.RandomInt()).ToList();
+            // Randomize list order so air defense units are not always at the end
+            Units = unitList.OrderBy(x => HQTools.RandomInt()).ToList();
 
-        //    CheckAbsolueMaxUnitCount();
-        //}
+            CheckAbsolueMaxUnitCount();
+        }
 
         private void CheckAbsolueMaxUnitCount()
         {

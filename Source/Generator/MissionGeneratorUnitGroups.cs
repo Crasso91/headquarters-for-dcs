@@ -437,7 +437,6 @@ namespace Headquarters4DCS.Generator
                 {
                     UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
 
-
                     uGroup =
                         DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
                             grp.LuaGroup, grp.LuaUnit, coalitions[(int)groupCoalition],
@@ -449,11 +448,23 @@ namespace Headquarters4DCS.Generator
                     availableFamilies.Remove(selectedFamily);
                 }
 
+
                 if ((uGroup == null) || (uGroup.UnitCount == 0))
                     throw new Exception($"Found no valid units to generate mission critical group of {uGroup.Coalition} {uGroup.Category}.");
 
-                //if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
-                //    uGroup.AddAirDefenseUnits(Library, coalitions[(int)groupCoalition], template.TimePeriod, Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)]);
+                if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense))
+                    uGroup.AddAirDefenseUnits(
+                        coalitions[(int)groupCoalition], template.ContextTimePeriod,
+                        Library.Instance.Common.AirDefense[(int)HQTools.ResolveRandomAmount(grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? template.DifficultyAllyAirDefense : template.DifficultyEnemyAirDefense)]);
+
+                string hidden;
+                if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysVisible)) hidden = "false";
+                else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysHidden)) hidden = "true";
+                else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly)) hidden = "false";
+                else if (template.PreferencesEnemiesOnF10Map) hidden = "false";
+                else hidden = "true";
+
+                uGroup.CustomValues.Add("Hidden", hidden);
 
                 mission.UnitGroups.Add(uGroup);
             }

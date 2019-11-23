@@ -236,11 +236,31 @@ namespace Headquarters4DCS.Template
         [TypeConverter(typeof(SplitEnumTypeConverter<DCSOption>))]
         public DCSOption RealismRandomFailures { get; set; }
 
+        [Category("Difficulty")]
+        [DisplayName("Enemy air defense"), Description("Amount of enemy surface-to-air defense.")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
+        public AmountNR DifficultyEnemyAirDefense { get; set; }
+
+        [Category("Difficulty")]
+        [DisplayName("Friendly air defense"), Description("Amount of friendly surface-to-air defense.")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
+        public AmountNR DifficultyAllyAirDefense { get; set; }
+
+        [Category("Difficulty")]
+        [DisplayName("Enemy air defense"), Description("Amount of enemy combat air patrols.")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
+        public AmountNR DifficultyEnemyCAP { get; set; }
+
+        [Category("Difficulty")]
+        [DisplayName("Friendly air defense"), Description("Amount of friendly combat air patrols.")]
+        [TypeConverter(typeof(SplitEnumTypeConverter<AmountNR>))]
+        public AmountNR DifficultyAllyCAP { get; set; }
+
         /// <summary>
         /// Skill level of friendly AI aircraft.
         /// </summary>
         [Category("Difficulty")]
-        [DisplayName("Skill level, friendly aircraft"), Description("Skill level of friendly AI aircraft.")]
+        [DisplayName("Friendly aircraft AI"), Description("Skill level of friendly AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
         public HQSkillLevel DifficultyAllySkillAir { get; set; }
 
@@ -248,7 +268,7 @@ namespace Headquarters4DCS.Template
         /// Skill level of friendly AI ground units.
         /// </summary>
         [Category("Difficulty")]
-        [DisplayName("Skill level, friendly ground units"), Description("Skill level of friendly AI ground units.")]
+        [DisplayName("Friendly ground AI"), Description("Skill level of friendly AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
         public HQSkillLevel DifficultyAllySkillGround { get; set; }
 
@@ -256,7 +276,7 @@ namespace Headquarters4DCS.Template
         /// Skill level of enemy AI aircraft.
         /// </summary>
         [Category("Difficulty")]
-        [DisplayName("Skill level, enemy aircraft"), Description("Skill level of enemy AI aircraft.")]
+        [DisplayName("Enemy aircraft AI"), Description("Skill level of enemy AI aircraft.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
         public HQSkillLevel DifficultyEnemySkillAir { get; set; }
 
@@ -264,7 +284,7 @@ namespace Headquarters4DCS.Template
         /// Skill level of enemy AI ground units.
         /// </summary>
         [Category("Difficulty")]
-        [DisplayName("Skill level, enemy ground units"), Description("Skill level of enemy AI ground units.")]
+        [DisplayName("Enemy ground AI"), Description("Skill level of enemy AI ground units.")]
         [TypeConverter(typeof(SplitEnumTypeConverter<HQSkillLevel>))]
         public HQSkillLevel DifficultyEnemySkillGround { get; set; }
 
@@ -298,8 +318,12 @@ namespace Headquarters4DCS.Template
             ContextTheater = Library.Instance.Common.DefaultTheater;
             ContextTimePeriod = TimePeriod.Decade2000;
 
+            DifficultyAllyAirDefense = AmountNR.Random;
+            DifficultyAllyCAP = AmountNR.Random;
             DifficultyAllySkillAir = HQSkillLevel.Random;
             DifficultyAllySkillGround = HQSkillLevel.Random;
+            DifficultyEnemyAirDefense = AmountNR.Random;
+            DifficultyEnemyCAP = AmountNR.Random;
             DifficultyEnemySkillAir = HQSkillLevel.Random;
             DifficultyEnemySkillGround = HQSkillLevel.Random;
 
@@ -347,8 +371,12 @@ namespace Headquarters4DCS.Template
                 ContextTheater = ini.GetValue("Settings", "Context.Theater", ContextTheater);
                 ContextTimePeriod = ini.GetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
+                DifficultyAllyAirDefense = ini.GetValue("Settings", "Difficulty.Defense.Ally.Ground", DifficultyAllyAirDefense);
+                DifficultyAllyCAP = ini.GetValue("Settings", "Difficulty.Defense.Ally.Air", DifficultyAllyCAP);
                 DifficultyAllySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
                 DifficultyAllySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
+                DifficultyEnemyAirDefense = ini.GetValue("Settings", "Difficulty.Defense.Enemy.Ground", DifficultyEnemyAirDefense);
+                DifficultyEnemyCAP = ini.GetValue("Settings", "Difficulty.Defense.Enemy.Air", DifficultyEnemyCAP);
                 DifficultyEnemySkillAir = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
                 DifficultyEnemySkillGround = ini.GetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
 
@@ -400,8 +428,12 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Context.Theater", ContextTheater);
                 ini.SetValue("Settings", "Context.TimePeriod", ContextTimePeriod);
 
+                ini.SetValue("Settings", "Difficulty.Defense.Ally.Ground", DifficultyAllyAirDefense);
+                ini.SetValue("Settings", "Difficulty.Defense.Ally.Air", DifficultyAllyCAP);
                 ini.SetValue("Settings", "Difficulty.Skill.Ally.Air", DifficultyAllySkillAir);
                 ini.SetValue("Settings", "Difficulty.Skill.Ally.Ground", DifficultyAllySkillGround);
+                ini.SetValue("Settings", "Difficulty.Defense.Enemy.Ground", DifficultyEnemyAirDefense);
+                ini.SetValue("Settings", "Difficulty.Defense.Enemy.Air", DifficultyEnemyCAP);
                 ini.SetValue("Settings", "Difficulty.Skill.Enemy.Air", DifficultyEnemySkillAir);
                 ini.SetValue("Settings", "Difficulty.Skill.Enemy.Ground", DifficultyEnemySkillGround);
 
