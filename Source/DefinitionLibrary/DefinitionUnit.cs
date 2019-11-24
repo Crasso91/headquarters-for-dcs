@@ -227,6 +227,8 @@ namespace Headquarters4DCS.DefinitionLibrary
                 // -----------------------------------------------------------
                 int i, j;
 
+                AircraftPayloadCommon = ini.GetValue<string>("AircraftPayload", "Common");
+
                 List<AircraftPayloadType> payloadsList = new List<AircraftPayloadType>();
 
                 for (i = 0; i < AircraftPayloadPylons.GetLength(0); i++)
