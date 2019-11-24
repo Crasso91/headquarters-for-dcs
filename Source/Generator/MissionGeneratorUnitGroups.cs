@@ -265,58 +265,58 @@ namespace Headquarters4DCS.Generator
             return AircraftPayloadType.Default;
         }
 
-        public DCSMissionUnitGroup AddNodeFeatureGroup(
-            DCSMission mission, MissionTemplate template,
-            DefinitionFeatureUnitGroup unitGroupDefinition, Coordinates location)
-        {
-            DebugLog.Instance.Log("Adding unit group...");
+        //public DCSMissionUnitGroup AddNodeFeatureGroup(
+        //    DCSMission mission, MissionTemplate template,
+        //    DefinitionFeatureUnitGroup unitGroupDefinition, Coordinates location)
+        //{
+        //    DebugLog.Instance.Log("Adding unit group...");
 
-            Coalition groupCoalition = unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
+        //    Coalition groupCoalition = unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
 
-            DCSMissionUnitGroup unitGroup = null;
+        //    DCSMissionUnitGroup unitGroup = null;
 
-            UnitFamily selectedFamily = HQTools.RandomFrom(unitGroupDefinition.Families);
+        //    UnitFamily selectedFamily = HQTools.RandomFrom(unitGroupDefinition.Families);
 
-            unitGroup =
-                DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
-                    unitGroupDefinition.LuaGroup, unitGroupDefinition.LuaUnit,
-                    Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.ContextCoalitionRed : template.ContextCoalitionBlue),
-                    template.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
-                    LastGroupID, groupCoalition, location);
+        //    unitGroup =
+        //        DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+        //            unitGroupDefinition.LuaGroup, unitGroupDefinition.LuaUnit,
+        //            Library.Instance.GetDefinition<DefinitionCoalition>(groupCoalition == Coalition.Red ? template.ContextCoalitionRed : template.ContextCoalitionBlue),
+        //            template.ContextTimePeriod, selectedFamily, unitGroupDefinition.UnitCount.GetValue(),
+        //            LastGroupID, groupCoalition, location);
 
 
-            if ((unitGroup == null) || (unitGroup.UnitCount == 0)) // TODO: is group critical or not? If not, simply output a warning
-                throw new Exception($"Found no valid units to generate mission critical group of {unitGroup.Coalition} {unitGroup.Category}.");
+        //    if ((unitGroup == null) || (unitGroup.UnitCount == 0)) // TODO: is group critical or not? If not, simply output a warning
+        //        throw new Exception($"Found no valid units to generate mission critical group of {unitGroup.Coalition} {unitGroup.Category}.");
 
-            if (unitGroup.IsAircraft)
-            {
-                CallsignFamily csFamily = CallsignFamily.Aircraft;
+        //    if (unitGroup.IsAircraft)
+        //    {
+        //        CallsignFamily csFamily = CallsignFamily.Aircraft;
 
-                switch (selectedFamily)
-                {
-                    case UnitFamily.PlaneAWACS:
-                        csFamily = CallsignFamily.AWACS;
-                        break;
-                    case UnitFamily.PlaneTankerBasket:
-                    case UnitFamily.PlaneTankerBoom:
-                        csFamily = CallsignFamily.Tanker;
-                        break;
-                }
+        //        switch (selectedFamily)
+        //        {
+        //            case UnitFamily.PlaneAWACS:
+        //                csFamily = CallsignFamily.AWACS;
+        //                break;
+        //            case UnitFamily.PlaneTankerBasket:
+        //            case UnitFamily.PlaneTankerBoom:
+        //                csFamily = CallsignFamily.Tanker;
+        //                break;
+        //        }
 
-                SetupAircraftGroup(unitGroup, mission, csFamily, unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly));
-            }
+        //        SetupAircraftGroup(unitGroup, mission, csFamily, unitGroupDefinition.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly));
+        //    }
 
-            // TODO: embedded air defense
-            //if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
-            //    unitGroup.AddAirDefenseUnits(Library, coalitions[(int)groupCoalition], template.TimePeriod, Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)]);
+        //    // TODO: embedded air defense
+        //    //if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense) && !grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly))
+        //    //    unitGroup.AddAirDefenseUnits(Library, coalitions[(int)groupCoalition], template.TimePeriod, Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)]);
 
-            mission.UnitGroups.Add(unitGroup);
+        //    mission.UnitGroups.Add(unitGroup);
 
-            DebugLog.Instance.Log();
+        //    DebugLog.Instance.Log();
 
-            LastGroupID++;
-            return unitGroup; // GroupID - 1;
-        }
+        //    LastGroupID++;
+        //    return unitGroup; // GroupID - 1;
+        //}
 
         //public void GeneratePlayerFlightGroups(HQMission mission, MissionTemplate template, DefinitionMissionObjective missionObjective)
         //{
@@ -628,7 +628,7 @@ namespace Headquarters4DCS.Generator
                         // players starting airbase (see HQLibrary.Common.EnemyCAPDistance)
                         spawnPoint = theater.GetRandomSpawnPoint(
                             null, null,
-                            new MinMaxD(0, Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation), missionAirbase.Coordinates);
+                            new MinMaxD(0, 1), missionAirbase.Coordinates);
                     else
                         // Enemy CAP: select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
                         // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
@@ -640,7 +640,8 @@ namespace Headquarters4DCS.Generator
                     if (!spawnPoint.HasValue) { capAircraftCount--; continue; }
 
                     DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
-                        "GroupPlaneEnemyCAP", "UnitAircraft",
+                        (i == (int)template.ContextPlayerCoalition) ? "GroupAircraftCAPFriendly" : "GroupAircraftCAPEnemy",
+                        "UnitAircraft",
                         UnitCategory.Plane, LastGroupID, (Coalition)i, spawnPoint.Value.Coordinates,
                         groupUnits.ToArray());
 
@@ -678,8 +679,10 @@ namespace Headquarters4DCS.Generator
 
             MGCallsign cs = CSGenerator.GetCallsign(csFamily, isFriendly ? mission.CoalitionPlayer : mission.CoalitionEnemy);
             uGroup.Name = cs.GroupName;
+            uGroup.CustomValues.Add("Altitude", HQTools.ValToString(aircraftDefinition.AircraftCruiseAltitude));
             uGroup.CustomValues.Add("Callsign", cs.Lua);
             uGroup.CustomValues.Add("Payload", aircraftDefinition.GetPayloadLua(payload));
+            uGroup.CustomValues.Add("Speed", HQTools.ValToString(aircraftDefinition.AircraftCruiseSpeed));
             uGroup.RadioFrequency = aircraftDefinition.CommsRadioFrequency;
 
             for (int i = 0; i < uGroup.UnitCount; i++)

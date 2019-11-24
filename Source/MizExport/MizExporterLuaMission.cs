@@ -134,6 +134,9 @@ namespace Headquarters4DCS.Miz
             HQTools.ReplaceKey(ref lua, "Waypoints", CreatePlayerWaypointsLua(mission.Waypoints));
             HQTools.ReplaceKey(ref lua, "FinalPlayerWPIndex", mission.Waypoints.Length + 2);
 
+            HQTools.ReplaceKey(ref lua, "CenterX", mission.MapCenter.X);
+            HQTools.ReplaceKey(ref lua, "CenterY", mission.MapCenter.Y);
+
             return lua;
         }
 
