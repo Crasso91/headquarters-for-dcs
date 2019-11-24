@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
 ==========================================================================
 This file is part of Headquarters for DCS World (HQ4DCS), a mission generator for
 Eagle Dynamics' DCS World flight simulator.
@@ -39,14 +39,18 @@ namespace Headquarters4DCS.TypeConverters
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            int fgCount = ((MissionTemplatePlayerFlightGroup[])value).Length;
+            MissionTemplatePlayerFlightGroup[] flightGroups = (MissionTemplatePlayerFlightGroup[])value;
 
-            switch (fgCount)
+            int acCount = 0;
+            int fgCount = ((MissionTemplatePlayerFlightGroup[])value).Length;
+            int plCount = 0;
+            foreach (MissionTemplatePlayerFlightGroup fg in flightGroups)
             {
-                case 0: return "No flight group";
-                case 1: return "1 flight group";
-                default: return $"{fgCount} flight groups";
+                acCount += fg.Count;
+                plCount += fg.GetPlayerCount();
             }
+
+            return $"{plCount} player(s) in {acCount} aircraft in {fgCount} flight group(s)";
         }
     }
 }

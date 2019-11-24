@@ -50,7 +50,10 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Number of aircraft in the flight group.
         /// </summary>
-        public int Count { get; set; }
+        [DisplayName("Count"), Description("Number of aircraft in this flight group.")]
+        //[TypeConverter(typeof(IntegerMinMaxValueTypeConverter)), MinMaxValue(1, 4)]
+        public int Count { get { return _Count; } set { _Count = HQTools.Clamp(value, 1, 4); } }
+        private int _Count = 1;
 
         /// <summary>
         /// Task assigned to the flight group.
@@ -146,7 +149,7 @@ namespace Headquarters4DCS.Template
             string acName = Library.Instance.DefinitionExists<DefinitionUnit>(AircraftType) ? Library.Instance.GetDefinition<DefinitionUnit>(AircraftType).DisplayName : AircraftType;
 
             return $"{HQTools.ValToString(Count)}x {acName}, {GUITools.SplitEnumCamelCase(Task)} " +
-                $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}, {GUITools.SplitEnumCamelCase(WingmenAI).ToLowerInvariant()})";
+                $"({GUITools.SplitEnumCamelCase(StartLocation).ToLowerInvariant()}{(WingmenAI ? ", AI wingmen" : "")})";
         }
 
         /// <summary>
@@ -155,7 +158,7 @@ namespace Headquarters4DCS.Template
         /// <returns>Number of player-controlled aircraft</returns>
         public int GetPlayerCount()
         {
-            return Math.Max(Count, WingmenAI ? 1 : Count);
+            return Math.Min(Count, WingmenAI ? 1 : Count);
         }
     }
 }
