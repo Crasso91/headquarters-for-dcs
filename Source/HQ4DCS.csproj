@@ -110,7 +110,6 @@
     <Compile Include="Enums\FeatureFlag.cs" />
     <Compile Include="Enums\FeatureScriptRepetition.cs" />
     <Compile Include="Enums\FeatureScriptScope.cs" />
-    <Compile Include="Enums\Gender.cs" />
     <Compile Include="Enums\HQSkillLevel.cs" />
     <Compile Include="Enums\MissionObjectiveUnitGroupFlags.cs" />
     <Compile Include="Enums\Month.cs" />

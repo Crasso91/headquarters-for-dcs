@@ -240,8 +240,9 @@ namespace Headquarters4DCS.Generator
                 if (mission.AirbasesCoalition.ContainsKey(missionAirbase.DCSID))
                     mission.AirbasesCoalition[missionAirbase.DCSID] = template.ContextPlayerCoalition;
 
-                List<string> oggFilesList = new List<string> { "Radio" }; // Default wave files
-                oggFilesList.AddRange(objectiveDef.FilesOgg);
+                List<string> oggFilesList = new List<string>();
+                oggFilesList.AddRange(Library.Instance.Common.SharedOggFiles); // Default wave files
+                oggFilesList.AddRange(objectiveDef.FilesOgg); // Objective wave files
                 mission.OggFiles = oggFilesList.Distinct().ToArray();
 
                 /*

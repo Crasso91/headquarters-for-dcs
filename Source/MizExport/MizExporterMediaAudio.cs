@@ -57,7 +57,7 @@ namespace Headquarters4DCS.Miz
 
             foreach (string f in missHQ.OggFiles)
             {
-                string oggFilePath = HQTools.PATH_INCLUDE + "Ogg\\" + f + ".ogg";
+                string oggFilePath = $"{HQTools.PATH_INCLUDE}Ogg\\{f}.ogg";
                 if (!File.Exists(oggFilePath))
                 {
                     DebugLog.Instance.Log($"WARNING: Failed to load .ogg file Include\\Ogg\\{f}.ogg");

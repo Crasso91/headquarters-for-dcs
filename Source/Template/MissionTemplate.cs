@@ -198,14 +198,6 @@ namespace Headquarters4DCS.Template
         public string PreferencesLanguage { get; set; }
 
         /// <summary>
-        /// Should the voice radio messages by the player pilots use a male or a female voice?
-        /// </summary>
-        [Category("Preferences")]
-        [DisplayName("Pilot gender"), Description("Should the voice radio messages by the player pilot(s) use a male or a female voice?")]
-        [TypeConverter(typeof(SplitEnumTypeConverter<Gender>))]
-        public Gender PreferencesPilotGender { get; set; }
-
-        /// <summary>
         /// Should enemy units be visible on the F10 map?
         /// </summary>
         [Category("Preferences")]
@@ -333,7 +325,6 @@ namespace Headquarters4DCS.Template
             PreferencesEnemiesOnF10Map = false;
             PreferencesForceClientInSP = false;
             PreferencesLanguage = Library.Instance.Common.DefaultLanguage;
-            PreferencesPilotGender = Gender.Male;
             PreferencesExtraWaypoints = true;
 
             RealismAllowExternalViews = DCSOption.Default;
@@ -391,7 +382,6 @@ namespace Headquarters4DCS.Template
                 PreferencesExtraWaypoints = ini.GetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
                 PreferencesForceClientInSP = ini.GetValue("Settings", "Preferences.ForceClientInSP", PreferencesForceClientInSP);
                 PreferencesLanguage = ini.GetValue("Settings", "Preferences.Language", PreferencesLanguage);
-                PreferencesPilotGender = ini.GetValue("Settings", "Preferences.PilotGender", PreferencesPilotGender);
 
                 RealismAllowExternalViews = ini.GetValue("Settings", "Realism.AllowExternalViews", RealismAllowExternalViews);
                 RealismBirdStrikes = ini.GetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
@@ -444,7 +434,6 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
                 ini.SetValue("Settings", "Preferences.ForceClientInSP", PreferencesForceClientInSP);
                 ini.SetValue("Settings", "Preferences.Language", PreferencesLanguage);
-                ini.SetValue("Settings", "Preferences.PilotGender", PreferencesPilotGender);
 
                 ini.SetValue("Settings", "Realism.AllowExternalViews", RealismAllowExternalViews);
                 ini.SetValue("Settings", "Realism.BirdStrikes", RealismBirdStrikes);
