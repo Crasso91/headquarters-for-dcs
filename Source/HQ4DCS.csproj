@@ -164,10 +164,10 @@
     <Compile Include="Mission\DCSMissionUnitGroupCustomValueKey.cs" />
     <Compile Include="Mission\DCSMissionWaypoint.cs" />
     <Compile Include="TypeConverters\DescriptionArrayEditor.cs" />
-    <Compile Include="TypeConverters\MissionTemplatePlayerFlightGroupConverter.cs" />
     <Compile Include="TypeConverters\BooleanYesNoTypeConverter.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverterPlayerAircraft.cs" />
     <Compile Include="TypeConverters\DefinitionsStringConverter.cs" />
+    <Compile Include="TypeConverters\MissionTemplatePlayerFlightGroupConverter.cs" />
     <Compile Include="TypeConverters\SplitEnumTypeConverter.cs" />
     <Compile Include="Template\MissionTemplate.cs" />
     <Compile Include="Template\MissionTemplatePlayerFlightGroup.cs" />
@@ -226,6 +226,9 @@
     <EmbeddedResource Include="Resources\Icons\switchSides.png" />
     <EmbeddedResource Include="Resources\Icons\templatetab.png" />
     <EmbeddedResource Include="Resources\Icons\website.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
