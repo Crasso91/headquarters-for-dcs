@@ -27,7 +27,7 @@ namespace Headquarters4DCS
     /// <summary>
     /// The type of payload an aircraft must carry for its mission.
     /// </summary>
-    public enum AircraftPayloadType
+    public enum PlayerFlightGroupPayloadType
     {
         Default,
 

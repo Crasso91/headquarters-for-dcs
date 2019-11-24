@@ -152,12 +152,12 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// An array of valid payload types for this aircraft.
         /// </summary>
-        public AircraftPayloadType[] AircraftAvailablePayloads { get; private set; } = new AircraftPayloadType[0];
+        public PlayerFlightGroupPayloadType[] AircraftAvailablePayloads { get; private set; } = new PlayerFlightGroupPayloadType[0];
 
         /// <summary>
         /// An array of pylons CLSID for the various payloads available to this aircraft.
         /// </summary>
-        public string[,] AircraftPayloadPylons { get; private set; } = new string[HQTools.EnumCount<AircraftPayloadType>(), MAX_PYLONS];
+        public string[,] AircraftPayloadPylons { get; private set; } = new string[HQTools.EnumCount<PlayerFlightGroupPayloadType>(), MAX_PYLONS];
 
         // TODO
         // public Country[][] LiveriesPriority { get; private set; } = new Country[2][];
@@ -229,17 +229,17 @@ namespace Headquarters4DCS.DefinitionLibrary
 
                 AircraftPayloadCommon = ini.GetValue<string>("AircraftPayload", "Common");
 
-                List<AircraftPayloadType> payloadsList = new List<AircraftPayloadType>();
+                List<PlayerFlightGroupPayloadType> payloadsList = new List<PlayerFlightGroupPayloadType>();
 
                 for (i = 0; i < AircraftPayloadPylons.GetLength(0); i++)
                     for (j = 0; j < AircraftPayloadPylons.GetLength(1); j++)
                     {
                         AircraftPayloadPylons[i, j] = ini.GetValue<string>("AircraftPayload",
-                            $"Pylons.{((AircraftPayloadType)i).ToString()}.Pylon{HQTools.ValToString(j + 1, "00")}");
+                            $"Pylons.{((PlayerFlightGroupPayloadType)i).ToString()}.Pylon{HQTools.ValToString(j + 1, "00")}");
 
                         // Each payload with at least one pylon not empty is a valid payload
-                        if (!payloadsList.Contains((AircraftPayloadType)i) && !string.IsNullOrEmpty(AircraftPayloadPylons[i, j]))
-                            payloadsList.Add((AircraftPayloadType)i);
+                        if (!payloadsList.Contains((PlayerFlightGroupPayloadType)i) && !string.IsNullOrEmpty(AircraftPayloadPylons[i, j]))
+                            payloadsList.Add((PlayerFlightGroupPayloadType)i);
                     }
 
                 AircraftAvailablePayloads = payloadsList.ToArray();
@@ -264,7 +264,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         /// <param name="payloadType"></param>
         /// <returns></returns>
-        public string GetPayloadLua(AircraftPayloadType payloadType)
+        public string GetPayloadLua(PlayerFlightGroupPayloadType payloadType)
         {
             if ((Category != UnitCategory.Helicopter) && (Category != UnitCategory.Plane)) return "{ }";
             if (AircraftAvailablePayloads.Length == 0) return "{ }"; // No payloads
@@ -272,7 +272,7 @@ namespace Headquarters4DCS.DefinitionLibrary
             string payloadLua = "[\"pylons\"] = {\n";
 
             // No payload for this configuration, use the default payload instead
-            if (!AircraftAvailablePayloads.Contains(payloadType)) payloadType = AircraftPayloadType.Default;
+            if (!AircraftAvailablePayloads.Contains(payloadType)) payloadType = PlayerFlightGroupPayloadType.Default;
 
             for (int i = 0; i < MAX_PYLONS; i++)
             {
