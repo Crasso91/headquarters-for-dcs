@@ -89,12 +89,12 @@ namespace Headquarters4DCS.DefinitionLibrary
                 Common = new LibraryCommonSettings();
 
                 // Load definitions
-                LoadDefinitions<DefinitionCoalition>("Coalitions", false);
-                LoadDefinitions<DefinitionLanguage>("Languages", true);
-                LoadDefinitions<DefinitionFeature>("Features", false);
-                LoadDefinitions<DefinitionObjective>("Objectives", false);
-                LoadDefinitions<DefinitionTheater>("Theaters", false);
-                LoadDefinitions<DefinitionUnit>("Units", false);
+                LoadDefinitions<DefinitionCoalition>("Coalitions");
+                LoadDefinitions<DefinitionLanguage>("Languages");
+                LoadDefinitions<DefinitionFeature>("Features");
+                LoadDefinitions<DefinitionObjective>("Objectives");
+                LoadDefinitions<DefinitionTheater>("Theaters");
+                LoadDefinitions<DefinitionUnit>("Units");
 
                 // Check default values are present
                 CheckDefaultValuesExist<DefinitionLanguage>(Common.DefaultLanguage);
@@ -185,34 +185,18 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         /// <typeparam name="T">The type of the definition</typeparam>
         /// <param name="path">Path to the definition.</param>
-        /// <param name="fromDirectory">Should the definition be loaded from a directory (true) or a single INI file (false)?</param>
-        private void LoadDefinitions<T>(string path, bool fromDirectory) where T : Definition, new()
+        private void LoadDefinitions<T>(string path) where T : Definition, new()
         {
             Dictionary<string, Definition> dictionary = new Dictionary<string, Definition>(StringComparer.InvariantCultureIgnoreCase);
 
-            if (fromDirectory)
+            foreach (string f in Directory.GetFiles(HQTools.PATH_LIBRARY + path, "*.ini"))
             {
-                foreach (string d in Directory.GetDirectories(HQTools.PATH_LIBRARY + path))
-                {
-                    T def = new T();
-                    if (!def.Load(Path.GetFileName(d), HQTools.NormalizeDirectoryPath(d))) continue;
+                T def = new T();
+                if (!def.Load(Path.GetFileNameWithoutExtension(f), f)) continue;
 
-                    // ID is null/empty or already exists - must be after def.Load because some definitions override the default ID
-                    if (string.IsNullOrEmpty(def.ID) || dictionary.ContainsKey(def.ID)) continue;
-                    dictionary.Add(def.ID, def);
-                }
-            }
-            else
-            {
-                foreach (string f in Directory.GetFiles(HQTools.PATH_LIBRARY + path, "*.ini"))
-                {
-                    T def = new T();
-                    if (!def.Load(Path.GetFileNameWithoutExtension(f), f)) continue;
-
-                    // ID is null/empty or already exists - must be after def.Load because some definitions override the default ID
-                    if (string.IsNullOrEmpty(def.ID) || dictionary.ContainsKey(def.ID)) continue;
-                    dictionary.Add(def.ID, def);
-                }
+                // ID is null/empty or already exists - must be after def.Load because some definitions override the default ID
+                if (string.IsNullOrEmpty(def.ID) || dictionary.ContainsKey(def.ID)) continue;
+                dictionary.Add(def.ID, def);
             }
 
             Definitions.Add(typeof(T), dictionary);

@@ -51,41 +51,28 @@ namespace Headquarters4DCS.DefinitionLibrary
         private readonly Dictionary<string, string> Strings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
         /// <summary>
-        /// Loads strings from all .ini files in the provided path.
+        /// Loads strings from a .ini file.
         /// </summary>
-        /// <param name="path">The path to load from.</param>
+        /// <param name="ini">The ini file to load from.</param>
         /// <returns>True is successful, false if an error happened.</returns>
-        protected override bool OnLoad(string path)
+        protected override bool OnLoad(INIFile ini)
         {
             Strings.Clear();
 
-            foreach (string iniFilePath in Directory.GetFiles(path, "*.ini"))
-                LoadStringsFromINIFile(iniFilePath);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Loads all strings for 
-        /// </summary>
-        /// <param name="iniFilePath"></param>
-        private void LoadStringsFromINIFile(string iniFilePath)
-        {
-            using (INIFile ini = new INIFile(iniFilePath))
+            foreach (string section in ini.GetSections())
             {
-                foreach (string section in ini.GetSections())
+                foreach (string key in ini.GetKeysInSection(section))
                 {
-                    foreach (string key in ini.GetKeysInSection(section))
-                    {
-                        string stringKey = MakeStringKey(section, key);
+                    string stringKey = MakeStringKey(section, key);
 
-                        if (Strings.ContainsKey(stringKey))
-                            Strings[stringKey] = ini.GetValue(section, key, "");
-                        else
-                            Strings.Add(stringKey, ini.GetValue(section, key, ""));
-                    }
+                    if (Strings.ContainsKey(stringKey))
+                        Strings[stringKey] = ini.GetValue(section, key, "");
+                    else
+                        Strings.Add(stringKey, ini.GetValue(section, key, ""));
                 }
             }
+
+            return true;
         }
 
         /// <summary>

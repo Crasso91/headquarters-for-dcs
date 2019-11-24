@@ -55,12 +55,14 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// Loads definition from an .ini file.
         /// </summary>
         /// <param name="id">Unique ID of the definition. Generated from the .ini file name, can be overriden by the definition.</param>
-        /// <param name="path">Path to definition file or directory.</param>
+        /// <param name="iniPath">Path to definition .ini file.</param>
         /// <returns>True is successful, false if an error happened.</returns>
-        public bool Load(string id, string path)
+        public bool Load(string id, string iniPath)
         {
             ID = id.Trim();
-            bool result = OnLoad(path);
+            INIFile ini = new INIFile(iniPath);
+            bool result = OnLoad(ini);
+            ini.Dispose();
             if (string.IsNullOrEmpty(ID)) ID = id.Trim();
             if (ID.Contains(",")) return false; // Commas are not allowed as they're used as separators
             DisplayName = string.IsNullOrEmpty(DisplayName) ? ID : DisplayName;
@@ -70,8 +72,8 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// Loads data required by this definition.
         /// </summary>
-        /// <param name="path">Path to definition file or directory.</param>
+        /// <param name="ini">INI file.</param>
         /// <returns>True is successful, false if an error happened.</returns>
-        protected abstract bool OnLoad(string path);
+        protected abstract bool OnLoad(INIFile ini);
     }
 }

@@ -79,31 +79,28 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         public DefinitionObjectiveUnitGroup[] Groups { get; private set; }
 
-        protected override bool OnLoad(string path)
+        protected override bool OnLoad(INIFile ini)
         {
-            using (INIFile ini = new INIFile(path))
-            {
-                BriefingDescription = ini.GetValue<string>("Objective", "Briefing.Description");
-                BriefingRemarks = ini.GetValueArray<string>("Objective", "Briefing.Remarks");
-                BriefingTask = ini.GetValue<string>("Objective", "Briefing.Task");
+            BriefingDescription = ini.GetValue<string>("Objective", "Briefing.Description");
+            BriefingRemarks = ini.GetValueArray<string>("Objective", "Briefing.Remarks");
+            BriefingTask = ini.GetValue<string>("Objective", "Briefing.Task");
 
-                FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
+            FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
 
-                ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
-                ScriptsOnce = ini.GetValueArray<string>("Objective", "Scripts.Once");
+            ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
+            ScriptsOnce = ini.GetValueArray<string>("Objective", "Scripts.Once");
 
-                SpawnPointType = ini.GetValueArray<TheaterLocationSpawnPointType>("Objective", "SpawnPoint.Type");
-                if (SpawnPointType.Length == 0) SpawnPointType = new TheaterLocationSpawnPointType[] { TheaterLocationSpawnPointType.LandMedium, TheaterLocationSpawnPointType.LandLarge };
+            SpawnPointType = ini.GetValueArray<TheaterLocationSpawnPointType>("Objective", "SpawnPoint.Type");
+            if (SpawnPointType.Length == 0) SpawnPointType = new TheaterLocationSpawnPointType[] { TheaterLocationSpawnPointType.LandMedium, TheaterLocationSpawnPointType.LandLarge };
 
-                WaypointInaccuracy = ini.GetValue<MinMaxD>("Objective", "Waypoint.Inaccuracy");
-                WaypointOnGround = ini.GetValue<bool>("Objective", "Waypoint.OnGround");
+            WaypointInaccuracy = ini.GetValue<MinMaxD>("Objective", "Waypoint.Inaccuracy");
+            WaypointOnGround = ini.GetValue<bool>("Objective", "Waypoint.OnGround");
 
-                // [Groups] section
-                Groups = new DefinitionObjectiveUnitGroup[ini.GetTopLevelKeysInSection("UnitGroups").Length];
-                int i = 0;
-                foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
-                { Groups[i] = new DefinitionObjectiveUnitGroup(ini, k); i++; }
-            }
+            // [Groups] section
+            Groups = new DefinitionObjectiveUnitGroup[ini.GetTopLevelKeysInSection("UnitGroups").Length];
+            int i = 0;
+            foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
+            { Groups[i] = new DefinitionObjectiveUnitGroup(ini, k); i++; }
 
             return true;
         }

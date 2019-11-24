@@ -85,54 +85,51 @@ namespace Headquarters4DCS.DefinitionLibrary
         public MinMaxD WaypointInaccuracy { get; private set; }
         public bool WaypointOnGround { get; private set; }
 
-        protected override bool OnLoad(string path)
+        protected override bool OnLoad(INIFile ini)
         {
             int i, j;
 
-            using (INIFile ini = new INIFile(path))
+            // [Info] section
+            ID = ini.GetValue("Info", "ID", ID);
+            DisplayName = ini.GetValue<string>("Info", "DisplayName");
+            DisplayDescription = ini.GetValue<string>("Info", "DisplayDescription");
+
+            // [Briefing] section
+            BriefingTask = ini.GetValue<string>("Briefing", "Task");
+            BriefingRemark = ini.GetValue<string>("Briefing", "Remark");
+
+            // [Feature] section
+            Category = ini.GetValue<FeatureCategory>("Feature", "Category");
+            FeatureFlags = ini.GetValueArray<FeatureFlag>("Feature", "Flags").Distinct().ToArray();
+            FeatureLocationTypes = ini.GetValueArray<TheaterLocationType>("Feature", "LocationTypes").Distinct().ToArray();
+            if (FeatureLocationTypes.Length == 0) FeatureLocationTypes = (TheaterLocationType[])Enum.GetValues(typeof(TheaterLocationType));
+
+            // [Media] section
+            MediaOgg = ini.GetValueArray<string>("Media", "Ogg");
+
+            // [Scripts] section
+            Scripts = new string[HQTools.EnumCount<FeatureScriptRepetition>()][][];
+            for (i = 0; i < Scripts.Length; i++)
             {
-                // [Info] section
-                ID = ini.GetValue("Info", "ID", ID);
-                DisplayName = ini.GetValue<string>("Info", "DisplayName");
-                DisplayDescription = ini.GetValue<string>("Info", "DisplayDescription");
-
-                // [Briefing] section
-                BriefingTask = ini.GetValue<string>("Briefing", "Task");
-                BriefingRemark = ini.GetValue<string>("Briefing", "Remark");
-
-                // [Feature] section
-                Category = ini.GetValue<FeatureCategory>("Feature", "Category");
-                FeatureFlags = ini.GetValueArray<FeatureFlag>("Feature", "Flags").Distinct().ToArray();
-                FeatureLocationTypes = ini.GetValueArray<TheaterLocationType>("Feature", "LocationTypes").Distinct().ToArray();
-                if (FeatureLocationTypes.Length == 0) FeatureLocationTypes = (TheaterLocationType[])Enum.GetValues(typeof(TheaterLocationType));
-
-                // [Media] section
-                MediaOgg = ini.GetValueArray<string>("Media", "Ogg");
-
-                // [Scripts] section
-                Scripts = new string[HQTools.EnumCount<FeatureScriptRepetition>()][][];
-                for (i = 0; i < Scripts.Length; i++)
-                {
-                    Scripts[i] = new string[HQTools.EnumCount<FeatureScriptScope>()][];
-                    for (j = 0; j < Scripts[i].Length; j++)
-                        Scripts[i][j] = ini.GetValueArray<string>("Scripts", $"{((FeatureScriptRepetition)i)}.{((FeatureScriptScope)j)}");
-                }
-
-                // [UnitGroups] section
-                List<DefinitionFeatureUnitGroup> unitGroupsList = new List<DefinitionFeatureUnitGroup>();
-                foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
-                    unitGroupsList.Add(new DefinitionFeatureUnitGroup(ini, "UnitGroups", k, Category == FeatureCategory.Objective));
-                UnitGroups = unitGroupsList.ToArray();
-
-                // Features of category "objective" can only include one unit group.
-                if ((Category == FeatureCategory.Objective) && (UnitGroups.Length > 0))
-                    UnitGroups = UnitGroups.Take(1).ToArray();
-
-                // [Waypoint] section
-                WaypointEnabled = ini.GetValue<bool>("Waypoint", "Enabled");
-                WaypointInaccuracy = ini.GetValue<MinMaxD>("Waypoint", "Inaccuracy");
-                WaypointOnGround = ini.GetValue<bool>("Waypoint", "OnGround");
+                Scripts[i] = new string[HQTools.EnumCount<FeatureScriptScope>()][];
+                for (j = 0; j < Scripts[i].Length; j++)
+                    Scripts[i][j] = ini.GetValueArray<string>("Scripts", $"{((FeatureScriptRepetition)i)}.{((FeatureScriptScope)j)}");
             }
+
+            // [UnitGroups] section
+            List<DefinitionFeatureUnitGroup> unitGroupsList = new List<DefinitionFeatureUnitGroup>();
+            foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
+                unitGroupsList.Add(new DefinitionFeatureUnitGroup(ini, "UnitGroups", k, Category == FeatureCategory.Objective));
+            UnitGroups = unitGroupsList.ToArray();
+
+            // Features of category "objective" can only include one unit group.
+            if ((Category == FeatureCategory.Objective) && (UnitGroups.Length > 0))
+                UnitGroups = UnitGroups.Take(1).ToArray();
+
+            // [Waypoint] section
+            WaypointEnabled = ini.GetValue<bool>("Waypoint", "Enabled");
+            WaypointInaccuracy = ini.GetValue<MinMaxD>("Waypoint", "Inaccuracy");
+            WaypointOnGround = ini.GetValue<bool>("Waypoint", "OnGround");
 
             return true;
         }

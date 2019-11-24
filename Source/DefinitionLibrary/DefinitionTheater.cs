@@ -98,9 +98,9 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <summary>
         /// Loads data required by this definition.
         /// </summary>
-        /// <param name="path">Path to definition file or directory.</param>
+        /// <param name="ini">INI file to load definition from.</param>
         /// <returns>True is successful, false if an error happened.</returns>
-        protected override bool OnLoad(string path)
+        protected override bool OnLoad(INIFile ini)
         {
             int i;
 
@@ -108,47 +108,43 @@ namespace Headquarters4DCS.DefinitionLibrary
             //if (!File.Exists(path + "CommonSettings.ini") || !File.Exists(path + "GUIMap.jpg"))
             //    return false;
 
-            // Load common settings
-            using (INIFile ini = new INIFile(path))
-            {
-                // [Theater] section
-                DCSID = ini.GetValue<string>("Theater", "DCSID");
-                DefaultMapCenter = ini.GetValue<Coordinates>("Theater", "DefaultMapCenter");
-                RequiredModules = ini.GetValueArray<string>("Theater", "RequiredModules");
-                MagneticDeclination = ini.GetValue<float>("Theater", "MagneticDeclination");
+            // [Theater] section
+            DCSID = ini.GetValue<string>("Theater", "DCSID");
+            DefaultMapCenter = ini.GetValue<Coordinates>("Theater", "DefaultMapCenter");
+            RequiredModules = ini.GetValueArray<string>("Theater", "RequiredModules");
+            MagneticDeclination = ini.GetValue<float>("Theater", "MagneticDeclination");
 
-                // [Daytime] section
-                DayTime = new MinMaxI[12];
-                for (i = 0; i < 12; i++)
-                    DayTime[i] = ini.GetValue<MinMaxI>("Daytime", ((Month)i).ToString());
+            // [Daytime] section
+            DayTime = new MinMaxI[12];
+            for (i = 0; i < 12; i++)
+                DayTime[i] = ini.GetValue<MinMaxI>("Daytime", ((Month)i).ToString());
 
-                // [Temperature] section
-                Temperature = new MinMaxI[12];
-                for (i = 0; i < 12; i++)
-                    Temperature[i] = ini.GetValue<MinMaxI>("Temperature", ((Month)i).ToString());
+            // [Temperature] section
+            Temperature = new MinMaxI[12];
+            for (i = 0; i < 12; i++)
+                Temperature[i] = ini.GetValue<MinMaxI>("Temperature", ((Month)i).ToString());
 
-                // [Weather] section
-                Weather = new DefinitionTheaterWeather[HQTools.EnumCount<Weather>() - 1]; // -1 because we don't want "Random"
-                for (i = 0; i < Weather.Length; i++)
-                    Weather[i] = new DefinitionTheaterWeather(ini, ((Weather)i).ToString());
+            // [Weather] section
+            Weather = new DefinitionTheaterWeather[HQTools.EnumCount<Weather>() - 1]; // -1 because we don't want "Random"
+            for (i = 0; i < Weather.Length; i++)
+                Weather[i] = new DefinitionTheaterWeather(ini, ((Weather)i).ToString());
 
-                // [Wind] section
-                Wind = new DefinitionTheaterWind[HQTools.EnumCount<Wind>() - 1]; // -1 because we don't want "Auto"
-                for (i = 0; i < Wind.Length; i++)
-                    Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
+            // [Wind] section
+            Wind = new DefinitionTheaterWind[HQTools.EnumCount<Wind>() - 1]; // -1 because we don't want "Auto"
+            for (i = 0; i < Wind.Length; i++)
+                Wind[i] = new DefinitionTheaterWind(ini, ((Wind)i).ToString());
 
-                // [Airbases] section
-                Airbases = new DefinitionTheaterAirbase[ini.GetTopLevelKeysInSection("Airbases").Length];
-                i = 0;
-                foreach (string k in ini.GetTopLevelKeysInSection("Airbases"))
-                { Airbases[i] = new DefinitionTheaterAirbase(ini, k); i++; }
+            // [Airbases] section
+            Airbases = new DefinitionTheaterAirbase[ini.GetTopLevelKeysInSection("Airbases").Length];
+            i = 0;
+            foreach (string k in ini.GetTopLevelKeysInSection("Airbases"))
+            { Airbases[i] = new DefinitionTheaterAirbase(ini, k); i++; }
 
-                // [SpawnPoints] section
-                SpawnPoints = new DefinitionTheaterSpawnPoint[ini.GetKeysInSection("SpawnPoints").Length];
-                i = 0;
-                foreach (string k in ini.GetKeysInSection("SpawnPoints"))
-                { SpawnPoints[i] = new DefinitionTheaterSpawnPoint(ini, k); i++; }
-            }
+            // [SpawnPoints] section
+            SpawnPoints = new DefinitionTheaterSpawnPoint[ini.GetKeysInSection("SpawnPoints").Length];
+            i = 0;
+            foreach (string k in ini.GetKeysInSection("SpawnPoints"))
+            { SpawnPoints[i] = new DefinitionTheaterSpawnPoint(ini, k); i++; }
 
             ResetUsedSpawnPoints();
 

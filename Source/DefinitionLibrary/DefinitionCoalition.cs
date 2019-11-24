@@ -76,35 +76,32 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         /// <param name="ini">The ini file to load from.</param>
         /// <returns>True is successful, false if an error happened.</returns>
-        protected override bool OnLoad(string path)
+        protected override bool OnLoad(INIFile ini)
         {
-            using (INIFile ini = new INIFile(path))
-            {
-                // -------------------
-                // [Coalition] section
-                // -------------------
-                DisplayName = ini.GetValue<string>("Coalition", "DisplayName");
+            // -------------------
+            // [Coalition] section
+            // -------------------
+            DisplayName = ini.GetValue<string>("Coalition", "DisplayName");
 
-                MinMaxI timePeriodInteger = ini.GetValue<MinMaxI>("Coalition", "TimePeriod");
-                MinMaxTimePeriod = new TimePeriod[] { (TimePeriod)timePeriodInteger.Min, (TimePeriod)timePeriodInteger.Max };
+            MinMaxI timePeriodInteger = ini.GetValue<MinMaxI>("Coalition", "TimePeriod");
+            MinMaxTimePeriod = new TimePeriod[] { (TimePeriod)timePeriodInteger.Min, (TimePeriod)timePeriodInteger.Max };
 
-                NATOCallsigns = ini.GetValue<bool>("Coalition", "NATOCallsigns");
-                UnitSystem = ini.GetValue<UnitSystem>("Coalition", "UnitSystem");
-                if (UnitSystem == UnitSystem.ByCoalition) UnitSystem = UnitSystem.Metric;
-                RequiredModules = ini.GetValueArray<string>("Coalition", "RequiredModules");
-                Countries = ini.GetValueArray<DCSCountry>("Coalition", "Countries").Distinct().ToArray();
-                if (Countries.Length == 0) return false; // No countries, bad coalition
+            NATOCallsigns = ini.GetValue<bool>("Coalition", "NATOCallsigns");
+            UnitSystem = ini.GetValue<UnitSystem>("Coalition", "UnitSystem");
+            if (UnitSystem == UnitSystem.ByCoalition) UnitSystem = UnitSystem.Metric;
+            RequiredModules = ini.GetValueArray<string>("Coalition", "RequiredModules");
+            Countries = ini.GetValueArray<DCSCountry>("Coalition", "Countries").Distinct().ToArray();
+            if (Countries.Length == 0) return false; // No countries, bad coalition
 
-                // ---------------
-                // [Units] section
-                // ---------------
-                Units = ini.GetAllValuesInSectionAsStringArray("Units");
+            // ---------------
+            // [Units] section
+            // ---------------
+            Units = ini.GetAllValuesInSectionAsStringArray("Units");
 
-                // ---------------------
-                // [LegacyUnits] section
-                // ---------------------
-                LegacyUnits = ini.GetAllValuesInSectionAsStringArray("LegacyUnits");
-            }
+            // ---------------------
+            // [LegacyUnits] section
+            // ---------------------
+            LegacyUnits = ini.GetAllValuesInSectionAsStringArray("LegacyUnits");
 
             return true;
         }
