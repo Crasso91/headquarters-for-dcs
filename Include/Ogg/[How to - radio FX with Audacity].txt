@@ -4,4 +4,4 @@ Effects > Distorsion (Hard saturation)
 Effects > Bass & Treble (0dB bass, -30db Treble)
 Effects > Amplification (-3dB, allow saturation)
 
-Then mix with radio FX .wav files from https://github.com/akaAgar/radio-message-generator
+Then mix with radio FX .wav files from Media/RadioMessageGenerator
