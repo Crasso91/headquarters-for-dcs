@@ -93,25 +93,25 @@ namespace Headquarters4DCS.Generator
         /// </summary>
         /// <param name="mission">The mission.</param>
         /// <param name="templateMissionDescription">The provided description in the template.</param>
-        /// <param name="missionObjective">The mission objective definition.</param>
-        //public void GenerateMissionDescription(HQMission mission, string templateMissionDescription, DefinitionMissionObjective missionObjective)
-        //{
-        //    HQDebugLog.Instance.Log("Generating mission briefing description...");
+        /// <param name="objective">The mission objective definition.</param>
+        public void GenerateMissionDescription(DCSMission mission, string templateMissionDescription, DefinitionObjective objective)
+        {
+            DebugLog.Instance.Log("Generating mission briefing description...");
 
-        //    if (templateMissionDescription == null) templateMissionDescription = "";
+            if (templateMissionDescription == null) templateMissionDescription = "";
 
-        //    // If a custom mission description was provided, use it...
-        //    if (!string.IsNullOrEmpty(templateMissionDescription.Trim()))
-        //    {
-        //        mission.BriefingDescription = templateMissionDescription.Trim();
-        //        return;
-        //    }
+            // If a custom mission description was provided, use it...
+            if (!string.IsNullOrEmpty(templateMissionDescription.Trim()))
+            {
+                mission.BriefingDescription = templateMissionDescription.Trim();
+                return;
+            }
 
-        //    // ...else generate a random description
-        //    mission.BriefingDescription = Language.GetStringRandom("BriefingMission", $"Description.{missionObjective.BriefingDescription}");
+            // ...else generate a random description
+            mission.BriefingDescription = Language.GetStringRandom("Briefing", $"Description.{objective.BriefingDescription}");
 
-        //    HQDebugLog.Instance.Log("");
-        //}
+            DebugLog.Instance.Log("");
+        }
 
         /// <summary>
         /// Generates the list of tasks for the mission.
