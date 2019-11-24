@@ -66,7 +66,6 @@
     <Compile Include="Enums\BriefingExportFileFormat.cs" />
     <Compile Include="Enums\CountriesCoalition.cs" />
     <Compile Include="Enums\DCSFlightGroupTask.cs" />
-    <Compile Include="Enums\PlayerFlightGroupAI.cs" />
     <Compile Include="Forms\GUITools.cs" />
     <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
@@ -97,7 +96,7 @@
     <Compile Include="DefinitionLibrary\DefinitionUnit.cs" />
     <Compile Include="DefinitionLibrary\Library.cs" />
     <Compile Include="DefinitionLibrary\LibraryCommonSettings.cs" />
-    <Compile Include="Enums\AircraftPayloadType.cs" />
+    <Compile Include="Enums\PlayerFlightGroupPayloadType.cs" />
     <Compile Include="Enums\AmountNR.cs" />
     <Compile Include="Enums\CallsignFamily.cs" />
     <Compile Include="Enums\CarrierGroupShipType.cs" />

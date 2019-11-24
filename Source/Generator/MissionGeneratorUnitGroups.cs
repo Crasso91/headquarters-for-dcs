@@ -173,22 +173,13 @@ namespace Headquarters4DCS.Generator
 
             bool usePlayerInsteadOfClient = (template.GetPlayerCount() < 2) && !template.PreferencesForceClientInSP;
 
-            switch (flightGroupTemplate.WingmenAI)
+            if (flightGroupTemplate.WingmenAI)
             {
-                case PlayerFlightGroupAI.AllAI:
-                    if (flightGroupTemplate.Task == PlayerFlightGroupTask.PrimaryMission)
-                        throw new HQ4DCSException("AI flight groups cannot be tasked with the primary mission.");
-                    break;
-                case PlayerFlightGroupAI.AllPlayers:
-                    // No AI wingmen: make all units clients
-                    unitGroup.UnitsSkill = usePlayerInsteadOfClient ? DCSSkillLevel.Player : DCSSkillLevel.Client;
-                    break;
-                case PlayerFlightGroupAI.OnePlayerThenAIWingmen:
-                    // set group AI to default allied AI, and add a special flag so the first unit of the group will be a client
-                    unitGroup.UnitsSkill = HQSkillToDCSSkill(template.SkillFriendlyAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
-                    unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
-                    break;
+                unitGroup.UnitsSkill = HQSkillToDCSSkill(template.SkillFriendlyAir); // NEXTVERSION: allySkillAir or enemySkillAir according to airbase coalition
+                unitGroup.Flags.Add(usePlayerInsteadOfClient ? UnitGroupFlag.FirstUnitIsPlayer : UnitGroupFlag.FirstUnitIsClient);
             }
+            else // No AI wingmen: make all units clients
+                unitGroup.UnitsSkill = usePlayerInsteadOfClient ? DCSSkillLevel.Player : DCSSkillLevel.Client;
 
             unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbase.DCSID));
             //unitGroup.CustomValues.Add("FinalWPIndex", HQTools.ValToString(mission.Waypoints.Count + 2));
@@ -235,34 +226,34 @@ namespace Headquarters4DCS.Generator
             return LastGroupID - 1;
         }
 
-        private AircraftPayloadType GetPayloadByPlayerGroupTask(DCSFlightGroupTask task)
+        private PlayerFlightGroupPayloadType GetPayloadByPlayerGroupTask(DCSFlightGroupTask task)
         {
             switch (task)
             {
                 case DCSFlightGroupTask.AntishipStrike:
-                    return AircraftPayloadType.AntiShip;
+                    return PlayerFlightGroupPayloadType.AntiShip;
 
                 case DCSFlightGroupTask.CAP:
                 case DCSFlightGroupTask.FighterSweep:
                 case DCSFlightGroupTask.Intercept:
-                    return AircraftPayloadType.A2A;
+                    return PlayerFlightGroupPayloadType.A2A;
 
                 case DCSFlightGroupTask.CAS:
                 case DCSFlightGroupTask.GroundAttack:
                 case DCSFlightGroupTask.PinpointStrike:
                 case DCSFlightGroupTask.RunwayAttack:
-                    return AircraftPayloadType.A2G;
+                    return PlayerFlightGroupPayloadType.A2G;
 
                 case DCSFlightGroupTask.SEAD:
-                    return AircraftPayloadType.SEAD;
+                    return PlayerFlightGroupPayloadType.SEAD;
 
                 case DCSFlightGroupTask.Escort:
                 case DCSFlightGroupTask.Reconnaissance:
                 case DCSFlightGroupTask.Transport:
-                    return AircraftPayloadType.Default;
+                    return PlayerFlightGroupPayloadType.Default;
             }
 
-            return AircraftPayloadType.Default;
+            return PlayerFlightGroupPayloadType.Default;
         }
 
         //public DCSMissionUnitGroup AddNodeFeatureGroup(
@@ -645,7 +636,7 @@ namespace Headquarters4DCS.Generator
                         UnitCategory.Plane, LastGroupID, (Coalition)i, spawnPoint.Value.Coordinates,
                         groupUnits.ToArray());
 
-                    SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, AircraftPayloadType.A2A);
+                    SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, PlayerFlightGroupPayloadType.A2A);
                     uGroup.CustomValues.Add("LateActivation", "false"); // TODO: random chance
                     uGroup.CustomValues.Add("ParkingID", "0"); // TODO: should not be used, remove from Lua file
 
@@ -668,7 +659,7 @@ namespace Headquarters4DCS.Generator
         /// <param name="payload">The type of payload to use.</param>
         /// <param name="airdromeID">The airdrome this aircraft group is linked to.</param>
         /// <returns>True if everything went right, false is something went wrong.</returns>
-        private bool SetupAircraftGroup(DCSMissionUnitGroup uGroup, DCSMission mission, CallsignFamily csFamily, bool isFriendly, DefinitionUnit aircraftDefinition = null, AircraftPayloadType payload = AircraftPayloadType.Default, int airdromeID = 0)
+        private bool SetupAircraftGroup(DCSMissionUnitGroup uGroup, DCSMission mission, CallsignFamily csFamily, bool isFriendly, DefinitionUnit aircraftDefinition = null, PlayerFlightGroupPayloadType payload = PlayerFlightGroupPayloadType.Default, int airdromeID = 0)
         {
             if (uGroup.UnitCount == 0) return false;
 
