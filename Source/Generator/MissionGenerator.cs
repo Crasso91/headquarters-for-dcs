@@ -77,17 +77,17 @@ namespace Headquarters4DCS.Generator
                 coalitions[(int)Coalition.Blue] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionBlue);
                 coalitions[(int)Coalition.Red] = Library.Instance.GetDefinition<DefinitionCoalition>(template.ContextCoalitionRed);
 
-                DefinitionLanguage language = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
+                DefinitionLanguage languageDef = Library.Instance.GetDefinition<DefinitionLanguage>(template.PreferencesLanguage.ToLowerInvariant());
                 DefinitionObjective objectiveDef = Library.Instance.GetDefinition<DefinitionObjective>(template.ObjectiveType.ToLowerInvariant());
                 DefinitionTheater theaterDef = Library.Instance.GetDefinition<DefinitionTheater>(template.ContextTheater);
                 theaterDef.ResetUsedSpawnPoints();
 
                 // Create a list of all available objective names
-                List<string> objectiveNames = language.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
+                List<string> objectiveNames = languageDef.GetStringArray("Mission", "Waypoint.ObjectiveNames").ToList();
 
                 // Create unit generators
                 MissionGeneratorCallsign callsignGenerator = new MissionGeneratorCallsign(coalitions[(int)Coalition.Blue].NATOCallsigns, coalitions[(int)Coalition.Red].NATOCallsigns);
-                MissionGeneratorUnitGroups unitGroupsGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator);
+                MissionGeneratorUnitGroups unitGroupsGenerator = new MissionGeneratorUnitGroups(languageDef, callsignGenerator);
 
                 // Copy values from the template to the mission
                 mission.Theater = template.ContextTheater;
@@ -126,9 +126,9 @@ namespace Headquarters4DCS.Generator
                 // Randomly select objective spawn points
                 int objectiveCount = (int)template.ObjectiveCount;
                 if (objectiveCount == 0) objectiveCount = HQTools.RandomFrom(1, 1, 1, 2, 2, 3, 3, 4, 5); // Random objective count
-                AmountR objectiveDistance = template.ObjectiveDistance;
-                if (objectiveDistance == AmountR.Random) objectiveDistance =
-                        HQTools.RandomFrom(AmountR.VeryLow, AmountR.VeryLow, AmountR.Low, AmountR.Low, AmountR.Low, AmountR.Average, AmountR.Average, AmountR.Average, AmountR.High, AmountR.High, AmountR.VeryHigh);
+                //AmountR objectiveDistance = template.ObjectiveDistance;
+                //if (objectiveDistance == AmountR.Random) objectiveDistance =
+                //        HQTools.RandomFrom(AmountR.VeryLow, AmountR.VeryLow, AmountR.Low, AmountR.Low, AmountR.Low, AmountR.Average, AmountR.Average, AmountR.Average, AmountR.High, AmountR.High, AmountR.VeryHigh);
                 List<DCSMissionObjectiveLocation> objectivesList = new List<DCSMissionObjectiveLocation>();
                 List<DCSMissionWaypoint> waypointsList = new List<DCSMissionWaypoint>();
                 for (i = 0; i < objectiveCount; i++)
@@ -136,12 +136,15 @@ namespace Headquarters4DCS.Generator
                     // If this is the first objective, measure distance from the airbase. Else measure distance from the previous objective.
                     Coordinates previousPoint = (i == 0) ? missionAirbase.Coordinates : objectivesList[i - 1].Coordinates;
 
-                    MinMaxD distanceFromLastPoint =
-                        (i == 0) ?
-                        Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceFromStartLocation :
-                        Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceBetweenTargets;
+                    MinMaxD distanceFromLastPoint = new MinMaxD(template.ObjectiveDistance * 0.75, template.ObjectiveDistance * 1.25) * HQTools.NM_TO_METERS;
+                    if (i > 0) distanceFromLastPoint /= 4.0;
 
-                    DefinitionTheaterSpawnPoint ? spawnPoint =
+                    //MinMaxD distanceFromLastPoint =
+                    //    (i == 0) ?
+                    //    Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceFromStartLocation :
+                    //    Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceBetweenTargets;
+
+                    DefinitionTheaterSpawnPoint? spawnPoint =
                         theaterDef.GetRandomSpawnPoint(objectiveDef.SpawnPointType, null, distanceFromLastPoint, previousPoint);
 
                     if (!spawnPoint.HasValue) // No valid spawn point, throw an error
@@ -199,10 +202,9 @@ namespace Headquarters4DCS.Generator
                         mission.TotalFlightPlanDistance += mission.Waypoints[i].Coordinates.GetDistanceFrom(mission.Waypoints[i - 1].Coordinates);
                 }
 
-                // Create a of used player aircraft type, so the proper kneeboard subdirectories can be created in the .miz file
+                // Create a list of used player aircraft types, so the proper kneeboard subdirectories can be created in the .miz file
                 mission.UsedPlayerAircraftTypes =
-                    (from MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups
-                     where pfg.WingmenAI != PlayerFlightGroupAI.AllAI select pfg.AircraftType).Distinct().OrderBy(x => x).ToArray();
+                    (from MissionTemplatePlayerFlightGroup pfg in template.FlightPackagePlayers select pfg.AircraftType).Distinct().OrderBy(x => x).ToArray();
 
                 // Generate bullseyes and map center
                 mission.MapCenter = Coordinates.GetCenter(
@@ -258,9 +260,10 @@ namespace Headquarters4DCS.Generator
                 */
 
                 // Generate units
-                using (MissionGeneratorUnitGroups unitGenerator = new MissionGeneratorUnitGroups(language, callsignGenerator))
+                AmountNR selectedEnemyAirDefense, selectedEnemyCAP; // We have to store these values here because they're used in the briefing remarks
+                using (MissionGeneratorUnitGroups unitGenerator = new MissionGeneratorUnitGroups(languageDef, callsignGenerator))
                 {
-                    foreach (MissionTemplatePlayerFlightGroup pfg in template.PlayerFlightGroups)
+                    foreach (MissionTemplatePlayerFlightGroup pfg in template.FlightPackagePlayers)
                         unitGenerator.AddPlayerFlightGroup(mission, template, pfg, missionAirbase);
 
                     //unitGroups.GeneratePlayerFlightGroups(mission, template, missionObjective);
@@ -279,24 +282,27 @@ namespace Headquarters4DCS.Generator
                     unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objectiveDef, coalitions);
                     ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
 
-                    unitGenerator.AddEnemyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase);
-                    unitGenerator.AddCombatAirPatrolUnits(mission, template, theaterDef, coalitions, missionAirbase);
+                    unitGenerator.AddEnemyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase, out selectedEnemyAirDefense);
+                    unitGenerator.AddFriendlyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase, out AmountNR selectedFriendlyAirDefense);
+                    unitGenerator.AddCombatAirPatrolUnits(mission, template, theaterDef, coalitions, missionAirbase, out AmountNR selectedFriendlyCAP, out selectedEnemyCAP);
                 }
 
-                using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(language))
+                using (MissionGeneratorBriefing briefingGenerator = new MissionGeneratorBriefing(languageDef))
                 {
                     // Add briefing remarks
                     for (i = 0; i < objectiveDef.BriefingRemarks.Length; i++)
-                        mission.BriefingRemarks.Add(language.GetString("Briefing", $"Remark.{objectiveDef.BriefingRemarks}"));
+                        mission.BriefingRemarks.Add(languageDef.GetStringRandom("Briefing", $"Remark.{objectiveDef.BriefingRemarks}"));
+                    mission.BriefingRemarks.Add(languageDef.GetStringRandom("Briefing", $"Remark.EnemyAirDefense.{selectedEnemyAirDefense}"));
+                    mission.BriefingRemarks.Add(languageDef.GetStringRandom("Briefing", $"Remark.EnemyCAP.{selectedEnemyCAP}"));
 
-                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.TakeOffFrom", "Airbase", missionAirbase.Name));
+                    mission.BriefingTasks.Add(languageDef.GetString("Briefing", "Task.TakeOffFrom", "Airbase", missionAirbase.Name));
                     for (i = 0; i < mission.Objectives.Length; i++)
-                        mission.BriefingTasks.Add(language.GetString("Briefing", $"Task.{objectiveDef.BriefingTask}", "Objective", mission.Objectives[i].Name.ToUpperInvariant()));
-                    mission.BriefingTasks.Add(language.GetString("Briefing", "Task.LandAt", "Airbase", missionAirbase.Name));
+                        mission.BriefingTasks.Add(languageDef.GetString("Briefing", $"Task.{objectiveDef.BriefingTask}", "Objective", mission.Objectives[i].Name.ToUpperInvariant()));
+                    mission.BriefingTasks.Add(languageDef.GetString("Briefing", "Task.LandAt", "Airbase", missionAirbase.Name));
 
                     briefingGenerator.GenerateMissionName(mission, template.BriefingName);
+                    briefingGenerator.GenerateMissionDescription(mission, template.BriefingDescription, objectiveDef);
                     /*
-                        briefing.GenerateMissionDescription(mission, template.BriefingDescription, missionObjective);
                         briefing.GenerateMissionTasks(mission, template, missionObjective);
                         briefing.GenerateMissionRemarks(mission, template, missionObjective);
                         */

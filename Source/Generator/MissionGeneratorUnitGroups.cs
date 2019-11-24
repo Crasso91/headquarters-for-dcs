@@ -411,7 +411,7 @@ namespace Headquarters4DCS.Generator
                 DCSMissionUnitGroup uGroup = null;
 
                 List<UnitFamily> availableFamilies = new List<UnitFamily>(grp.Family);
-                    //System.Windows.Forms.MessageBox.Show(grp.Family[0].ToString());
+                //System.Windows.Forms.MessageBox.Show(grp.Family[0].ToString());
 
                 int groupID;
                 if (grp.GroupID > 0)
@@ -508,18 +508,20 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Log();
         //}
 
-        public void AddEnemyAirDefenseUnits(DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionObjective objective, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase airbase)
+        public void AddEnemyAirDefenseUnits(
+            DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionObjective objective, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase airbase,
+            out AmountNR selectedEnemyAirDefense)
         {
             DebugLog.Instance.Log("Generating enemy ground air defense units...");
 
-            AmountNR airDefenseLevel = HQTools.ResolveRandomAmount(template.SituationEnemyAirDefense);
+            selectedEnemyAirDefense = HQTools.ResolveRandomAmount(template.SituationEnemyAirDefense);
 
             DebugLog.Instance.Log(
                 $"  Enemy air defense should be {template.SituationEnemyAirDefense.ToString().ToUpperInvariant()}" +
                 ((template.SituationEnemyAirDefense == AmountNR.Random) ?
-                $" (randomly selected level {airDefenseLevel.ToString().ToUpperInvariant()})" : ""));
+                $" (randomly selected level {selectedEnemyAirDefense.ToString().ToUpperInvariant()})" : ""));
 
-            LibraryCommonSettingsEnemyAirDefense airDefense = Library.Instance.Common.AirDefense[(int)airDefenseLevel];
+            LibraryCommonSettingsEnemyAirDefense airDefense = Library.Instance.Common.AirDefense[(int)selectedEnemyAirDefense];
 
             foreach (AirDefenseRange adr in Enum.GetValues(typeof(AirDefenseRange)))
             {
@@ -568,18 +570,87 @@ namespace Headquarters4DCS.Generator
             DebugLog.Instance.Log();
         }
 
-        public void AddCombatAirPatrolUnits(DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase missionAirbase)
+        public void AddFriendlyAirDefenseUnits(
+            DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionObjective objective, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase airbase,
+            out AmountNR selectedFriendlyAirDefense)
+        {
+            DebugLog.Instance.Log("Generating friendly ground air defense units...");
+
+            selectedFriendlyAirDefense = HQTools.ResolveRandomAmount(template.SituationFriendlyAirDefense);
+
+            DebugLog.Instance.Log(
+                $"  Enemy air defense should be {template.SituationEnemyAirDefense.ToString().ToUpperInvariant()}" +
+                ((template.SituationEnemyAirDefense == AmountNR.Random) ?
+                $" (randomly selected level {selectedFriendlyAirDefense.ToString().ToUpperInvariant()})" : ""));
+
+            LibraryCommonSettingsEnemyAirDefense airDefense = Library.Instance.Common.AirDefense[(int)selectedFriendlyAirDefense];
+
+            foreach (AirDefenseRange adr in Enum.GetValues(typeof(AirDefenseRange)))
+            {
+                int adGroupCount = airDefense.InAreaGroupCount[(int)adr].GetValue();
+                if (adGroupCount == 0) continue; // no unit groups for this air defense range
+
+                LibraryCommonSettingsEnemyAirDefenseDistance distanceSettings = Library.Instance.Common.AirDefenseDistance[(int)adr];
+
+                for (int i = 0; i < adGroupCount; i++)
+                {
+                    // Select nodes near the starting location
+                    DefinitionTheaterSpawnPoint? selNode = theater.GetRandomSpawnPoint(
+                        distanceSettings.NodeTypes, null,
+                        new MinMaxD(0, 10.0), airbase.Coordinates);
+
+                    if (!selNode.HasValue) // No nodes matching search criteria, don't spawn anything
+                    {
+                        DebugLog.Instance.Log("WARNING: failed to find a node to spawn enemy air defense.");
+                        continue;
+                    }
+
+                    UnitFamily unitFamily = HQTools.RandomFrom(airDefense.InAreaFamilies[(int)adr]);
+
+                    DCSMissionUnitGroup uGroup = DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                        "GroupVehicleIdle", "UnitVehicle",
+                        coalitions[(int)mission.CoalitionPlayer], template.ContextTimePeriod,
+                        unitFamily, airDefense.InAreaGroupSize[(int)adr].GetValue(),
+                        LastGroupID, mission.CoalitionPlayer, selNode.Value.Coordinates);
+
+                    if (uGroup == null)
+                    {
+                        DebugLog.Instance.Log($"WARNING: failed to generate air defense of type {unitFamily} for coalition {mission.CoalitionPlayer}.");
+                        continue;
+                    }
+
+                    uGroup.Name = GetGroupName(UnitFamily.VehicleSAMMedium);
+
+                    if (uGroup.UnitCount == 0) continue;
+
+                    mission.UnitGroups.Add(uGroup);
+                    LastGroupID++;
+                }
+            }
+
+            DebugLog.Instance.Log();
+        }
+
+        public void AddCombatAirPatrolUnits(DCSMission mission, MissionTemplate template, DefinitionTheater theater, DefinitionCoalition[] coalitions, DefinitionTheaterAirbase missionAirbase,
+            out AmountNR selectedFriendlyCAP, out AmountNR selectedEnemyCAP)
         {
             DebugLog.Instance.Log("Generating combat air patrols...");
+            selectedFriendlyCAP = AmountNR.None; selectedEnemyCAP = AmountNR.None;
 
             for (int i = 0; i < 2; i++)
             {
                 // Select a enemy CAP intensity if set to Random
                 AmountNR capSetting;
                 if (i == (int)template.ContextPlayerCoalition)
-                    capSetting = HQTools.ResolveRandomAmount(template.SituationFriendlyCAP);
+                {
+                    selectedFriendlyCAP = HQTools.ResolveRandomAmount(template.SituationFriendlyCAP);
+                    capSetting = selectedFriendlyCAP;
+                }
                 else
-                    capSetting = HQTools.ResolveRandomAmount(template.SituationEnemyCAP);
+                {
+                    selectedEnemyCAP = HQTools.ResolveRandomAmount(template.SituationEnemyCAP);
+                    capSetting = selectedEnemyCAP;
+                }
 
                 DebugLog.Instance.Log($"  CAP for coalition {(Coalition)i} set to {capSetting.ToString().ToUpperInvariant()}");
 
