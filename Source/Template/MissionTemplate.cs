@@ -37,6 +37,14 @@ namespace Headquarters4DCS.Template
     /// </summary>
     public sealed class MissionTemplate : IDisposable
     {
+        private const int OBJECTIVE_COUNT_MIN = 1;
+        private const int OBJECTIVE_COUNT_MAX = 5;
+        private const int OBJECTIVE_COUNT_DEFAULT = 1;
+
+        private const int OBJECTIVE_DISTANCE_MIN = 20;
+        private const int OBJECTIVE_DISTANCE_MAX = 300;
+        private const int OBJECTIVE_DISTANCE_DEFAULT = 50;
+
         /// <summary>
         /// The description of the mission in the briefing.
         /// </summary>
@@ -145,16 +153,17 @@ namespace Headquarters4DCS.Template
         /// </summary>
         [Category("Mission objective")]
         [DisplayName("Objective count"), Description("How many objectives/targets will be present in the mission?")]
-        [TypeConverter(typeof(SplitEnumTypeConverter<Count12345R>))]
-        public Count12345R ObjectiveCount { get; set; }
+        //[TypeConverter(typeof(IntegerMinMaxValueTypeConverter)), MinMaxValue(OBJECTIVE_COUNT_MIN, OBJECTIVE_COUNT_MAX)]
+        public int ObjectiveCount { get { return _ObjectiveCount; } set { _ObjectiveCount = HQTools.Clamp(value, OBJECTIVE_COUNT_MIN, OBJECTIVE_COUNT_MAX); } }
+        private int _ObjectiveCount = OBJECTIVE_COUNT_DEFAULT;
 
         /// <summary>
         /// How far from the player(s) starting airbase will the objectives be?
         /// </summary>
         [Category("Mission objective")]
-        [DisplayName("Objective distance"), Description("How far from the player(s) starting airbase will the objectives be?")]
-        [TypeConverter(typeof(SplitEnumTypeConverter<AmountR>))]
-        public AmountR ObjectiveDistance { get; set; }
+        [DisplayName("Objective distance"), Description("Approximate distance between the player(s)' starting location and the objective(s), in nautical miles.")]
+        public int ObjectiveDistance { get { return _ObjectiveDistance; } set { _ObjectiveDistance = HQTools.Clamp(value, OBJECTIVE_DISTANCE_MIN, OBJECTIVE_DISTANCE_MAX); } }
+        private int _ObjectiveDistance = OBJECTIVE_DISTANCE_DEFAULT;
 
         /// <summary>
         /// The type of objective of this mission
@@ -167,11 +176,33 @@ namespace Headquarters4DCS.Template
         /// <summary>
         /// Player flight groups
         /// </summary>
-        [Category("Mission package")]
-        [DisplayName("Flight groups"), Description("All player controlled flight groups")]
+        [Category("Flight package")]
+        [DisplayName("Player flight groups"), Description("Player controlled flight groups")]
         [TypeConverter(typeof(MissionTemplatePlayerFlightGroupConverter))]
         [Editor(typeof(DescriptionArrayEditor), typeof(UITypeEditor))]
-        public MissionTemplatePlayerFlightGroup[] PlayerFlightGroups { get; set; }
+        public MissionTemplatePlayerFlightGroup[] FlightPackagePlayers { get; set; }
+
+        [Category("Flight package")]
+        [DisplayName("Support, AI CAP escort"), Description("Number of AI-controlled CAP escort aircraft")]
+        //[TypeConverter(typeof(IntegerMinMaxValueTypeConverter)), MinMaxValue(0, 12)]
+        public int FlightPackageAICAP { get { return _FlightPackageAICAP; } set { _FlightPackageAICAP = HQTools.Clamp(value, 0, 12); } }
+        private int _FlightPackageAICAP = 0;
+
+        [Category("Flight package")]
+        [DisplayName("Support, AI SEAD escort"), Description("Number of AI-controlled SEAD escort aircraft")]
+        //[TypeConverter(typeof(IntegerMinMaxValueTypeConverter)), MinMaxValue(0, 12)]
+        public int FlightPackageAISEAD { get { return _FlightPackageAISEAD; } set { _FlightPackageAISEAD = HQTools.Clamp(value, 0, 12); } }
+        private int _FlightPackageAISEAD = 0;
+
+        [Category("Flight package")]
+        [DisplayName("Support, AWACS"), Description("Should an AWACS aircraft be spawned?")]
+        [TypeConverter(typeof(BooleanYesNoTypeConverter))]
+        public bool FlightPackageSupportAWACS { get; set; }
+
+        [Category("Flight package")]
+        [DisplayName("Support, tanker"), Description("Should a tanker aircraft be spawned?")]
+        [TypeConverter(typeof(BooleanYesNoTypeConverter))]
+        public bool FlightPackageSupportTanker { get; set; }
 
         /// <summary>
         /// Should enemy units be visible on the F10 map?
@@ -316,11 +347,15 @@ namespace Headquarters4DCS.Template
             EnvironmentWeather = Weather.Random;
             EnvironmentWind = Wind.Auto;
 
-            ObjectiveCount = Count12345R.Random;
-            ObjectiveDistance = AmountR.Random;
+            ObjectiveCount = 1;
+            ObjectiveDistance = 50;
             ObjectiveType = Library.Instance.Common.DefaultObjective;
 
-            PlayerFlightGroups = addDefaultFlightGroup ? new MissionTemplatePlayerFlightGroup[] { new MissionTemplatePlayerFlightGroup() } : new MissionTemplatePlayerFlightGroup[0];
+            FlightPackagePlayers = addDefaultFlightGroup ? new MissionTemplatePlayerFlightGroup[] { new MissionTemplatePlayerFlightGroup() } : new MissionTemplatePlayerFlightGroup[0];
+            FlightPackageAICAP = 0;
+            FlightPackageAISEAD = 0;
+            FlightPackageSupportAWACS = true;
+            FlightPackageSupportTanker = true;
 
             PreferencesEnemiesOnF10Map = false;
             PreferencesForceClientInSP = false;
@@ -376,7 +411,11 @@ namespace Headquarters4DCS.Template
                 List<MissionTemplatePlayerFlightGroup> playerFlightGroupsList = new List<MissionTemplatePlayerFlightGroup>();
                 foreach (string k in ini.GetKeysInSection("FlightGroups"))
                     playerFlightGroupsList.Add(new MissionTemplatePlayerFlightGroup(ini, "FlightGroups", k));
-                PlayerFlightGroups = playerFlightGroupsList.ToArray();
+                FlightPackagePlayers = playerFlightGroupsList.ToArray();
+                FlightPackageAICAP = ini.GetValue("Settings", "FlightPackage.AI.CAP", FlightPackageAICAP);
+                FlightPackageAICAP = ini.GetValue("Settings", "FlightPackage.AI.SEAD", FlightPackageAISEAD);
+                FlightPackageSupportAWACS = ini.GetValue("Settings", "FlightPackage.Support.AWACS", FlightPackageSupportAWACS);
+                FlightPackageSupportTanker = ini.GetValue("Settings", "FlightPackage.Support.Tanker", FlightPackageSupportTanker);
 
                 PreferencesEnemiesOnF10Map = ini.GetValue("Settings", "Preferences.EnemiesOnF10Map", PreferencesEnemiesOnF10Map);
                 PreferencesExtraWaypoints = ini.GetValue("Settings", "Preferences.ExtraWaypoints", PreferencesExtraWaypoints);
@@ -426,6 +465,13 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Environment.Weather", EnvironmentWeather);
                 ini.SetValue("Settings", "Environment.Wind", EnvironmentWind);
 
+                for (int i = 0; i < FlightPackagePlayers.Length; i++)
+                    FlightPackagePlayers[i].SaveToFile(ini, "FlightGroups", $"FG{i.ToString("000")}");
+                ini.SetValue("Settings", "FlightPackage.AI.CAP", FlightPackageAICAP);
+                ini.SetValue("Settings", "FlightPackage.AI.SEAD", FlightPackageAISEAD);
+                ini.SetValue("Settings", "FlightPackage.Support.AWACS", FlightPackageSupportAWACS);
+                ini.SetValue("Settings", "FlightPackage.Support.Tanker", FlightPackageSupportTanker);
+
                 ini.SetValue("Settings", "Objective.Count", ObjectiveCount);
                 ini.SetValue("Settings", "Objective.Distance", ObjectiveDistance);
                 ini.SetValue("Settings", "Objective.Type", ObjectiveType);
@@ -449,9 +495,6 @@ namespace Headquarters4DCS.Template
                 ini.SetValue("Settings", "Skill.Friendly.Air", SkillFriendlyAir);
                 ini.SetValue("Settings", "Skill.Friendly.Ground", SkillFriendlyGround);
 
-                for (int i = 0; i < PlayerFlightGroups.Length; i++)
-                    PlayerFlightGroups[i].SaveToFile(ini, "FlightGroups", $"FG{i.ToString("000")}");
-
                 ini.SaveToFile(filePath);
             }
 
@@ -466,7 +509,7 @@ namespace Headquarters4DCS.Template
         {
             int playerCount = 0;
 
-            foreach (MissionTemplatePlayerFlightGroup pfg in PlayerFlightGroups)
+            foreach (MissionTemplatePlayerFlightGroup pfg in FlightPackagePlayers)
                 playerCount += pfg.GetPlayerCount();
 
             return playerCount;
