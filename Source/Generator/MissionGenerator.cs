@@ -270,18 +270,9 @@ namespace Headquarters4DCS.Generator
                     //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAICAP, UnitFamily.PlaneFighter, "GroupPlaneEscortCAP", AircraftPayloadType.A2A, DCSAircraftTask.CAP);
                     //unitGroups.GenerateAIEscortFlightGroups(mission, template, coalitions, template.FlightGroupsAISEAD, UnitFamily.PlaneSEAD, "GroupPlaneEscortSEAD", AircraftPayloadType.SEAD, DCSAircraftTask.SEAD);
 
-                    //if (template.FlightGroupsTanker)
-                    //{
-                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBasket, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
-                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneTankerBoom, "GroupPlaneTanker", CallsignFamily.Tanker, DCSAircraftTask.Refueling);
-                    //}
-
-                    //if (template.FlightGroupsAWACS)
-                    //    unitGroups.GenerateAISupportFlightGroups(mission, template, coalitions, UnitFamily.PlaneAWACS, "GroupPlaneAWACS", CallsignFamily.AWACS, DCSAircraftTask.AWACS);
-
                     unitGenerator.AddObjectiveUnitGroupsAtEachObjective(mission, template, objectiveDef, coalitions);
-                    ////unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
-
+                    //unitGroups.GenerateObjectiveUnitGroupsAtCenter(mission, template, missionObjective, coalitions);
+                    unitGenerator.AddFriendlySupportAircraft(mission, template, coalitions[(int)mission.CoalitionPlayer], theaterDef, missionAirbase);
                     unitGenerator.AddEnemyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase, out selectedEnemyAirDefense);
                     unitGenerator.AddFriendlyAirDefenseUnits(mission, template, theaterDef, objectiveDef, coalitions, missionAirbase, out AmountNR selectedFriendlyAirDefense);
                     unitGenerator.AddCombatAirPatrolUnits(mission, template, theaterDef, coalitions, missionAirbase, out AmountNR selectedFriendlyCAP, out selectedEnemyCAP);
