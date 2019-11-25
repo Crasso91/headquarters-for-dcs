@@ -145,14 +145,14 @@ namespace Headquarters4DCS.Generator
         //    HQDebugLog.Instance.Log();
         //}
 
-        public int AddPlayerFlightGroup(DCSMission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup flightGroupTemplate, DefinitionTheaterAirbase airbase)
+        public int AddPlayerFlightGroup(DCSMission mission, MissionTemplate template, MissionTemplatePlayerFlightGroup flightGroupTemplate, DefinitionObjective objectiveDef, DefinitionTheaterAirbase airbaseDef)
         {
             DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(flightGroupTemplate.AircraftType);
             if (aircraftDefinition == null) return -1; // Aircraft does not exist
 
             DCSMissionUnitGroup unitGroup = new DCSMissionUnitGroup(
                 "GroupAircraftPlayer", "UnitAircraft", aircraftDefinition.Category,
-                LastGroupID, template.ContextPlayerCoalition, airbase.Coordinates,
+                LastGroupID, template.ContextPlayerCoalition, airbaseDef.Coordinates,
                 Enumerable.Repeat(aircraftDefinition.ID, flightGroupTemplate.Count).ToArray());
 
             DCSFlightGroupTask fgTask;
@@ -164,12 +164,12 @@ namespace Headquarters4DCS.Generator
                 case PlayerFlightGroupTask.SEADEscort:
                     fgTask = DCSFlightGroupTask.SEAD; break;
                 default: // PlayerFlightGroupTask.PrimaryMission:
-                    fgTask = DCSFlightGroupTask.PinpointStrike; break; // TODO: by mission type 
+                    fgTask = objectiveDef.FGTasking; break;
             }
 
             SetupAircraftGroup(
                 unitGroup, mission, CallsignFamily.Aircraft, true,
-                aircraftDefinition, GetPayloadByPlayerGroupTask(fgTask), airbase.DCSID);
+                aircraftDefinition, GetPayloadByPlayerGroupTask(fgTask), airbaseDef.DCSID);
 
             bool usePlayerInsteadOfClient = (template.GetPlayerCount() < 2) && !template.PreferencesForceClientInSP;
 
@@ -181,11 +181,11 @@ namespace Headquarters4DCS.Generator
             else // No AI wingmen: make all units clients
                 unitGroup.UnitsSkill = usePlayerInsteadOfClient ? DCSSkillLevel.Player : DCSSkillLevel.Client;
 
-            unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbase.DCSID));
+            unitGroup.CustomValues.Add("AirdromeID", HQTools.ValToString(airbaseDef.DCSID));
             //unitGroup.CustomValues.Add("FinalWPIndex", HQTools.ValToString(mission.Waypoints.Count + 2));
-            unitGroup.CustomValues.Add("FinalX", HQTools.ValToString(airbase.Coordinates.X));
-            unitGroup.CustomValues.Add("FinalY", HQTools.ValToString(airbase.Coordinates.Y));
-            unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbase.DCSID));
+            unitGroup.CustomValues.Add("FinalX", HQTools.ValToString(airbaseDef.Coordinates.X));
+            unitGroup.CustomValues.Add("FinalY", HQTools.ValToString(airbaseDef.Coordinates.Y));
+            unitGroup.CustomValues.Add("FinalAirdromeID", HQTools.ValToString(airbaseDef.DCSID));
             //unitGroup.CustomValues.Add("DCSTask", MGTools.GetDCSTaskNameString(missionObjective.DCSTask));
             //unitGroup.CustomValues.Add("DCSTaskTasks", MGTools.GetDCSTaskAdditionalTasksString(missionObjective.DCSTask, 2));
 
@@ -218,7 +218,7 @@ namespace Headquarters4DCS.Generator
 
             mission.BriefingFlightPackage.Add(
                 new DCSMissionBriefingFlightGroup(
-                    unitGroup.Name, unitGroup.Units[0], DCSFlightGroupTask.CAS, airbase.Name, // FIXME: tasking
+                    unitGroup.Name, unitGroup.Units[0], DCSFlightGroupTask.CAS, airbaseDef.Name, // FIXME: tasking
                     unitGroup.UnitCount, unitGroup.RadioFrequency)); // FIXME: complete
 
             mission.UnitGroups.Add(unitGroup);
@@ -639,9 +639,11 @@ namespace Headquarters4DCS.Generator
 
             for (int i = 0; i < 2; i++)
             {
+                bool friendly = (i == (int)template.ContextPlayerCoalition);
+
                 // Select a enemy CAP intensity if set to Random
                 AmountNR capSetting;
-                if (i == (int)template.ContextPlayerCoalition)
+                if (friendly)
                 {
                     selectedFriendlyCAP = HQTools.ResolveRandomAmount(template.SituationFriendlyCAP);
                     capSetting = selectedFriendlyCAP;
@@ -685,8 +687,8 @@ namespace Headquarters4DCS.Generator
                     if (groupUnits.Count == 0) { capAircraftCount--; continue; }
 
                     DefinitionTheaterSpawnPoint? spawnPoint;
-                    if (i == (int)template.ContextPlayerCoalition)
-                        // Allied CAP: select any nodes (aircraft can be spawned anywhere, even over water) located close enough to the
+                    if (friendly)
+                        // Friendly CAP: select any nodes (aircraft can be spawned anywhere, even over water) located close enough to the
                         // players starting airbase (see HQLibrary.Common.EnemyCAPDistance)
                         spawnPoint = theater.GetRandomSpawnPoint(
                             null, null,
@@ -702,12 +704,12 @@ namespace Headquarters4DCS.Generator
                     if (!spawnPoint.HasValue) { capAircraftCount--; continue; }
 
                     DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
-                        (i == (int)template.ContextPlayerCoalition) ? "GroupAircraftCAPFriendly" : "GroupAircraftCAPEnemy",
+                        friendly ? "GroupAircraftCAPFriendly" : "GroupAircraftCAPEnemy",
                         "UnitAircraft",
                         UnitCategory.Plane, LastGroupID, (Coalition)i, spawnPoint.Value.Coordinates,
                         groupUnits.ToArray());
 
-                    SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, false, aircraftDefinition, PlayerFlightGroupPayloadType.A2A);
+                    SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, friendly, aircraftDefinition, PlayerFlightGroupPayloadType.A2A);
                     uGroup.CustomValues.Add("LateActivation", "false"); // TODO: random chance
                     uGroup.CustomValues.Add("ParkingID", "0"); // TODO: should not be used, remove from Lua file
 
@@ -715,6 +717,112 @@ namespace Headquarters4DCS.Generator
                     LastGroupID++;
                 }
             }
+
+            DebugLog.Instance.Log();
+        }
+
+        public void AddFriendlySupportAircraft(DCSMission mission, MissionTemplate template, DefinitionCoalition playerCoalition, DefinitionTheaterAirbase missionAirbase)
+        {
+            DebugLog.Instance.Log("Generating friendly support aircraft...");
+
+            if (template.FlightPackageSupportAWACS)
+            {
+                DCSMissionUnitGroup unitGroup =
+                    DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                        "GroupPlaneAWACS", "UnitAircraft",
+                        playerCoalition, template.ContextTimePeriod, UnitFamily.PlaneAWACS, 1, LastGroupID, template.ContextPlayerCoalition, new Coordinates());
+
+                if (unitGroup == null)
+                    DebugLog.Instance.Log($"  Failed to generate AWACS aircraft for {template.ContextPlayerCoalition} coalition.");
+            }
+
+            if (template.FlightPackageSupportTanker)
+            {
+
+            }
+
+            //selectedFriendlyCAP = AmountNR.None; selectedEnemyCAP = AmountNR.None;
+
+            //for (int i = 0; i < 2; i++)
+            //{
+            //    bool friendly = (i == (int)template.ContextPlayerCoalition);
+
+            //    // Select a enemy CAP intensity if set to Random
+            //    AmountNR capSetting;
+            //    if (friendly)
+            //    {
+            //        selectedFriendlyCAP = HQTools.ResolveRandomAmount(template.SituationFriendlyCAP);
+            //        capSetting = selectedFriendlyCAP;
+            //    }
+            //    else
+            //    {
+            //        selectedEnemyCAP = HQTools.ResolveRandomAmount(template.SituationEnemyCAP);
+            //        capSetting = selectedEnemyCAP;
+            //    }
+
+            //    DebugLog.Instance.Log($"  CAP for coalition {(Coalition)i} set to {capSetting.ToString().ToUpperInvariant()}");
+
+            //    // Get the proper number of aircraft according to Setting.ini
+            //    int capAircraftCount = Library.Instance.Common.CAPCount[(int)capSetting].GetValue();
+            //    if (capAircraftCount <= 0) return; // No aircraft
+
+            //    string[] availableFighterUnits = coalitions[i].GetUnits(mission.TimePeriod, UnitFamily.PlaneFighter, true, false);
+
+            //    if (availableFighterUnits.Length == 0)
+            //    {
+            //        DebugLog.Instance.Log($"  WARNING: No fighters or interceptors found for coalition {(Coalition)i}, could not generate combat air patrols.");
+            //        continue;
+            //    }
+
+            //    while (capAircraftCount > 0)
+            //    {
+            //        List<string> groupUnits = new List<string>();
+
+            //        string unit = HQTools.RandomFrom(availableFighterUnits);
+            //        DefinitionUnit aircraftDefinition = Library.Instance.GetDefinition<DefinitionUnit>(unit);
+            //        if (aircraftDefinition == null) { capAircraftCount--; continue; }
+
+            //        do
+            //        {
+            //            groupUnits.Add(unit);
+            //            capAircraftCount--;
+            //            if (capAircraftCount <= 0) break;
+            //            if (groupUnits.Count >= HQTools.RandomFrom(2, 2, 3, 4, 4, 4)) break; // Group is full, stop here
+            //        } while (true);
+
+            //        if (groupUnits.Count == 0) { capAircraftCount--; continue; }
+
+            //        DefinitionTheaterSpawnPoint? spawnPoint;
+            //        if (friendly)
+            //            // Friendly CAP: select any nodes (aircraft can be spawned anywhere, even over water) located close enough to the
+            //            // players starting airbase (see HQLibrary.Common.EnemyCAPDistance)
+            //            spawnPoint = theater.GetRandomSpawnPoint(
+            //                null, null,
+            //                new MinMaxD(0, 1), missionAirbase.Coordinates);
+            //        else
+            //            // Enemy CAP: select any nodes (aircraft can be spawned anywhere, even over water) located far enough from the
+            //            // players starting airbase and neither too far or too near of the objective (see HQLibrary.Common.EnemyCAPDistance)
+            //            spawnPoint = theater.GetRandomSpawnPoint(
+            //                null, null,
+            //                new MinMaxD(Library.Instance.Common.EnemyCAPDistance.MinDistanceFromTakeOffLocation, double.MaxValue), missionAirbase.Coordinates,
+            //                Library.Instance.Common.EnemyCAPDistance.DistanceFromObjective, HQTools.RandomFrom(mission.Objectives).Coordinates);
+
+            //        if (!spawnPoint.HasValue) { capAircraftCount--; continue; }
+
+            //        DCSMissionUnitGroup uGroup = new DCSMissionUnitGroup(
+            //            friendly ? "GroupAircraftCAPFriendly" : "GroupAircraftCAPEnemy",
+            //            "UnitAircraft",
+            //            UnitCategory.Plane, LastGroupID, (Coalition)i, spawnPoint.Value.Coordinates,
+            //            groupUnits.ToArray());
+
+            //        SetupAircraftGroup(uGroup, mission, CallsignFamily.Aircraft, friendly, aircraftDefinition, PlayerFlightGroupPayloadType.A2A);
+            //        uGroup.CustomValues.Add("LateActivation", "false"); // TODO: random chance
+            //        uGroup.CustomValues.Add("ParkingID", "0"); // TODO: should not be used, remove from Lua file
+
+            //        mission.UnitGroups.Add(uGroup);
+            //        LastGroupID++;
+            //    }
+            //}
 
             DebugLog.Instance.Log();
         }
