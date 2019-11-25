@@ -85,8 +85,6 @@
     <Compile Include="HQ4DCS.cs" />
     <Compile Include="DefinitionLibrary\Definition.cs" />
     <Compile Include="DefinitionLibrary\DefinitionCoalition.cs" />
-    <Compile Include="DefinitionLibrary\DefinitionFeature.cs" />
-    <Compile Include="DefinitionLibrary\DefinitionFeatureUnitGroup.cs" />
     <Compile Include="DefinitionLibrary\DefinitionLanguage.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheater.cs" />
     <Compile Include="DefinitionLibrary\DefinitionTheaterAirbase.cs" />

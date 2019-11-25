@@ -91,7 +91,6 @@ namespace Headquarters4DCS.DefinitionLibrary
                 // Load definitions
                 LoadDefinitions<DefinitionCoalition>("Coalitions");
                 LoadDefinitions<DefinitionLanguage>("Languages");
-                LoadDefinitions<DefinitionFeature>("Features");
                 LoadDefinitions<DefinitionObjective>("Objectives");
                 LoadDefinitions<DefinitionTheater>("Theaters");
                 LoadDefinitions<DefinitionUnit>("Units");
@@ -102,7 +101,8 @@ namespace Headquarters4DCS.DefinitionLibrary
                 CheckDefaultValuesExist<DefinitionCoalition>(Common.DefaultCoalitionRed);
                 CheckDefaultValuesExist<DefinitionObjective>(Common.DefaultObjective);
                 CheckDefaultValuesExist<DefinitionUnit>(Common.DefaultPlayerAircraft);
-                if (!GetDefinition<DefinitionUnit>(Common.DefaultPlayerAircraft).AircraftPlayerControllable) throw new HQ4DCSException("Default player aircraft is not player-controllable.");
+                if (!GetDefinition<DefinitionUnit>(Common.DefaultPlayerAircraft).AircraftPlayerControllable)
+                    throw new HQ4DCSException("Default player aircraft is not player-controllable.");
 
                 DebugLog.Instance.Log();
                 DebugLog.Instance.Log("Library .ini files loaded successfully.");

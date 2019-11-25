@@ -23,6 +23,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 */
 
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Headquarters4DCS.DefinitionLibrary
 {
@@ -91,7 +92,11 @@ namespace Headquarters4DCS.DefinitionLibrary
             if (UnitSystem == UnitSystem.ByCoalition) UnitSystem = UnitSystem.Metric;
             RequiredModules = ini.GetValueArray<string>("Coalition", "RequiredModules");
             Countries = ini.GetValueArray<DCSCountry>("Coalition", "Countries").Distinct().ToArray();
-            if (Countries.Length == 0) return false; // No countries, bad coalition
+            if (Countries.Length == 0)
+            {
+                MessageBox.Show($"Failed to load coalition definition {ID.ToUpperInvariant()}, no countries assigned to coalition.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false; // No countries, bad coalition
+            }
 
             // ---------------
             // [Units] section

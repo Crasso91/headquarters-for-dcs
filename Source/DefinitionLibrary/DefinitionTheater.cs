@@ -104,10 +104,6 @@ namespace Headquarters4DCS.DefinitionLibrary
         {
             int i;
 
-            // No common settings? No map? No theater.
-            //if (!File.Exists(path + "CommonSettings.ini") || !File.Exists(path + "GUIMap.jpg"))
-            //    return false;
-
             // [Theater] section
             DCSID = ini.GetValue<string>("Theater", "DCSID");
             DefaultMapCenter = ini.GetValue<Coordinates>("Theater", "DefaultMapCenter");
