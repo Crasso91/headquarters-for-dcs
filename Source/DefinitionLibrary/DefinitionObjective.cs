@@ -45,9 +45,9 @@ namespace Headquarters4DCS.DefinitionLibrary
         public string BriefingTask { get; private set; }
 
         /// <summary>
-        /// Type of payload for this mission
+        /// DCS tasking assigned to aircraft for this mission
         /// </summary>
-        public PlayerFlightGroupPayloadType FGPayloadType { get; private set; }
+        public DCSFlightGroupTask FGTasking { get; private set; }
 
         /// <summary>
         /// Valid spawn point types for this objective.
@@ -90,7 +90,7 @@ namespace Headquarters4DCS.DefinitionLibrary
             BriefingRemarks = ini.GetValueArray<string>("Objective", "Briefing.Remarks");
             BriefingTask = ini.GetValue<string>("Objective", "Briefing.Task");
 
-            FGPayloadType = ini.GetValue<PlayerFlightGroupPayloadType>("Objective", "FlightGroup.PayloadType");
+            FGTasking = ini.GetValue<DCSFlightGroupTask>("Objective", "FlightGroup.Tasking");
 
             FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
 
