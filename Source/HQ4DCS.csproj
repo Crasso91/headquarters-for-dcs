@@ -66,6 +66,7 @@
     <Compile Include="Enums\BriefingExportFileFormat.cs" />
     <Compile Include="Enums\CountriesCoalition.cs" />
     <Compile Include="Enums\DCSFlightGroupTask.cs" />
+    <Compile Include="Enums\ObjectiveUnitGroupRole.cs" />
     <Compile Include="Forms\GUITools.cs" />
     <Compile Include="Forms\FormMain.cs">
       <SubType>Form</SubType>
@@ -105,8 +106,8 @@
     <Compile Include="Enums\DCSSkillLevel.cs" />
     <Compile Include="Enums\FeatureCategory.cs" />
     <Compile Include="Enums\FeatureFlag.cs" />
-    <Compile Include="Enums\FeatureScriptRepetition.cs" />
-    <Compile Include="Enums\FeatureScriptScope.cs" />
+    <Compile Include="Enums\ObjectiveScriptRepetition.cs" />
+    <Compile Include="Enums\ObjectiveScriptScope.cs" />
     <Compile Include="Enums\HQSkillLevel.cs" />
     <Compile Include="Enums\MissionObjectiveUnitGroupFlags.cs" />
     <Compile Include="Enums\Month.cs" />

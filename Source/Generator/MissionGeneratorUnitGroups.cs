@@ -400,8 +400,8 @@ namespace Headquarters4DCS.Generator
 
             for (int i = 0; i < mission.Objectives.Length; i++)
             {
-                if (objective.Groups.Length == 0) continue;
-                DefinitionObjectiveUnitGroup grp = objective.Groups[0];
+                if (objective.UnitGroups.Length == 0) continue;
+                DefinitionObjectiveUnitGroup grp = objective.UnitGroups[0];
                 if (string.IsNullOrEmpty(grp.LuaGroup)) break; // No units
 
                 DCSMissionObjectiveLocation obj = mission.Objectives[i];

@@ -244,8 +244,10 @@ namespace Headquarters4DCS.Generator
 
                 List<string> oggFilesList = new List<string>();
                 oggFilesList.AddRange(Library.Instance.Common.SharedOggFiles); // Default wave files
-                oggFilesList.AddRange(objectiveDef.FilesOgg); // Objective wave files
+                oggFilesList.AddRange(objectiveDef.IncludeOgg); // Objective wave files
                 mission.OggFiles = oggFilesList.Distinct().ToArray();
+
+                mission.Scripts
 
                 /*
                 // Generate mission flight plan

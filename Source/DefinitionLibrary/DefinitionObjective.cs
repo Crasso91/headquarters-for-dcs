@@ -22,6 +22,8 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 ==========================================================================
 */
 
+using System;
+
 namespace Headquarters4DCS.DefinitionLibrary
 {
     /// <summary>
@@ -65,24 +67,19 @@ namespace Headquarters4DCS.DefinitionLibrary
         public bool WaypointOnGround { get; private set; }
 
         /// <summary>
-        /// Scripts to include only once.
-        /// </summary>
-        public string[] ScriptsOnce { get; private set; }
-
-        /// <summary>
-        /// Scripts to incude once per objective.
-        /// </summary>
-        public string[] ScriptsEachObjective { get; private set; }
-
-        /// <summary>
         /// Ogg Vorbis files to include.
         /// </summary>
-        public string[] FilesOgg { get; private set; }
+        public string[] IncludeOgg { get; private set; }
+
+        /// <summary>
+        /// Scripts files to include.
+        /// </summary>
+        public string[,][] IncludeLua { get; private set; }
 
         /// <summary>
         /// Unit groups to spawn for this mission objective.
         /// </summary>
-        public DefinitionObjectiveUnitGroup[] Groups { get; private set; }
+        public DefinitionObjectiveUnitGroup[] UnitGroups { get; private set; }
 
         protected override bool OnLoad(INIFile ini)
         {
@@ -92,10 +89,11 @@ namespace Headquarters4DCS.DefinitionLibrary
 
             FGTasking = ini.GetValue<DCSFlightGroupTask>("Objective", "FlightGroup.Tasking");
 
-            FilesOgg = ini.GetValueArray<string>("Objective", "Files.Ogg");
-
-            ScriptsEachObjective = ini.GetValueArray<string>("Objective", "Scripts.EachObjective");
-            ScriptsOnce = ini.GetValueArray<string>("Objective", "Scripts.Once");
+            IncludeLua = new string[HQTools.EnumCount<ObjectiveScriptRepetition>(), HQTools.EnumCount<ObjectiveScriptScope>()][];
+            foreach (ObjectiveScriptRepetition rep in HQTools.EnumValues<ObjectiveScriptRepetition>())
+                foreach (ObjectiveScriptScope scope in HQTools.EnumValues<ObjectiveScriptScope>())
+                    IncludeLua[(int)rep, (int)scope] = ini.GetValueArray<string>("Include", $"Lua.{rep}.{scope}");
+            IncludeOgg = ini.GetValueArray<string>("Include", "Ogg");
 
             SpawnPointType = ini.GetValueArray<TheaterLocationSpawnPointType>("Objective", "SpawnPoint.Type");
             if (SpawnPointType.Length == 0) SpawnPointType = new TheaterLocationSpawnPointType[] { TheaterLocationSpawnPointType.LandMedium, TheaterLocationSpawnPointType.LandLarge };
@@ -103,11 +101,10 @@ namespace Headquarters4DCS.DefinitionLibrary
             WaypointInaccuracy = ini.GetValue<MinMaxD>("Objective", "Waypoint.Inaccuracy");
             WaypointOnGround = ini.GetValue<bool>("Objective", "Waypoint.OnGround");
 
-            // [Groups] section
-            Groups = new DefinitionObjectiveUnitGroup[ini.GetTopLevelKeysInSection("UnitGroups").Length];
-            int i = 0;
-            foreach (string k in ini.GetTopLevelKeysInSection("UnitGroups"))
-            { Groups[i] = new DefinitionObjectiveUnitGroup(ini, k); i++; }
+            UnitGroups = new DefinitionObjectiveUnitGroup[HQTools.EnumCount<ObjectiveUnitGroupRole>()];
+
+            foreach (ObjectiveUnitGroupRole role in HQTools.EnumValues<ObjectiveUnitGroupRole>())
+                UnitGroups[(int)role] = new DefinitionObjectiveUnitGroup(ini, role.ToString());
 
             return true;
         }

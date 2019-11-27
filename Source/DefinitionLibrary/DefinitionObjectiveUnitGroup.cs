@@ -68,7 +68,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         public DefinitionObjectiveUnitGroup(INIFile ini, string key)
         {
             Family = ini.GetValueArray<UnitFamily>("UnitGroups", $"{key}.Family");
-            if (Family.Length == 0) Family = new UnitFamily[] { UnitFamily.VehicleTransport };
+            if (Family.Length == 0) Family = new UnitFamily[] { UnitFamily.HelicopterTransport };
             Count = ini.GetValue<MinMaxI>("UnitGroups", $"{key}.Count");
             Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>("UnitGroups", $"{key}.Flags");
             LuaGroup = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Group");

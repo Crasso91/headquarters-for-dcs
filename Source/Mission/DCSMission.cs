@@ -173,7 +173,7 @@ namespace Headquarters4DCS.Mission
         /// <summary>
         /// A Lua scripts to include in the mission.
         /// </summary>
-        public string[] Scripts { get; set; } = new string[HQTools.EnumCount<FeatureScriptScope>()];
+        public string[] Scripts { get; set; } = new string[HQTools.EnumCount<ObjectiveScriptScope>()];
 
         /// <summary>
         /// The DCS World theater for this mission.
