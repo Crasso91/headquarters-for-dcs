@@ -41,7 +41,7 @@ namespace Headquarters4DCS
         /// <summary>
         /// The total count of mission script scopes.
         /// </summary>
-        public static readonly int MISSION_SCRIPT_SCOPE_COUNT = Enum.GetValues(typeof(FeatureScriptScope)).Length;
+        public static readonly int MISSION_SCRIPT_SCOPE_COUNT = Enum.GetValues(typeof(ObjectiveScriptScope)).Length;
 
         /// <summary>
         /// Flags required to center text properly.
@@ -178,6 +178,16 @@ namespace Headquarters4DCS
         public static int EnumCount<T>() where T : struct
         {
             return Enum.GetValues(typeof(T)).Length;
+        }
+
+        /// <summary>
+        /// Returns values in an enum. Basically a shortcut for "(T[])Enum.GetValues(typeof(T))".
+        /// </summary>
+        /// <typeparam name="T">The type of enum.</typeparam>
+        /// <returns>The enum values.</returns>
+        public static T[] EnumValues<T>() where T : struct
+        {
+            return (T[])Enum.GetValues(typeof(T));
         }
 
         /// <summary>
