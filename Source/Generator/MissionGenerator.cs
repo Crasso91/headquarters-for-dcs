@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Headquarters4DCS.Generator
 {
@@ -90,7 +89,8 @@ namespace Headquarters4DCS.Generator
                 MissionGeneratorUnitGroups unitGroupsGenerator = new MissionGeneratorUnitGroups(languageDef, callsignGenerator);
 
                 // Copy values from the template to the mission
-                mission.Theater = template.ContextTheater;
+                mission.TheaterDefinition = template.ContextTheater;
+                mission.ObjectiveDefinition = template.ObjectiveType;
                 mission.Language = template.PreferencesLanguage;
                 mission.CoalitionPlayer = template.ContextPlayerCoalition;
                 mission.SinglePlayer = (template.GetPlayerCount() < 2);
@@ -138,11 +138,6 @@ namespace Headquarters4DCS.Generator
 
                     MinMaxD distanceFromLastPoint = new MinMaxD(template.ObjectiveDistance * 0.75, template.ObjectiveDistance * 1.25) * HQTools.NM_TO_METERS;
                     if (i > 0) distanceFromLastPoint /= 4.0;
-
-                    //MinMaxD distanceFromLastPoint =
-                    //    (i == 0) ?
-                    //    Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceFromStartLocation :
-                    //    Library.Instance.Common.DistanceToObjective[(int)objectiveDistance].DistanceBetweenTargets;
 
                     DefinitionTheaterSpawnPoint? spawnPoint =
                         theaterDef.GetRandomSpawnPoint(objectiveDef.SpawnPointType, null, distanceFromLastPoint, previousPoint);
@@ -247,7 +242,7 @@ namespace Headquarters4DCS.Generator
                 oggFilesList.AddRange(objectiveDef.IncludeOgg); // Objective wave files
                 mission.OggFiles = oggFilesList.Distinct().ToArray();
 
-                mission.Scripts
+                //mission.Scripts
 
                 /*
                 // Generate mission flight plan

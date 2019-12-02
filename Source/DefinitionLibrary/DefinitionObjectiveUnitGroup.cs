@@ -54,13 +54,6 @@ namespace Headquarters4DCS.DefinitionLibrary
         public readonly MissionObjectiveUnitGroupFlags[] Flags;
 
         /// <summary>
-        /// The fixed ID of this unit group.
-        /// Ignored if 0 or less, else set to 1000 * objective index + this value.
-        /// Used in scripts, so the game knows for instance that group with ID X001 must be destroyed.
-        /// </summary>
-        public readonly int GroupID;
-
-        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="ini">The .ini file to load airbase data from.</param>
@@ -71,9 +64,8 @@ namespace Headquarters4DCS.DefinitionLibrary
             if (Family.Length == 0) Family = new UnitFamily[] { UnitFamily.HelicopterTransport };
             Count = ini.GetValue<MinMaxI>("UnitGroups", $"{key}.Count");
             Flags = ini.GetValueArray<MissionObjectiveUnitGroupFlags>("UnitGroups", $"{key}.Flags");
-            LuaGroup = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Group");
-            LuaUnit = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Unit");
-            GroupID = HQTools.Clamp(ini.GetValue<int>("UnitGroups", $"{key}.ID"), 0, 999);
+            LuaGroup = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Group").Trim();
+            LuaUnit = ini.GetValue<string>("UnitGroups", $"{key}.Lua.Unit").Trim();
         }
     }
 }

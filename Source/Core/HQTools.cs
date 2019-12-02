@@ -567,7 +567,7 @@ namespace Headquarters4DCS
             if (!filePath.ToLowerInvariant().EndsWith(".lua")) filePath += ".lua";
             filePath = $"{PATH_INCLUDE}Lua\\{filePath}";
             if (!File.Exists(filePath)) return "";
-            return File.ReadAllText(filePath);
+            return File.ReadAllText(filePath) + "\n";
         }
     }
 }

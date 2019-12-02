@@ -25,6 +25,7 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 using Headquarters4DCS.DefinitionLibrary;
 using Headquarters4DCS.Mission;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Headquarters4DCS.Miz
@@ -63,6 +64,8 @@ namespace Headquarters4DCS.Miz
             lua += HQTools.ReadIncludeLuaFile("Script\\DebugMenu.lua") + "\n\n";
 #endif
 
+            GenerateCommonScript(ref lua, mission);
+
             CopyMissionLuaScripts(ref lua, mission);
 
             HQTools.ReplaceKey(ref lua, "UnitNames", CreateUnitNamesTable(mission.UseNATOCallsigns));
@@ -74,6 +77,22 @@ namespace Headquarters4DCS.Miz
             DoLocalizationReplacements(ref lua);
 
             return lua;
+        }
+
+        /// <summary>
+        /// Generate the script common to all missions at the beginning of the Lua code.
+        /// </summary>
+        /// <param name="lua">Mission Lua script.</param>
+        /// <param name="mission">HQ4DCS mission</param>
+        private void GenerateCommonScript(ref string lua, DCSMission mission)
+        {
+            string scriptLua = "";
+            scriptLua += $"hq.objectiveCount = {mission.Objectives.Length}\n";
+            scriptLua += $"hq.objectiveLeft = {mission.Objectives.Length}\n";
+            scriptLua += $"hq.objectiveNames = {{ \"{string.Join("\", \"", (from DCSMissionObjectiveLocation o in mission.Objectives select o.Name.ToUpperInvariant()))}\" }}\n";
+            scriptLua += $"hq.objectiveStatus = {{ {string.Join(", ", Enumerable.Repeat("false", mission.Objectives.Length))} }}\n";
+
+            HQTools.ReplaceKey(ref lua, "ScriptCommon", scriptLua);
         }
 
         /// <summary>
@@ -98,8 +117,36 @@ namespace Headquarters4DCS.Miz
         /// <param name="mission">A HQ4DCS mission.</param>
         private void CopyMissionLuaScripts(ref string lua, DCSMission mission)
         {
-            for (int i = 0; i < HQTools.MISSION_SCRIPT_SCOPE_COUNT; i++)
-                HQTools.ReplaceKey(ref lua, $"Script{((ObjectiveScriptScope)i).ToString()}", mission.Scripts[i]);
+            DefinitionObjective objectiveDef = Library.Instance.GetDefinition<DefinitionObjective>(mission.ObjectiveDefinition);
+            if (objectiveDef == null) return;
+
+            int i;
+
+            // For each script scope (global, event and timer)...
+            foreach (ObjectiveScriptScope scope in HQTools.EnumValues<ObjectiveScriptScope>())
+            {
+                string scriptLua = "";
+
+                // ...add once every script to include once...
+                foreach (string scriptFile in objectiveDef.IncludeLua[(int)ObjectiveScriptRepetition.Once, (int)scope])
+                    scriptLua += HQTools.ReadIncludeLuaFile($"Script\\{scriptFile}");
+
+                // ...and add each time for each objective the scripts to include once for each objective
+                for (i = 0; i < mission.Objectives.Length; i++)
+                {
+                    string objectiveScriptLua = "";
+
+                    foreach (string scriptFile in objectiveDef.IncludeLua[(int)ObjectiveScriptRepetition.Each, (int)scope])
+                        objectiveScriptLua += HQTools.ReadIncludeLuaFile($"Script\\{scriptFile}");
+
+                    HQTools.ReplaceKey(ref objectiveScriptLua, "ObjectiveID", 1 + i);
+                    HQTools.ReplaceKey(ref objectiveScriptLua, "GroupID", 1001 + i);
+
+                    scriptLua += objectiveScriptLua + "\n";
+                }
+
+                HQTools.ReplaceKey(ref lua, $"Script{scope.ToString()}", scriptLua);
+            }
         }
 
         /// <summary>

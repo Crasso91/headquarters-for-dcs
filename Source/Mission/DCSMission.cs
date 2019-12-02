@@ -120,6 +120,11 @@ namespace Headquarters4DCS.Mission
         public bool SinglePlayer { get; set; }
 
         /// <summary>
+        /// ID of the objective definition in the definition library.
+        /// </summary>
+        public string ObjectiveDefinition { get; set; }
+
+        /// <summary>
         /// Should NATO callsigns be used in the briefing?
         /// </summary>
         public bool UseNATOCallsigns { get; set; }
@@ -171,14 +176,9 @@ namespace Headquarters4DCS.Mission
         public DCSOption RealismRandomFailures { get; set; }
 
         /// <summary>
-        /// A Lua scripts to include in the mission.
-        /// </summary>
-        public string[] Scripts { get; set; } = new string[HQTools.EnumCount<ObjectiveScriptScope>()];
-
-        /// <summary>
         /// The DCS World theater for this mission.
         /// </summary>
-        public string Theater { get; set; }
+        public string TheaterDefinition { get; set; }
 
         /// <summary>
         /// The time period during which this mission takes place.
