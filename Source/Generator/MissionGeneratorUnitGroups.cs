@@ -752,14 +752,22 @@ namespace Headquarters4DCS.Generator
                     continue;
                 }
 
+                Coordinates oval1 = mission.MapCenter + Coordinates.CreateRandomInaccuracy(20, 50) * HQTools.NM_TO_METERS;
+                Coordinates oval2 = oval1 + Coordinates.CreateRandomInaccuracy(20, 50) * HQTools.NM_TO_METERS;
+
                 DCSMissionUnitGroup unitGroup =
                     DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
                         unitLua, "UnitAircraft",
                         playerCoalition, template.ContextTimePeriod, family,
-                        1, LastGroupID, template.ContextPlayerCoalition, new Coordinates());
+                        1, LastGroupID, template.ContextPlayerCoalition, oval1);
+
+                unitGroup.CustomValues.Add("X2", HQTools.ValToString(oval2.X));
+                unitGroup.CustomValues.Add("Y2", HQTools.ValToString(oval2.Y));
 
                 if (unitGroup == null)
                     DebugLog.Instance.Log($"  Failed to generate {family} aircraft for {template.ContextPlayerCoalition} coalition.");
+
+                SetupAircraftGroup(unitGroup, mission, (family == UnitFamily.PlaneAWACS) ? CallsignFamily.AWACS : CallsignFamily.Tanker, true);
 
                 mission.UnitGroups.Add(unitGroup);
                 LastGroupID++;
