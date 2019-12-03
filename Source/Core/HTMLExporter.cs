@@ -167,6 +167,6 @@ namespace Headquarters4DCS
             return htmlBitmap;
         }
 
-        // TODO: ExportToMultipleImagePages
+        // NEXTVERSION: ExportToMultipleImagePages
     }
 }

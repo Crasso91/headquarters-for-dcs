@@ -159,7 +159,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// </summary>
         public string[,] AircraftPayloadPylons { get; private set; } = new string[HQTools.EnumCount<PlayerFlightGroupPayloadType>(), MAX_PYLONS];
 
-        // TODO
+        // NEXTVERSION
         // public Country[][] LiveriesPriority { get; private set; } = new Country[2][];
         // public string[][] Liveries { get; private set; } = new string[HQTools.EnumCount<Country>()][];
 
@@ -287,7 +287,7 @@ namespace Headquarters4DCS.DefinitionLibrary
 
             payloadLua += AircraftPayloadCommon.Replace(",", ",\n");
 
-            // TODO: payload upgrades by decade
+            // NEXTVERSION: payload upgrades by decade
 
             return "{\n" + payloadLua + "\n}";
         }
@@ -299,7 +299,7 @@ namespace Headquarters4DCS.DefinitionLibrary
         /// <returns>The name of the livery</returns>
         public string GetLiveryName(DCSCountry[] coalitionCountries)
         {
-            // TODO
+            // NEXTVERSION
 
             return "default";
         }
