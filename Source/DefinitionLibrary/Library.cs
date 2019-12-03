@@ -165,12 +165,6 @@ namespace Headquarters4DCS.DefinitionLibrary
             return (T)Definitions[typeof(T)][id];
         }
 
-        // TODO: description
-        public T[] GetMultipleDefinitions<T>(params string[] ids) where T : Definition
-        {
-            return (from T definition in Definitions[typeof(T)] where ids.Contains(definition.ID) select definition).ToArray();
-        }
-
         /// <summary>
         /// Does a definition exist?
         /// </summary>

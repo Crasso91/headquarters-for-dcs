@@ -59,24 +59,31 @@ namespace Headquarters4DCS.Miz
         {
             string lua = HQTools.ReadIncludeLuaFile("Script.lua");
 
-            // Add the debug script to scripts generated with the debug build.
-#if DEBUG
-            lua += HQTools.ReadIncludeLuaFile("Script\\DebugMenu.lua") + "\n\n";
-#endif
-
             GenerateCommonScript(ref lua, mission);
-
             CopyMissionLuaScripts(ref lua, mission);
 
+#if DEBUG
+            // Add the debug script to scripts generated with the debug build.
+            lua += HQTools.ReadIncludeLuaFile("Script\\DebugMenu.lua") + "\n\n";
+#endif
+            MakeCommonReplacements(ref lua, mission);
+            DoLocalizationReplacements(ref lua);
+
+            return lua;
+        }
+
+        /// <summary>
+        /// Read values from the mission and make replacements in the Lua file
+        /// </summary>
+        /// <param name="lua">Lua string</param>
+        /// <param name="mission">HQ4DCS mission to use</param>
+        private void MakeCommonReplacements(ref string lua, DCSMission mission)
+        {
             HQTools.ReplaceKey(ref lua, "UnitNames", CreateUnitNamesTable(mission.UseNATOCallsigns));
             HQTools.ReplaceKey(ref lua, "ObjectiveNames", CreateObjectiveNamesTable(mission));
             HQTools.ReplaceKey(ref lua, "PlayerCoalition", mission.CoalitionPlayer.ToString().ToUpperInvariant());
             HQTools.ReplaceKey(ref lua, "EnemyCoalition", mission.CoalitionEnemy.ToString().ToUpperInvariant());
             HQTools.ReplaceKey(ref lua, "ObjectiveCount", mission.Objectives.Length);
-
-            DoLocalizationReplacements(ref lua);
-
-            return lua;
         }
 
         /// <summary>
