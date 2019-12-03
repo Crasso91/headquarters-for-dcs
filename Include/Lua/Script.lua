@@ -9,8 +9,11 @@ hq.constants.defaultTextMessageDuration = 5 -- default duration (in seconds) for
 hq.constants.smokeDuration = 300 -- smoke markers last for 5 minutes (300 seconds) in DCS World
 hq.constants.timeForRadioAnswer = { 4, 6 } -- min/max time (in seconds) before a radio message gets an answer. Include the initial message duration (around 3 seconds for most messages)
 
+hq.missionComplete = false -- is the mission complete yet?
 hq.playerTookOff = false -- becomes true once at least one player took off
 hq.radioMessageScheduledID = nil -- The ID of the "answer" radio message (stored so we can cancel/unschedule the function if another radio transmission is made before the answer is played)
+
+$SCRIPTCOMMON$
 
 ------------------------
 -- Plays a radio message
@@ -59,6 +62,49 @@ function hq.playRadioMessageAnswer(msgParameters, time)
   hq.radioMessageScheduledID = nil
 
   return nil
+end
+
+-------------------------
+-- Completes an objective
+-------------------------
+function hq.completeObjective(objectiveID)
+  if (hq.objectiveStatus[objectiveID] == false) and (hq.missionComplete == false) then
+     hq.objectiveStatus[objectiveID] = true
+     hq.objectiveLeft = hq.objectiveLeft - 1
+     
+     if (hq.objectiveLeft <= 0) then -- all objectives complete, mission complete
+      hq.missionComplete = true
+      hq.playRadioMessage( "£Radio.RadioHQMissionEndComplete£", "RadioHQMissionEndComplete", nil, nil, nil, nil, nil)
+     else
+      hq.playRadioMessage( "£Radio.RadioHQObjectiveComplete£", "RadioHQObjectiveComplete", nil, nil, nil, nil, nil)
+     end
+  end
+end
+
+--------------------------
+-- Finds a group by its ID
+--------------------------
+function hq.getGroupByID(id)
+  for coalID=1,2 do
+    for _,g in pairs(coalition.getGroups(coalID)) do
+      if g:getID() == id then return g end
+    end
+  end
+
+  return nil
+end
+
+--------------------
+-- Is an unit alive?
+--------------------
+function hq.isUnitAlive(name)
+  if name == nil then return false end
+  local unit = Unit.getByName(name)
+  if unit == nil then return false end
+  if unit:isActive() == false then return false end
+  if unit:getLife() < 1 then return false end
+
+  return true
 end
 
 -- ===============================================
@@ -130,18 +176,18 @@ timer.scheduleFunction(hq.everySecond, nil, timer.getTime() + 1)
 -- Request update on mission status
 function hq.f10MissionStatus()
   if hq.missionStatus < 0 then -- mission failed
-    hq.playRadioMessage("£RadioMessages/Player.MissionStatus£", "PlayerMissionStatus", "£RadioMessages/Radio.MissionStatusFailed£", "RadioMissionStatusFailed")
+    hq.playRadioMessage("£Player.MissionStatus£", "PlayerMissionStatus", "£Radio.MissionStatusFailed£", "RadioMissionStatusFailed")
   elseif hq.missionStatus > 0 then -- mission complete
-    hq.playRadioMessage("£RadioMessages/Player.MissionStatus£", "PlayerMissionStatus", "£RadioMessages/Radio.MissionStatusComplete£", "RadioMissionStatusComplete")
+    hq.playRadioMessage("£Player.MissionStatus£", "PlayerMissionStatus", "£Radio.MissionStatusComplete£", "RadioMissionStatusComplete")
   else  -- mission in progress, show status of each objective
     local objectiveStatusList = "\n";
     for i=1,hq.objectiveCount do
       objectiveStatusList = objectiveStatusList.."\nObjective "..hq.objectiveNames[i].." "
-      if (objectiveStatus[i] > 0) then objectiveStatusList = objectiveStatusList.."[X]"
+      if (hq.objectiveStatus[i] == true) then objectiveStatusList = objectiveStatusList.."[X]"
       else objectiveStatusList = objectiveStatusList.."[ ]" end
     end
 
-    hq.playRadioMessage("£RadioMessages/Player.MissionStatus£", "PlayerMissionStatus", "£RadioMessages/Radio.MissionStatusInProgress£"..objectiveStatusList, "RadioMissionStatusInProgress")
+    hq.playRadioMessage("£Player.MissionStatus£", "PlayerMissionStatus", "£Radio.MissionStatusInProgress£"..objectiveStatusList, "RadioMissionStatusInProgress")
   end
 end
 

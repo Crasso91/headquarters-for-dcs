@@ -73,7 +73,7 @@ namespace Headquarters4DCS.Miz
             HQTools.ReplaceKey(ref lua, "CenterX", mission.MapCenter.X);
             HQTools.ReplaceKey(ref lua, "CenterY", mission.MapCenter.Y);
 
-            HQTools.ReplaceKey(ref lua, "TheaterID", mission.Theater);
+            HQTools.ReplaceKey(ref lua, "TheaterID", mission.TheaterDefinition);
 
             HQTools.ReplaceKey(ref lua, "DateDay", mission.DateDay);
             HQTools.ReplaceKey(ref lua, "DateMonth", (int)mission.DateMonth + 1);

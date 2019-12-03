@@ -6,10 +6,10 @@ namespace Headquarters4DCS.Mission
     public struct DCSMissionScript
     {
         public readonly string LuaFile;
-        public readonly FeatureScriptScope ScriptScope;
+        public readonly ObjectiveScriptScope ScriptScope;
         public readonly Dictionary<string, string> Replacements;
 
-        public DCSMissionScript(string luaFile, FeatureScriptScope scriptScope, params string[] replacements)
+        public DCSMissionScript(string luaFile, ObjectiveScriptScope scriptScope, params string[] replacements)
         {
             LuaFile = luaFile;
             ScriptScope = scriptScope;

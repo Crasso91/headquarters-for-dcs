@@ -25,11 +25,23 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// Should a script be included only once or each time a feature requires it?
+    /// Where should a script be included in the mission script Lua file?
     /// </summary>
-    public enum FeatureScriptRepetition
+    public enum ObjectiveScriptScope
     {
-        Once,
-        Each
+        /// <summary>
+        /// Include script at the end of the file so it is ran on mission start.
+        /// </summary>
+        Global,
+
+        /// <summary>
+        /// Include script in the hq.eventHandler:onEvent function, so it is ran when an event happens.
+        /// </summary>
+        Event,
+
+        /// <summary>
+        /// Include script in the hq.everySecond() function, so it is ran every second.
+        /// </summary>
+        Timer
     }
 }

@@ -396,66 +396,67 @@ namespace Headquarters4DCS.Generator
         {
             DebugLog.Instance.Log("Generating mission objective unit groups at each objective...");
 
+            int i, j;
+
             //CommonSettingsEnemyAirDefense airDefense = Library.Common.EnemyAirDefense[(int)HQTools.ResolveRandomAmount(template.EnemyAirDefense)];
 
-            for (int i = 0; i < mission.Objectives.Length; i++)
+            for (i = 0; i < mission.Objectives.Length; i++)
             {
-                if (objective.Groups.Length == 0) continue;
-                DefinitionObjectiveUnitGroup grp = objective.Groups[0];
-                if (string.IsNullOrEmpty(grp.LuaGroup)) break; // No units
+                if (objective.UnitGroups.Length == 0) continue;
 
-                DCSMissionObjectiveLocation obj = mission.Objectives[i];
-
-                Coalition groupCoalition = grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
-
-                DCSMissionUnitGroup uGroup = null;
-
-                List<UnitFamily> availableFamilies = new List<UnitFamily>(grp.Family);
-                //System.Windows.Forms.MessageBox.Show(grp.Family[0].ToString());
-
-                int groupID;
-                if (grp.GroupID > 0)
-                    groupID = (i + 1) * 1000 + grp.GroupID;
-                else
-                    groupID = ++LastGroupID;
-
-                while (availableFamilies.Count > 0)
+                for (j = 0; j < HQTools.EnumCount<ObjectiveUnitGroupRole>(); j++)
                 {
-                    UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
+                    DefinitionObjectiveUnitGroup grp = objective.UnitGroups[j];
+                    if (string.IsNullOrEmpty(grp.LuaGroup)) break; // No units
 
-                    uGroup =
-                        DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
-                            grp.LuaGroup, grp.LuaUnit, coalitions[(int)groupCoalition],
-                            template.ContextTimePeriod, selectedFamily, grp.Count.GetValue(),
-                            groupID, groupCoalition, obj.Coordinates);
+                    DCSMissionObjectiveLocation obj = mission.Objectives[i];
 
-                    if (uGroup == null)
-                        throw new HQ4DCSException($"Failed to generate required unit group of family {selectedFamily} at objective #{i + 1}. Perhaps no unit type of this type was found for the {groupCoalition} coalition.");
+                    Coalition groupCoalition = grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? mission.CoalitionPlayer : mission.CoalitionEnemy;
 
-                    if (uGroup.UnitCount > 0) break;
+                    DCSMissionUnitGroup uGroup = null;
 
-                    availableFamilies.Remove(selectedFamily);
+                    List<UnitFamily> availableFamilies = new List<UnitFamily>(grp.Family);
+
+                    int groupID = (j == (int)ObjectiveUnitGroupRole.Target) ? 1001 + i : ++LastGroupID;
+
+                    while (availableFamilies.Count > 0)
+                    {
+                        UnitFamily selectedFamily = HQTools.RandomFrom(availableFamilies);
+
+                        uGroup =
+                            DCSMissionUnitGroup.FromCoalitionArmyAndUnitFamily(
+                                grp.LuaGroup, grp.LuaUnit, coalitions[(int)groupCoalition],
+                                template.ContextTimePeriod, selectedFamily, grp.Count.GetValue(),
+                                groupID, groupCoalition, obj.Coordinates);
+
+                        if (uGroup == null)
+                            throw new HQ4DCSException($"Failed to generate required unit group of family {selectedFamily} at objective #{i + 1}. Perhaps no unit type of this type was found for the {groupCoalition} coalition.");
+
+                        if (uGroup.UnitCount > 0) break;
+
+                        availableFamilies.Remove(selectedFamily);
+                    }
+
+
+                    if ((uGroup == null) || (uGroup.UnitCount == 0))
+                        throw new Exception($"Found no valid units to generate mission critical group of {uGroup.Coalition} {uGroup.Category}.");
+
+                    if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense))
+                        uGroup.AddAirDefenseUnits(
+                            coalitions[(int)groupCoalition], template.ContextTimePeriod,
+                            Library.Instance.Common.AirDefense[(int)HQTools.ResolveRandomAmount(grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? template.SituationFriendlyAirDefense : template.SituationEnemyAirDefense)]);
+
+                    string hidden;
+                    if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysVisible)) hidden = "false";
+                    else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysHidden)) hidden = "true";
+                    else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly)) hidden = "false";
+                    else if (template.PreferencesEnemiesOnF10Map) hidden = "false";
+                    else hidden = "true";
+
+                    uGroup.CustomValues.Add("Hidden", hidden);
+
+                    mission.UnitGroups.Add(uGroup);
                 }
-
-
-                if ((uGroup == null) || (uGroup.UnitCount == 0))
-                    throw new Exception($"Found no valid units to generate mission critical group of {uGroup.Coalition} {uGroup.Category}.");
-
-                if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AllowAirDefense))
-                    uGroup.AddAirDefenseUnits(
-                        coalitions[(int)groupCoalition], template.ContextTimePeriod,
-                        Library.Instance.Common.AirDefense[(int)HQTools.ResolveRandomAmount(grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly) ? template.SituationFriendlyAirDefense : template.SituationEnemyAirDefense)]);
-
-                string hidden;
-                if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysVisible)) hidden = "false";
-                else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.AlwaysHidden)) hidden = "true";
-                else if (grp.Flags.Contains(MissionObjectiveUnitGroupFlags.Friendly)) hidden = "false";
-                else if (template.PreferencesEnemiesOnF10Map) hidden = "false";
-                else hidden = "true";
-
-                uGroup.CustomValues.Add("Hidden", hidden);
-
-                mission.UnitGroups.Add(uGroup);
             }
 
             DebugLog.Instance.Log();

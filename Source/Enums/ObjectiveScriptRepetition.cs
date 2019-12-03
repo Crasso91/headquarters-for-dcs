@@ -25,11 +25,11 @@ along with HQ4DCS. If not, see https://www.gnu.org/licenses/
 namespace Headquarters4DCS
 {
     /// <summary>
-    /// Various formations for HQMissionUnitGroup
+    /// Should a script be included only once or each time a feature requires it?
     /// </summary>
-    public enum UnitGroupFormation
+    public enum ObjectiveScriptRepetition
     {
-        Random
-        // NEXTVERSION: add proper formations
+        Once,
+        Each
     }
 }

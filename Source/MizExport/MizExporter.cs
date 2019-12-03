@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Headquarters4DCS.Miz
 {
@@ -134,7 +133,7 @@ namespace Headquarters4DCS.Miz
 
             // New in DCS World 2.5.5: a "theatre" file containing nothing but the name of the theater.
             // Doesn't seem to do anything, but add it anyway just to be safe.
-            using (MizExporterLuaMission luaMission = new MizExporterLuaMission()) { AddMIZEntry("theatre", missHQ.Theater); }
+            using (MizExporterLuaMission luaMission = new MizExporterLuaMission()) { AddMIZEntry("theatre", missHQ.TheaterDefinition); }
 
             // Mission script Lua
             using (MizExporterLuaScript luaScript = new MizExporterLuaScript(language))

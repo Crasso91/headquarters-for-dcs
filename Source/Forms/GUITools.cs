@@ -125,64 +125,11 @@ namespace Headquarters4DCS.Forms
         }
 
         /// <summary>
-        /// Returns an array of paths to all embedded resources whose path starts with EMBEDDED_RESOURCES_PATH + pathToResources
+        /// Turns a camel cased enum name into a string with spaces between words.
         /// </summary>
-        /// <param name="pathToResources">Relative path to the resources.</param>
-        /// <returns>An array of strings.</returns>
-        public static string[] GetAllResourceKeys(string pathToResources)
-        {
-            return
-                (from string res in Assembly.GetEntryAssembly().GetManifestResourceNames()
-                 where res.StartsWith($"{EMBEDDED_RESOURCES_PATH}{pathToResources}")
-                 select res.Substring(EMBEDDED_RESOURCES_PATH.Length)).ToArray();
-        }
-
-        /// <summary>
-        /// Tries to load an image from a file. If the file doesn't exist, return null.
-        /// </summary>
-        /// <param name="filePath">Full path to the image file.</param>
-        /// <returns>The image, or null if file doesn't exist.</returns>
-        public static Image TryImageFromFile(string filePath)
-        {
-            if (!File.Exists(filePath)) return null;
-            return Image.FromFile(filePath);
-        }
-
-        /// <summary>
-        /// Sets up a form so it can be displayed as a non-top level form in another panel.
-        /// Removes form borders, title...
-        /// </summary>
-        /// <param name="form">Form to set up.</param>
-        /// <param name="parentControl">Parent control to use as a parent for the form.</param>
-        public static void SetupFormForPanel(Form form, Control parentControl)
-        {
-            form.TopLevel = false;
-            form.FormBorderStyle = FormBorderStyle.None;
-            form.Text = "";
-            form.ControlBox = false;
-            form.MinimizeBox = false;
-            form.MaximizeBox = false;
-            form.Parent = parentControl;
-            form.Dock = DockStyle.Fill;
-            form.Show();
-        }
-
-        /// <summary>
-        /// Returns the top parent of a TreeView node.
-        /// </summary>
-        /// <param name="node">A TreeView node.</param>
-        /// <returns>The top (level 0) parent node or null if node was null.</returns>
-        public static TreeNode GetTopLevelNode(TreeNode node)
-        {
-            if (node == null) return null;
-            do
-            {
-                if (node.Level == 0) return node;
-                node = node.Parent;
-            } while (true);
-        }
-
-        // TODO: description
+        /// <typeparam name="T">Type of enum</typeparam>
+        /// <param name="enumValue">Enum value</param>
+        /// <returns>A string</returns>
         public static string SplitEnumCamelCase<T>(T enumValue) where T : struct, IConvertible
         {
             string enumString = enumValue.ToString();
@@ -193,7 +140,12 @@ namespace Headquarters4DCS.Forms
             return string.Join(" ", words);
         }
 
-        // TODO: description
+        /// <summary>
+        /// Join the words from a string split by GUITools.SplitEnumCamelCase and turn it back into an enum value
+        /// </summary>
+        /// <typeparam name="T">Type of enum</typeparam>
+        /// <param name="enumString">A string split by SplitEnumCamelCase</param>
+        /// <returns>A value of enum T</returns>
         public static T JoinEnumCamelCase<T>(string enumString) where T : struct, IConvertible
         {
             if (string.IsNullOrEmpty(enumString)) return default(T);
