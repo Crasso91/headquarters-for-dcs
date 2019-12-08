@@ -13,7 +13,13 @@ hq.missionComplete = false -- is the mission complete yet?
 hq.playerTookOff = false -- becomes true once at least one player took off
 hq.radioMessageScheduledID = nil -- The ID of the "answer" radio message (stored so we can cancel/unschedule the function if another radio transmission is made before the answer is played)
 
+hq.objectiveSubmenu = { }
+
 $SCRIPTCOMMON$
+
+for i=1,hq.objectiveCount do
+  table.insert(hq.objectiveSubmenu, missionCommands.addSubMenuForCoalition(coalition.side.$PLAYERCOALITION$, "Objective "..hq.objectiveNames[i], nil))
+end
 
 ------------------------
 -- Plays a radio message
