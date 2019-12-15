@@ -14,8 +14,6 @@ namespace Headquarters4DCS.Tools
         // PRIVATE FIELDS
         // ===============================================
 
-        //private readonly HQ4DCS HQ;
-
         private WaveFileReader WaveFile = null;
         private WaveOutEvent WavePlayer = null;
         private MemoryStream WaveStream = null;
@@ -62,6 +60,9 @@ namespace Headquarters4DCS.Tools
         {
             if (VoiceComboBox.Items.Count == 0) return;
 
+            RadioMsgMaker.Speed = SpeedTrackBar.Value;
+            RadioMsgMaker.RadioFXIntensity = RadioFXTrackBar.Value;
+
             if (sender == PlayButton)
             {
                 StopSound();
@@ -80,11 +81,15 @@ namespace Headquarters4DCS.Tools
             {
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
+                    string fileName = HQTools.RemoveInvalidFileNameCharacters(MessageTextbox.Text).ToLowerInvariant();
+                    fileName = fileName.Replace(" ", "").Replace(".", "").Replace(",", "");
+                    if (string.IsNullOrEmpty(fileName)) fileName = "NewRadioMessage";
+
                     sfd.InitialDirectory = LastSavePath;
                     if (sender == SaveToOggButton)
-                    { sfd.Filter = "Ogg Vorbis files (*.ogg)|*.ogg"; sfd.FileName = "NewRadioMessage.ogg"; }
+                    { sfd.Filter = "Ogg Vorbis files (*.ogg)|*.ogg"; sfd.FileName = $"{fileName}.ogg"; }
                     else
-                    { sfd.Filter = "PCM Wav files (*.wav)|*.wav"; sfd.FileName = "NewRadioMessage.wav"; }
+                    { sfd.Filter = "PCM Wav files (*.wav)|*.wav"; sfd.FileName = $"{fileName}.wav"; }
                     if (sfd.ShowDialog() != DialogResult.OK) return;
 
                     byte[] bytes = RadioMsgMaker.GenerateRadioMessageWavBytes(MessageTextbox.Text, GetVoiceNameOnlyFromCombobox());
