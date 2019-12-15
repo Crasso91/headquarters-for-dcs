@@ -12,7 +12,7 @@ hq.jtac$OBJECTIVEID$LaserCode = 1688 -- the laser code for this JTAC
 -- Finds a target for the JTAC. Returns an unit if found one, nil if not
 ------------------------------------------------------------------------
 function hq.getJTAC$OBJECTIVEID$Target()
-  local g = hq.getGroupByID($OBJECTIVEID$000)
+  local g = hq.getGroupByID(1000 + $OBJECTIVEID$)
   if g == nil then return nil end
 
   for __,u in ipairs(g:getUnits()) do
